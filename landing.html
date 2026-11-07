@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fimex — We make purchases easier</title>
+<meta name="description" content="Fimex is a B2B marketplace for consumer electronics in Dubai, UAE. Buy and sell Apple, Samsung, Xiaomi and more — direct from suppliers.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/base.css">
+<style>
+/* ==========================================================================
+   Fimex public landing — page-local styles (reconstruction of fimex.ae)
+   Light #f3f5f8 canvas, Inter body, Bebas Neue display.
+   ========================================================================== */
+body.landing {
+  background: #f3f5f8;
+  color: #14161c;
+  font-family: var(--font-landing);
+  font-size: 15px;
+  line-height: 1.55;
+  overflow-x: hidden;
+}
+body.landing ::selection { background: #dbe6fa; }
+.lp-wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+
+/* ---------- header ---------- */
+.lp-head {
+  position: sticky; top: 0; z-index: 300;
+  background: rgba(243, 245, 248, .82);
+  border-bottom: 1px solid rgba(31, 43, 68, .07);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.lp-head-in { display: flex; align-items: center; justify-content: space-between; height: 78px; }
+.lp-logo img { height: 36px; width: auto; }
+.lp-nav { display: flex; align-items: center; gap: 10px; }
+.lp-signin {
+  display: inline-flex; align-items: center; height: 40px; padding: 0 16px;
+  border-radius: 8px; color: #26324a; font-size: 14px; font-weight: 600;
+}
+.lp-signin:hover { background: #e9edf4; text-decoration: none; }
+.lp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 22px; border-radius: 8px;
+  font-family: var(--font-landing); font-size: 14px; font-weight: 600; line-height: 1;
+  border: 1px solid transparent; white-space: nowrap; text-decoration: none;
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.lp-btn:hover { text-decoration: none; transform: translateY(-1px); }
+.lp-btn-primary { background: #3B70CA; color: #fff; box-shadow: 0 6px 16px rgba(59, 112, 202, .25); }
+.lp-btn-primary:hover { background: #2c5cb3; box-shadow: 0 10px 22px rgba(59, 112, 202, .32); color: #fff; }
+.lp-btn-outline { background: transparent; color: #1b2537; border-color: #c9d2e0; }
+.lp-btn-outline:hover { background: #fff; border-color: #aeb9cb; }
+.lp-btn-lg { height: 50px; padding: 0 26px; font-size: 15px; }
+.lp-head .lp-btn { height: 40px; padding: 0 18px; }
+
+/* ---------- hero ---------- */
+.lp-hero { position: relative; padding: 66px 0 86px; overflow: hidden; }
+.lp-hero::before {
+  content: ''; position: absolute; z-index: 0; top: -220px; right: -180px;
+  width: 900px; height: 900px;
+  background: radial-gradient(circle at 50% 50%, rgba(59, 112, 202, .17) 0%, rgba(59, 112, 202, .06) 42%, rgba(59, 112, 202, 0) 68%);
+  pointer-events: none;
+}
+.lp-hero::after {
+  content: ''; position: absolute; z-index: 0; inset: 0;
+  background-image: radial-gradient(rgba(31, 55, 100, .13) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 76% 30%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(ellipse 70% 60% at 76% 30%, #000 0%, transparent 70%);
+  pointer-events: none; opacity: .55;
+}
+.lp-hero-in {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+  gap: 44px; align-items: center;
+}
+.lp-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 26px; padding: 0 11px; border-radius: 999px;
+  background: #e9eef7; color: #2d4a80; font-size: 11.5px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+}
+.lp-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #3B70CA; }
+.lp-hero h1 {
+  margin: 22px 0 18px;
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(68px, 7.6vw, 118px); line-height: .9; letter-spacing: .005em;
+  color: #101521; max-width: 640px;
+}
+.lp-hero h1 em { font-style: normal; color: #3B70CA; }
+.lp-sub { max-width: 486px; font-size: 16.5px; line-height: 1.6; color: #4b5464; }
+.lp-hero-actions { display: flex; align-items: center; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+.lp-hero-facts {
+  display: flex; gap: 34px; flex-wrap: wrap;
+  margin-top: 44px; padding-top: 24px; border-top: 1px solid #dfe4ec;
+}
+.lp-hero-facts b { display: block; font-size: 23px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; }
+.lp-hero-facts span { display: block; font-size: 12px; color: #6b7486; }
+
+/* ---------- hero visual: CSS-only phone + floating cards ---------- */
+.lp-visual { position: relative; height: 590px; min-width: 0; }
+.lp-phone {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 288px; height: 576px; padding: 10px; z-index: 2;
+  border-radius: 44px; background: #0c0f15;
+  box-shadow: 0 44px 90px rgba(14, 30, 64, .3), 0 6px 18px rgba(14, 30, 64, .16), inset 0 0 0 1px rgba(255, 255, 255, .07);
+}
+.lp-screen {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  border-radius: 35px; background: #f6f8fc;
+  padding: 30px 13px 0; display: flex; flex-direction: column;
+}
+.lp-notch {
+  position: absolute; top: 19px; left: 50%; transform: translateX(-50%);
+  width: 86px; height: 21px; border-radius: 12px; background: #0c0f15; z-index: 4;
+}
+.lp-status { display: flex; align-items: center; justify-content: space-between; font-size: 9.5px; font-weight: 600; color: #20293a; padding: 0 3px 8px; }
+.lp-status .sig { display: inline-flex; gap: 3px; align-items: center; }
+.lp-status .sig i { display: block; width: 3px; height: 6px; border-radius: 1px; background: #20293a; }
+.lp-status .sig i:nth-child(2) { height: 8px; }
+.lp-status .sig i:nth-child(3) { height: 10px; }
+.lp-status .battery { display: inline-block; width: 16px; height: 8px; border: 1px solid #20293a; border-radius: 2px; position: relative; margin-left: 3px; }
+.lp-status .battery::after { content: ''; position: absolute; inset: 1px; right: 4px; background: #20293a; border-radius: 1px; }
+.lp-appbar { display: flex; align-items: center; gap: 7px; padding: 4px 2px 10px; }
+.lp-mini-logo {
+  width: 20px; height: 20px; border-radius: 5px; background: #3B70CA; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-landing); font-size: 11px; font-weight: 800;
+}
+.lp-appbar .word { font-size: 14px; font-weight: 800; letter-spacing: .16em; color: #101521; }
+.lp-appbar .bell { margin-left: auto; width: 7px; height: 7px; border-radius: 50%; background: #3B70CA; box-shadow: 0 0 0 3px #dde7fa; }
+.lp-searchbar {
+  height: 27px; border-radius: 8px; background: #eaeef5; color: #7a8496;
+  display: flex; align-items: center; gap: 6px; padding: 0 9px; font-size: 9.5px; margin-bottom: 9px;
+}
+.lp-chips { display: flex; gap: 5px; margin-bottom: 10px; }
+.lp-chips span { font-size: 8.5px; font-weight: 600; color: #5a6474; padding: 3px 8px; border-radius: 999px; background: #eef1f7; }
+.lp-chips span.on { background: #3B70CA; color: #fff; }
+.lp-banner {
+  position: relative; overflow: hidden; border-radius: 12px; padding: 12px 13px; margin-bottom: 11px;
+  background: linear-gradient(120deg, #10306e 0%, #3B70CA 100%); color: #fff;
+}
+.lp-banner b { display: block; font-size: 12.5px; font-weight: 700; letter-spacing: .01em; }
+.lp-banner span { display: block; font-size: 8.5px; opacity: .8; margin-top: 2px; }
+.lp-tag { position: absolute; top: 10px; right: 10px; font-size: 7px; font-weight: 700; letter-spacing: .08em; padding: 2px 6px; border-radius: 999px; background: rgba(255, 255, 255, .22); color: #fff; }
+.lp-row { display: flex; align-items: center; gap: 9px; padding: 7px 2px; border-bottom: 1px solid #e9edf4; }
+.lp-row:last-of-type { border-bottom: 0; }
+.lp-thumb {
+  width: 30px; height: 30px; flex: none; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .02em;
+}
+.lp-thumb.a { background: #1c1c1e; }
+.lp-thumb.s { background: #1428a0; }
+.lp-thumb.x { background: #ff6900; }
+.lp-thumb.g { background: #4285f4; }
+.lp-thumb.h { background: #00a3e0; }
+.lp-thumb.o { background: #f5010c; }
+.lp-row-meta { min-width: 0; display: flex; flex-direction: column; }
+.lp-row-meta b { font-size: 9.5px; font-weight: 600; color: #1a2230; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lp-row-meta i { font-size: 8px; font-style: normal; color: #8791a3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lp-row-price { margin-left: auto; font-size: 9.5px; font-weight: 700; color: #14161c; }
+.lp-row .ready { font-size: 7.5px; font-weight: 700; color: #3d7c22; background: #eaf6e5; padding: 2px 5px; border-radius: 4px; margin-left: 4px; }
+.lp-cartbar {
+  margin: auto -13px 0; padding: 11px 13px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fff; border-top: 1px solid #e6eaf2;
+}
+.lp-cartbar span { font-size: 9px; color: #6b7486; }
+.lp-cartbar b { font-size: 9px; color: #fff; background: #3B70CA; border-radius: 6px; padding: 6px 12px; }
+
+.lp-float {
+  position: absolute; z-index: 3; background: #fff;
+  border: 1px solid #e4e9f1; border-radius: 14px;
+  box-shadow: 0 20px 46px rgba(19, 35, 68, .15);
+  padding: 12px 14px;
+}
+.lp-float-a { left: -70px; top: 52px; width: 212px; transform: rotate(-5deg); }
+.lp-fc-top { display: flex; align-items: center; gap: 9px; }
+.lp-fc-top b { display: block; font-size: 12px; font-weight: 700; color: #161c28; }
+.lp-fc-top i { display: block; font-size: 10px; font-style: normal; color: #7d8697; }
+.lp-fc-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; padding-top: 9px; border-top: 1px solid #edf0f5; }
+.lp-fc-qty { font-size: 10px; color: #6b7486; }
+.lp-fc-bottom b { font-size: 13px; font-weight: 700; color: #14161c; }
+.lp-float-b { right: -8px; bottom: 104px; width: 236px; display: flex; align-items: center; gap: 10px; transform: rotate(3deg); }
+.lp-check {
+  width: 30px; height: 30px; flex: none; border-radius: 50%;
+  background: #eaf6e5; color: #3d7c22;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+}
+.lp-float-b b { display: block; font-size: 11.5px; font-weight: 700; }
+.lp-float-b i { display: block; font-size: 10px; font-style: normal; color: #7d8697; }
+.lp-float-c { left: 12px; bottom: 52px; display: flex; flex-direction: column; transform: rotate(-2deg); }
+.lp-float-c b { font-size: 18px; font-weight: 800; letter-spacing: -.02em; color: #101521; }
+.lp-float-c span { font-size: 10px; color: #7d8697; }
+
+/* ---------- advantages ---------- */
+.lp-advantages { padding: 26px 0 12px; }
+.lp-sec-head { max-width: 720px; margin-bottom: 30px; }
+.lp-sec-head h2 {
+  margin-top: 14px;
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(44px, 4.4vw, 64px); line-height: .95; letter-spacing: .01em; color: #101521;
+}
+.lp-sec-head p { margin-top: 12px; font-size: 15px; color: #5a6474; max-width: 560px; }
+.lp-cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+.lp-card {
+  grid-column: span 2;
+  position: relative; padding: 26px 24px 28px;
+  background: #fff; border: 1px solid #e4e9f1; border-radius: 14px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.lp-card:nth-child(4), .lp-card:nth-child(5) { grid-column: span 3; }
+.lp-card:hover { transform: translateY(-4px); box-shadow: 0 20px 44px rgba(22, 40, 78, .09); border-color: #cfdaeb; }
+.lp-card .lp-num {
+  position: absolute; top: 22px; right: 22px;
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; color: #c3cbd8;
+}
+.lp-card .lp-ic {
+  width: 42px; height: 42px; border-radius: 11px; margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: center;
+  background: #eef3fc; color: #2c5cb3;
+}
+.lp-card h3 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; color: #14161c; }
+.lp-card p { margin-top: 8px; font-size: 13.5px; line-height: 1.55; color: #5d6675; }
+
+/* ---------- cta band ---------- */
+.lp-cta-wrap { padding: 56px 0 82px; }
+.lp-cta {
+  display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;
+  padding: 46px 50px; border-radius: 18px; overflow: hidden; position: relative;
+  background: linear-gradient(118deg, #0b2a6b 0%, #3B70CA 100%); color: #fff;
+  box-shadow: 0 30px 70px rgba(20, 44, 98, .22);
+}
+.lp-cta::after {
+  content: ''; position: absolute; right: -80px; top: -120px; width: 420px; height: 420px;
+  border-radius: 50%; border: 1px solid rgba(255, 255, 255, .18); pointer-events: none;
+}
+.lp-cta::before {
+  content: ''; position: absolute; right: 40px; bottom: -160px; width: 330px; height: 330px;
+  border-radius: 50%; background: rgba(255, 255, 255, .07); pointer-events: none;
+}
+.lp-cta h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(38px, 3.6vw, 52px); line-height: .95; letter-spacing: .01em; }
+.lp-cta p { margin-top: 10px; font-size: 14px; color: rgba(255, 255, 255, .78); max-width: 520px; }
+.lp-cta .lp-btn-white { background: #fff; color: #14306c; position: relative; z-index: 1; box-shadow: 0 12px 28px rgba(6, 20, 50, .25); }
+.lp-cta .lp-btn-white:hover { background: #eef4ff; color: #0b2a6b; }
+
+/* ---------- footer ---------- */
+.lp-foot { background: #fff; border-top: 1px solid #e4e9f1; padding: 52px 0 26px; }
+.lp-foot-grid {
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px;
+  padding-bottom: 34px; border-bottom: 1px solid #edf0f5;
+}
+.lp-foot-brand img { height: 34px; width: auto; }
+.lp-foot-brand p { margin-top: 14px; font-size: 13px; color: #6b7486; max-width: 330px; }
+.lp-foot h4 { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #8b93a3; margin-bottom: 10px; }
+.lp-foot p { font-size: 13.5px; color: #3c4557; max-width: 320px; }
+.lp-foot a { color: #2c5cb3; font-weight: 600; }
+.lp-foot-bottom {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding-top: 22px; font-size: 12px; color: #8b93a3;
+}
+.lp-foot-links { display: flex; gap: 18px; }
+.lp-foot-links a { color: #6b7486; font-weight: 500; }
+.lp-foot-links a:hover { color: #14161c; }
+
+/* ---------- cookie banner ---------- */
+.cookie {
+  position: fixed; left: 24px; bottom: 24px; z-index: 700;
+  width: min(580px, calc(100vw - 48px));
+  display: flex; align-items: flex-start; gap: 18px;
+  padding: 18px 20px; border-radius: 14px;
+  background: #fff; border: 1px solid #e4e9f1;
+  box-shadow: 0 24px 60px rgba(18, 33, 65, .18);
+}
+.cookie-txt { min-width: 0; }
+.cookie-title { font-size: 13px; font-weight: 700; color: #14161c; }
+.cookie p { margin-top: 5px; font-size: 12px; line-height: 1.5; color: #5d6675; }
+.cookie .linklike {
+  border: 0; background: none; padding: 0; color: #2c5cb3;
+  font-size: 12px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px;
+}
+.cookie .linklike:hover { color: #0b2a6b; }
+.cookie .btn { flex: none; height: 36px; padding: 0 16px; background: #3B70CA; color: #fff; font-family: var(--font-landing); }
+.cookie .btn:hover { background: #2c5cb3; }
+
+/* cookie modal content */
+.lp-cookie-modal p { font-size: 13.5px; color: #3c4557; margin-bottom: 12px; line-height: 1.6; }
+.lp-cookie-modal p:last-child { margin-bottom: 0; }
+body.landing .modal { font-family: var(--font-landing); }
+body.landing .modal-head h3 { font-family: var(--font-landing); font-size: 16px; }
+body.landing .modal-body { font-family: var(--font-landing); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1080px) {
+  .lp-hero-in { grid-template-columns: 1fr; gap: 30px; }
+  .lp-hero { padding: 48px 0 64px; }
+  .lp-hero h1 { max-width: none; font-size: clamp(64px, 12vw, 104px); }
+  .lp-visual { height: 552px; max-width: 620px; margin: 0 auto; width: 100%; }
+  .lp-hero-facts { margin-top: 34px; }
+  .lp-cards { grid-template-columns: repeat(2, 1fr); }
+  .lp-card, .lp-card:nth-child(4), .lp-card:nth-child(5) { grid-column: span 1; }
+  .lp-card:nth-child(5) { grid-column: span 2; }
+  .lp-foot-grid { grid-template-columns: 1.3fr 1fr; }
+}
+@media (max-width: 720px) {
+  .lp-wrap { padding: 0 20px; }
+  .lp-head-in { height: 68px; }
+  .lp-logo img { height: 30px; }
+  .lp-signin { padding: 0 10px; }
+  .lp-head .lp-btn { padding: 0 14px; }
+  .lp-hero-actions .lp-btn { flex: 1 1 auto; }
+  .lp-hero-facts { gap: 22px; }
+  .lp-visual { height: 500px; transform: scale(.92); transform-origin: center; }
+  .lp-float-a { left: -18px; width: 196px; }
+  .lp-float-b { right: -18px; width: 214px; bottom: 84px; }
+  .lp-float-c { left: 2px; bottom: 34px; }
+  .lp-cards { grid-template-columns: 1fr; }
+  .lp-card, .lp-card:nth-child(5) { grid-column: span 1; }
+  .lp-cta { padding: 34px 26px; }
+  .lp-cta-wrap { padding: 36px 0 54px; }
+  .lp-foot-grid { grid-template-columns: 1fr; gap: 26px; }
+  .cookie { left: 12px; bottom: 58px; width: calc(100vw - 24px); flex-direction: column; gap: 12px; padding: 16px; }
+}
+@media (max-width: 460px) {
+  .lp-hero h1 { font-size: 58px; }
+  .lp-visual { height: 470px; transform: scale(.82); }
+  .lp-float-a, .lp-float-c { display: none; }
+}
+</style>
+</head>
+<body class="landing">
+
+<header class="lp-head">
+  <div class="lp-wrap lp-head-in">
+    <a class="lp-logo" href="landing.html" aria-label="Fimex home">
+      <img src="assets/logo.svg" alt="FIMEX" width="151" height="36">
+    </a>
+    <nav class="lp-nav" aria-label="Main">
+      <a class="lp-signin" href="supplier.html#login">Sign in</a>
+      <a class="lp-btn lp-btn-primary" href="supplier.html#register">Get Started</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== HERO ===================== -->
+  <section class="lp-hero">
+    <div class="lp-wrap lp-hero-in">
+      <div class="lp-hero-copy">
+        <span class="lp-eyebrow">B2B marketplace · Dubai, UAE</span>
+        <h1>We make<br>purchases easier</h1>
+        <p class="lp-sub">One B2B platform for consumer electronics — buy and sell Apple, Samsung, Xiaomi and more, direct from suppliers in Dubai. Prices, stock and orders in one place.</p>
+        <div class="lp-hero-actions">
+          <a class="lp-btn lp-btn-primary lp-btn-lg" href="supplier.html#register">Get Started</a>
+          <a class="lp-btn lp-btn-outline lp-btn-lg" href="supplier.html#login">Sign in</a>
+        </div>
+        <div class="lp-hero-facts">
+          <div><b>2,000+</b><span>products in stock</span></div>
+          <div><b>9 brands</b><span>17 categories</span></div>
+          <div><b>DAFZA</b><span>Dubai, United Arab Emirates</span></div>
+        </div>
+      </div>
+
+      <div class="lp-visual" aria-hidden="true">
+        <div class="lp-phone">
+          <div class="lp-notch"></div>
+          <div class="lp-screen">
+            <div class="lp-status">
+              <span>9:41</span>
+              <span class="sig"><i></i><i></i><i></i><span class="battery"></span></span>
+            </div>
+            <div class="lp-appbar">
+              <span class="lp-mini-logo">F</span>
+              <span class="word">FIMEX</span>
+              <span class="bell"></span>
+            </div>
+            <div class="lp-searchbar"><span>⌕</span> Search products…</div>
+            <div class="lp-chips"><span class="on">All</span><span>Apple</span><span>Samsung</span><span>Xiaomi</span></div>
+            <div class="lp-banner">
+              <span class="lp-tag">NEW</span>
+              <b>iPhone 18 Pro</b>
+              <span>256Gb · Black · Ready to ship</span>
+            </div>
+            <div class="lp-row">
+              <span class="lp-thumb a">A</span>
+              <span class="lp-row-meta"><b>iPhone 18 Pro</b><i>256Gb Black</i></span>
+              <span class="lp-row-price">$1 234</span>
+            </div>
+            <div class="lp-row">
+              <span class="lp-thumb s">S</span>
+              <span class="lp-row-meta"><b>Galaxy S26 Ultra</b><i>512Gb Titanium</i></span>
+              <span class="lp-row-price">$1 180</span>
+            </div>
+            <div class="lp-row">
+              <span class="lp-thumb x">X</span>
+              <span class="lp-row-meta"><b>Redmi Note 15 Pro</b><i>256Gb Black</i></span>
+              <span class="lp-row-price">$268</span>
+            </div>
+            <div class="lp-row">
+              <span class="lp-thumb g">G</span>
+              <span class="lp-row-meta"><b>Pixel 11 Pro</b><i>256Gb Obsidian</i></span>
+              <span class="lp-row-price">$1 090</span>
+            </div>
+            <div class="lp-row">
+              <span class="lp-thumb h">H</span>
+              <span class="lp-row-meta"><b>Honor Magic 9 Pro</b><i>512Gb Black</i></span>
+              <span class="lp-row-price">$950</span>
+            </div>
+            <div class="lp-row">
+              <span class="lp-thumb o">1</span>
+              <span class="lp-row-meta"><b>OnePlus 15</b><i>512Gb Green</i></span>
+              <span class="lp-row-price">$870</span>
+            </div>
+            <div class="lp-cartbar"><span>Cart · 3 items</span><b>Checkout</b></div>
+          </div>
+        </div>
+
+        <div class="lp-float lp-float-a">
+          <div class="lp-fc-top">
+            <span class="lp-thumb a">A</span>
+            <div><b>iPhone 18 Pro</b><i>256Gb Black · Ready</i></div>
+          </div>
+          <div class="lp-fc-bottom"><span class="lp-fc-qty">Q-ty 8</span><b>$1 234</b></div>
+        </div>
+
+        <div class="lp-float lp-float-b">
+          <span class="lp-check">✓</span>
+          <div><b>Order #78410 placed</b><i>Awaiting assembly</i></div>
+        </div>
+
+        <div class="lp-float lp-float-c"><b>2,000+</b><span>products in stock</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ADVANTAGES ===================== -->
+  <section class="lp-advantages" id="advantages">
+    <div class="lp-wrap">
+      <div class="lp-sec-head">
+        <span class="lp-eyebrow">Why Fimex</span>
+        <h2>Key Advantages of Fimex</h2>
+        <p>Everything a supplier needs to sell consumer electronics to retail stores — without the usual wholesale friction.</p>
+      </div>
+
+      <div class="lp-cards">
+        <article class="lp-card">
+          <span class="lp-num">01</span>
+          <span class="lp-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9.5L12 4l9 5.5V20H3V9.5z"/><path d="M3 10h18M8.5 20v-6h7v6"/></svg>
+          </span>
+          <h3>Direct-to-Customer Sales</h3>
+          <p>Sell directly to clients running their own retail stores</p>
+        </article>
+
+        <article class="lp-card">
+          <span class="lp-num">02</span>
+          <span class="lp-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3.2 2"/></svg>
+          </span>
+          <h3>24/7 Sales Access</h3>
+          <p>Get access to consistent sales</p>
+        </article>
+
+        <article class="lp-card">
+          <span class="lp-num">03</span>
+          <span class="lp-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19h16M4 15l4.5-5 3.5 3 7-8"/><path d="M15 5h4v4"/></svg>
+          </span>
+          <h3>Higher Profit Margins</h3>
+          <p>Boost your margins by selling without middlemen</p>
+        </article>
+
+        <article class="lp-card">
+          <span class="lp-num">04</span>
+          <span class="lp-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+          </span>
+          <h3>Wide Product Range</h3>
+          <p>Over 2,000 products in multiple categories</p>
+        </article>
+
+        <article class="lp-card">
+          <span class="lp-num">05</span>
+          <span class="lp-ic">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2.5L4.5 14H11l-1 7.5L19.5 10H13l0-7.5z"/></svg>
+          </span>
+          <h3>Speed and Simplicity</h3>
+          <p>List and sell your product in just 3 clicks.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="lp-cta-wrap">
+    <div class="lp-wrap">
+      <div class="lp-cta">
+        <div>
+          <h2>Start selling on Fimex today.</h2>
+          <p>Join the suppliers already working with retail stores across the UAE, Kazakhstan, Uzbekistan and the Gulf.</p>
+        </div>
+        <a class="lp-btn lp-btn-lg lp-btn-white" href="supplier.html#register">Get Started</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="lp-foot">
+  <div class="lp-wrap">
+    <div class="lp-foot-grid">
+      <div class="lp-foot-brand">
+        <img src="assets/logo.svg" alt="FIMEX" width="143" height="34">
+        <p>B2B marketplace for consumer electronics. Buy and sell smartphones, tablets, laptops and accessories — direct from Dubai.</p>
+      </div>
+      <div>
+        <h4>Office</h4>
+        <p>Office 304, Building 3W (West Wing) Po Box 371254, DAFZA, Dubai, UAE</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p><a href="mailto:info@fimex.ae">info@fimex.ae</a></p>
+      </div>
+    </div>
+    <div class="lp-foot-bottom">
+      <span>Copyright © 2026 FIMEX All rights reserved.</span>
+      <div class="lp-foot-links">
+        <a href="supplier.html#login">Sign in</a>
+        <a href="supplier.html#register">Get Started</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== COOKIE BANNER ===================== -->
+<div class="cookie" id="cookie-banner">
+  <div class="cookie-txt">
+    <div class="cookie-title">This website uses cookies to improve your experience</div>
+    <p>By continuing to use this site, you agree to our use of cookies. <button class="linklike" type="button" id="cookie-more">Learn more</button></p>
+  </div>
+  <button class="btn btn-primary" type="button" id="cookie-accept">Accept All</button>
+</div>
+
+<!-- ===================== COOKIE MODAL ===================== -->
+<div class="modal-backdrop" id="cookie-modal" hidden>
+  <div class="modal narrow">
+    <div class="modal-head"><h3>About cookies</h3><button class="modal-close" type="button" data-close>×</button></div>
+    <div class="modal-body lp-cookie-modal">
+      <p>This website uses cookies to improve your experience while you navigate through the site. Cookies that are categorised as necessary are stored in your browser as they are essential for the basic functionality of the website.</p>
+      <p>We also use third-party cookies that help us analyse how you use this website and understand which parts are most useful. These cookies are stored only with your consent.</p>
+      <p>You can accept all cookies or continue to use the site with the default settings. Your choice is stored locally in this browser.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" type="button" data-close>Close</button>
+      <button class="btn btn-primary" type="button" id="cookie-accept-2">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<a class="proto-pill" href="index.html">🛈 Прототип Fimex · вымышленные данные · ← Карта платформы</a>
+
+<script src="assets/demo-data.js"></script>
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var CONSENT_KEY = 'cookie_consent';
+  var banner = document.getElementById('cookie-banner');
+
+  function readConsent() {
+    try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+  }
+  function saveConsent(value) {
+    try { localStorage.setItem(CONSENT_KEY, value); } catch (e) { /* storage may be blocked */ }
+  }
+  function hideBanner() {
+    banner.hidden = true;
+  }
+
+  if (readConsent() === 'accepted') hideBanner();
+
+  document.getElementById('cookie-accept').addEventListener('click', function () {
+    saveConsent('accepted');
+    hideBanner();
+    FX.toast('Cookies accepted', 'ok', 1800);
+  });
+
+  document.getElementById('cookie-more').addEventListener('click', function () {
+    FX.modal('cookie-modal');
+  });
+
+  document.getElementById('cookie-accept-2').addEventListener('click', function () {
+    saveConsent('accepted');
+    hideBanner();
+    FX.closeModal('cookie-modal');
+    FX.toast('Cookies accepted', 'ok', 1800);
+  });
+
+  /* smooth in-page link (no other JS needed) */
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+})();
+</script>
+</body>
+</html>

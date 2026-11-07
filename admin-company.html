@@ -1,0 +1,2341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fimex Admin — Компания · прототип</title>
+<link rel="icon" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/admin.css">
+<style>
+/* ===== admin-company.html — page-local styles (prefix co- / pay- / war-) ===== */
+.co-rail-note { padding: 2px 10px 10px; font-size: 11px; color: var(--muted); }
+.tree-item.co-country-row { padding: 8px; }
+.co-country-row .co-c-meta { display: block; font-size: 10.5px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+.co-country-row .row-flag { font-size: 15px; }
+.co-country-row .cnt { display: flex; align-items: center; gap: 4px; }
+
+.co-regions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.co-regions .chip { cursor: default; height: 27px; }
+.co-regions .chip .x { cursor: pointer; font-size: 13px; line-height: 1; padding: 0 1px; }
+.co-regions .chip .x:hover { color: var(--red); }
+.co-region-form { display: inline-flex; gap: 6px; }
+.co-region-form .input { width: 155px; height: 27px; font-size: 12px; }
+
+.co-logo { display: flex; align-items: center; gap: 12px; }
+.co-stick { width: 66px; height: 66px; border: 1px dashed var(--line-strong); border-radius: 8px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 9px; line-height: 1.3; color: var(--muted); background: var(--surface-2); letter-spacing: .08em; }
+.co-rate-hint { margin-top: 5px; font-size: 11px; color: var(--muted); }
+#co-country-form .form-grid { gap: 8px 14px; }
+#co-country-form .field { gap: 4px; }
+#co-country-form .form-actions { margin-top: 10px; }
+
+.co-row-actions { display: flex; justify-content: flex-end; gap: 2px; }
+.co-nowrap { white-space: nowrap; }
+.co-license { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 11.5px; }
+.co-count { font-size: 12px; color: var(--text-2); }
+.co-cust-pane { grid-template-columns: 240px minmax(0, 1fr); }
+.co-cust-pane .folder-rail .folder { padding: 7px 8px; font-size: 12.5px; }
+.co-cust-pane .table-tools .search { width: 220px; }
+.co-cust-pane .table td, .co-cust-pane .table th { white-space: nowrap; }
+.co-cust-pane .table td.co-email { max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
+.co-comment { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-width: 165px; line-height: 1.35; }
+.co-sub2 { display: block; font-size: 10.5px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+
+.co-chat-wrap { display: flex; flex-direction: column; height: 430px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.co-chat-wrap .chat-msgs { flex: 1 1 auto; overflow: auto; }
+.co-chat-wrap .chat-compose { border-top: 1px solid var(--line); padding: 10px 12px; background: var(--surface); }
+.co-chat-wrap .chat-compose .input { height: 34px; }
+
+.co-doc-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.co-doc-row:last-child { border-bottom: 0; }
+.co-doc-ico { width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; flex: none; background: var(--surface-2); }
+.co-doc-row .meta { margin-left: auto; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.co-manager-form { display: grid; grid-template-columns: 1fr 1.1fr auto; gap: 8px; margin-bottom: 12px; }
+
+.co-switch-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.co-switch-row:last-child { border-bottom: 0; }
+.co-switch-row .badge { margin-left: 4px; }
+
+/* payment */
+.pay-layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; }
+.pay-controls .panel-body { padding: 14px; display: flex; flex-direction: column; gap: 13px; }
+.pay-kinds { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pay-kind { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); text-align: left; }
+.pay-kind b { font-size: 12.5px; font-weight: 600; }
+.pay-kind span { font-size: 10.5px; color: var(--muted); }
+.pay-kind:hover { border-color: var(--accent); }
+.pay-kind.active { border-color: var(--accent); background: var(--accent-soft); }
+.pay-kind.active b { color: var(--accent-dark); }
+.pay-kind[data-kind="refund"].active { border-color: #e6b8b8; background: var(--red-soft); }
+.pay-kind[data-kind="refund"].active b { color: var(--red); }
+.pay-printbar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.pay-sum { font-size: 12px; color: var(--text-2); }
+.pay-note { font-size: 11.5px; color: var(--muted); margin-top: 10px; max-width: 720px; }
+
+.doc-sheet.co-doc { width: 185mm; min-height: 124mm; padding: 8mm 11mm; font-size: 11.5px; }
+.co-doc .doc-brand { font-size: 15px; font-weight: 700; letter-spacing: .05em; }
+.co-doc .doc-top h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .05em; }
+.co-doc .doc-title { text-align: right; }
+.co-doc .doc-title .ru { font-size: 10px; color: #666; margin-top: 2px; }
+.co-doc .doc-num { margin-top: 6px; font-size: 11.5px; font-weight: 600; }
+.co-doc .doc-meta { margin: 12px 0 4px; }
+.co-doc .doc-meta .box { flex: 1; min-width: 0; }
+.co-doc .doc-meta .box .strong { font-size: 11.5px; }
+.co-doc .doc-meta .box .line { color: #555; font-size: 10.5px; }
+.co-doc table.doc-lines { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.co-doc table.doc-lines th { padding: 4px 6px; border-bottom: 1.5px solid #222; text-align: left; font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: #444; font-weight: 600; }
+.co-doc table.doc-lines td { padding: 8px 6px; border-bottom: 1px solid #ccc; vertical-align: top; }
+.co-doc table.doc-lines .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.co-doc .doc-total { margin-top: 8px; padding-top: 7px; border-top: 2px solid #222; }
+.co-doc .doc-total b { font-size: 15px; }
+.co-doc .doc-words { margin-top: 10px; padding: 7px 9px; border: 1px solid #ddd; border-radius: 3px; background: #f7f8fa; font-size: 10.5px; color: #333; }
+.co-doc .doc-balance { display: flex; justify-content: space-between; gap: 20px; margin-top: 9px; font-size: 10.5px; color: #555; }
+.co-doc .doc-sign { margin-top: 22px; }
+.co-doc .doc-sign .stamp { width: 72px; height: 72px; border: 1.5px dashed #999; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 8px; line-height: 1.3; color: #8a8a8a; text-transform: uppercase; letter-spacing: .05em; flex: none; margin: 0 6px; align-self: center; }
+.co-doc .doc-foot { display: flex; justify-content: space-between; gap: 20px; margin-top: 16px; padding-top: 6px; border-top: 1px solid #ddd; font-size: 8.5px; color: #999; }
+
+/* currencies */
+.co-rate-input { width: 118px; height: 28px; padding: 0 8px; text-align: right; border: 1px solid var(--line-strong); border-radius: 5px; font-variant-numeric: tabular-nums; background: var(--surface); }
+.co-rate-input:disabled { background: var(--surface-3); color: var(--muted); border-color: var(--line); }
+.co-currency-note { font-size: 12px; color: var(--text-2); }
+.co-lock-state { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--text-2); }
+.co-iso { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; font-weight: 600; }
+
+/* warranty */
+.war-block { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px 10px; margin-bottom: 8px; background: var(--surface-2); }
+.war-block-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.war-block textarea { min-height: 54px; background: var(--surface); }
+.war-add { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 0; }
+.war-preview { font-size: 12.5px; line-height: 1.55; }
+.war-preview h3 { font-size: 14.5px; margin-bottom: 6px; }
+.war-preview h4 { font-size: 12.5px; margin: 12px 0 3px; }
+.war-preview p { margin: 3px 0 6px; }
+.war-preview ul { margin: 3px 0 6px; padding-left: 18px; }
+.war-preview blockquote { margin: 8px 0; padding: 6px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); font-style: italic; color: var(--text-2); }
+.war-preview .info { margin: 8px 0; padding: 7px 10px; border: 1px solid #e6d5b8; background: #fffaf0; border-radius: 5px; color: #7a5b20; font-size: 12px; }
+.war-preview .base { color: var(--text-2); }
+.war-months { max-width: 110px; }
+.war-lang-hint { font-size: 11.5px; color: var(--muted); }
+.war-text { min-height: 92px; }
+
+@media (max-width: 1280px) {
+  .pay-layout { grid-template-columns: 1fr; }
+  .co-manager-form { grid-template-columns: 1fr; }
+}
+@media print {
+  body.admin { background: #fff !important; }
+  .admin-topbar, .admin-sidebar, .proto-pill, .toast-host { display: none !important; }
+  .admin-main { margin: 0 !important; padding: 0 !important; }
+  .page { padding: 0 !important; }
+  .screen[data-screen="payment"] .page-head,
+  .pay-controls, .pay-printbar, .pay-note, .pay-sum { display: none !important; }
+  .pay-layout { display: block; }
+  .drawer-backdrop, .modal-backdrop { display: none !important; }
+  .doc-stage { display: block !important; padding: 0 !important; border: 0 !important; background: #fff !important; }
+  .doc-sheet.co-doc { width: 100% !important; min-height: 0; padding: 0; border: 0; box-shadow: none; }
+}
+</style>
+</head>
+<body class="admin">
+<div id="shell"></div>
+<section id="screens">
+
+<!-- ============================================================ COUNTRIES -->
+<div class="screen" data-screen="countries">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Страны</h1>
+        <div class="sub">Страны закупки и реализации: валюта, часовой пояс, скорость доставки, минимальная сумма заказа и шаг P2P. Данные вымышленные.</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" id="co-add-country" type="button">+ Add Country of purchase</button>
+      </div>
+    </div>
+    <div class="split-pane wide-left">
+      <div class="panel">
+        <div class="panel-head"><h3>Страны реализации</h3><span class="badge badge-gray" id="co-country-count">6</span></div>
+        <div class="tree" id="co-country-list"></div>
+        <div class="co-rail-note">Выберите страну, чтобы изменить её настройки.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3 id="co-country-title">Настройки страны</h3>
+          <span class="badge badge-gray" id="co-country-badge">Sales access</span>
+        </div>
+        <div class="panel-body">
+          <form id="co-country-form" autocomplete="off">
+            <div class="form-grid">
+              <div class="field"><label>Название <span class="req">*</span></label><input class="input" name="name" required></div>
+              <div class="field"><label>Сокращенное Название <span class="req">*</span></label><input class="input" name="short" required></div>
+              <div class="field"><label>Валюта <span class="req">*</span></label><select class="select" name="currency"></select></div>
+              <div class="field"><label>Time Zone <span class="req">*</span></label><input class="input" name="tz" placeholder="Asia/Dubai"></div>
+              <div class="field"><label>Скорость доставки (дней)</label><select class="select" name="deliveryDays"></select></div>
+              <div class="field"><label>Оплата по умолчанию</label><select class="select" name="payment"><option value="Cash">Cash</option><option value="Online">Online</option></select></div>
+              <div class="field"><label>Минимальная сумма заказа за указанный период <span class="req">*</span></label><input class="input" name="minOrder" type="number" min="0" step="1000"></div>
+              <div class="field"><label>Шаг суммы в P2p трейде <span class="req">*</span></label><input class="input" name="p2pStep" type="number" min="0" step="10"></div>
+              <div class="field"><label>Контрольная точка накладных <span class="req">*</span></label><input class="input" name="checkpoint" type="time"></div>
+              <div class="field"><label>Кол-во дней для вывода заказов полученных товаров</label><input class="input" name="calcDays" type="number" min="0" max="30"></div>
+              <div class="field"><label>Префикс констант</label><input class="input" name="prefix" placeholder="ae"></div>
+              <div class="field"><label>Rate</label><input class="input" name="rate" disabled><div class="co-rate-hint" id="co-rate-hint"></div></div>
+            </div>
+            <div class="form-grid" style="margin-top:8px">
+              <div class="field full">
+                <label>Регионы</label>
+                <div class="co-regions" id="co-regions"></div>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:8px">
+              <div class="field">
+                <label>Sales access</label>
+                <div class="row" style="height:34px">
+                  <label class="switch"><input type="checkbox" name="sales"><i></i></label>
+                  <span class="muted small" id="co-sales-hint">Клиенты страны видят каталог и цены</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Лого в стикере</label>
+                <div class="co-logo">
+                  <div class="co-stick">FIMEX<br>STICKER</div>
+                  <div class="stack tight">
+                    <button class="btn btn-default btn-sm" type="button" data-upload>Upload</button>
+                    <span class="hint">PNG / SVG, до 1 МБ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-default" type="button" id="co-country-reset">Отмена</button>
+              <button class="btn btn-primary" type="submit">Сохранить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ CUSTOMERS -->
+<div class="screen" data-screen="customers">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Клиенты</h1>
+        <div class="sub">Магазины-покупатели по странам реализации: лицензии, депозиты, штрафы, подписка и история операций.</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-default" id="co-customers-export" type="button">Экспорт</button>
+      </div>
+    </div>
+    <div class="split-pane co-cust-pane">
+      <div class="folder-rail" id="co-customer-countries"></div>
+      <div class="panel">
+        <div class="table-tools">
+          <div class="search"><input class="input" id="co-customer-search" placeholder="Name or ID"></div>
+          <div class="row-info" id="co-customer-count"></div>
+        </div>
+        <div class="table-wrap" style="border:0;border-radius:0">
+          <table class="table compact" id="co-customer-table">
+            <thead><tr>
+              <th>Company name</th>
+              <th>User Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Subscription status</th>
+              <th class="num">Deposit</th>
+              <th class="num">Penalty</th>
+              <th>License end date</th>
+            </tr></thead>
+            <tbody id="co-customer-rows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="co-customer-empty" hidden>
+          <div class="icon">🏬</div>
+          <h4>No customers</h4>
+          <p>В выбранной стране нет клиентов, подходящих под поиск. Смените страну или очистите поле поиска.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SUPPLIERS -->
+<div class="screen" data-screen="suppliers">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Поставщики</h1>
+        <div class="sub">Компании-поставщики закупки: лицензии, документы, доступ к каталогу, страны закупки и менеджеры.</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-default" id="co-supplier-export" type="button">Экспорт</button>
+        <button class="btn btn-primary" id="co-add-supplier" type="button">Add supplier</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="table-tools">
+        <div class="search"><input class="input" id="co-supplier-search" placeholder="Company or e-mail"></div>
+        <div class="row-info" id="co-supplier-count"></div>
+      </div>
+      <div class="table-wrap" style="border:0;border-radius:0">
+        <table class="table compact" id="co-supplier-table">
+          <thead><tr>
+            <th>Company name</th>
+            <th>Country</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>TRN Number</th>
+            <th>License</th>
+            <th>Purchases</th>
+            <th>Comment</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="co-supplier-rows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="co-supplier-empty" hidden>
+        <div class="icon">🏭</div>
+        <h4>No suppliers</h4>
+        <p>Поставщики не найдены. Измените поиск или добавьте поставщика кнопкой Add supplier.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ PAYMENT -->
+<div class="screen" data-screen="payment">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Касса</h1>
+        <div class="sub">Печатные формы кассы: приход и возврат по балансу, штрафам и депозитам клиентов, расчёты с поставщиками.</div>
+      </div>
+      <div class="page-actions">
+        <span class="badge badge-gray">Печатные формы</span>
+        <span class="tag blue">A5 · Cash document</span>
+      </div>
+    </div>
+    <div class="pay-layout">
+      <div class="panel pay-controls">
+        <div class="panel-head"><h3>Документ</h3></div>
+        <div class="panel-body">
+          <div class="field">
+            <label>Тип операции</label>
+            <div class="segmented" id="co-pay-side">
+              <button type="button" class="active" data-side="customers">Клиенты</button>
+              <button type="button" data-side="suppliers">Поставщики</button>
+            </div>
+          </div>
+          <div class="field" id="co-pay-cashbox-wrap">
+            <label>Payment</label>
+            <div class="chips" id="co-pay-cashbox">
+              <button type="button" class="chip active" data-cashbox="ballance">Balance</button>
+              <button type="button" class="chip" data-cashbox="penalty">Penalty</button>
+              <button type="button" class="chip" data-cashbox="deposit">Deposit</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Операция</label>
+            <div class="pay-kinds" id="co-pay-kind">
+              <button type="button" class="pay-kind active" data-kind="receipt"><b>Receipt</b><span>Debit · приход</span></button>
+              <button type="button" class="pay-kind" data-kind="refund"><b>Refund</b><span>Credit · расход</span></button>
+            </div>
+          </div>
+          <div class="field">
+            <label id="co-pay-party-label">Customer</label>
+            <select class="select" id="co-pay-party"></select>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label>Amount</label><input class="input" id="co-pay-amount" type="number" min="0" step="50" value="15000"></div>
+            <div class="field"><label>Date</label><input class="input" id="co-pay-date" type="date" value="2026-11-21"></div>
+          </div>
+          <div class="field"><label>Назначение</label><input class="input" id="co-pay-purpose"></div>
+          <div class="hint" id="co-pay-hint"></div>
+        </div>
+      </div>
+      <div>
+        <div class="pay-printbar">
+          <button class="btn btn-primary" id="co-print" type="button">🖨 Print</button>
+          <span class="pay-sum" id="co-pay-summary"></span>
+        </div>
+        <div class="doc-stage" id="co-doc-stage">
+          <div class="doc-sheet co-doc" id="co-doc"></div>
+        </div>
+        <p class="pay-note">Документ пересобирается при смене типа клиент/поставщик, кассы, прихода/расхода, контрагента и суммы. Кнопка Print открывает системный диалог печати — печатается только сама форма.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ CURRENCIES -->
+<div class="screen" data-screen="currencies">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Валюты</h1>
+        <div class="sub">ISO, символ, название и курс валют. Курс можно изменить только после Unlock с паролем.</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-default" id="co-unlock-all" type="button">🔒 Unlock</button>
+        <button class="btn btn-default" id="co-add-currency" type="button">+ Add currency</button>
+        <button class="btn btn-primary" id="co-save-currencies" type="button">Save</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="table-tools">
+        <div class="co-currency-note" id="co-currency-note"></div>
+        <div class="row-info" id="co-currency-count"></div>
+      </div>
+      <div class="table-wrap" style="border:0;border-radius:0">
+        <table class="table" id="co-currency-table">
+          <thead><tr>
+            <th>ISO</th>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th class="num">Currency rate</th>
+            <th>Статус</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="co-currency-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ LOGISTICS -->
+<div class="screen" data-screen="logistics">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Логистика</h1>
+        <div class="sub">Логистические компании: контакты, лицензии и логист по умолчанию для отгрузок.</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" id="co-add-logistics" type="button">Add company</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="table-tools">
+        <div class="row-info" id="co-logistics-count"></div>
+      </div>
+      <div class="table-wrap" style="border:0;border-radius:0">
+        <table class="table" id="co-logistics-table">
+          <thead><tr>
+            <th>Name</th>
+            <th>Company phone</th>
+            <th>Company address</th>
+            <th>License</th>
+            <th>License end date</th>
+            <th>Default</th>
+            <th></th>
+          </tr></thead>
+          <tbody id="co-logistics-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ WARRANTY -->
+<div class="screen" data-screen="warranty">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <h1>Гарантии</h1>
+        <div class="sub">Условия гарантии по бренду и категории: базовый срок, дополнительная гарантия и блоки текста RU/EN.</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" id="co-warranty-save" type="button">Сохранить</button>
+      </div>
+    </div>
+    <div class="split-pane wide-left">
+      <div class="panel">
+        <div class="panel-head"><h3>Brand / Category</h3><span class="badge badge-gray" id="co-warranty-tree-count"></span></div>
+        <div class="tree" id="co-warranty-tree"></div>
+        <div class="co-rail-note">Выберите категорию бренда, чтобы отредактировать её гарантию.</div>
+      </div>
+      <div class="stack">
+        <div class="panel" data-tabs-container>
+          <div class="panel-head">
+            <h3 id="co-warranty-title">Apple · iPhone</h3>
+            <span class="tag blue" id="co-warranty-months-badge">12 мес</span>
+          </div>
+          <div class="panel-body">
+            <form id="co-warranty-form" autocomplete="off">
+              <div class="form-grid">
+                <div class="field"><label>НАЗВАНИЕ RU</label><input class="input" name="titleRu"></div>
+                <div class="field"><label>НАЗВАНИЕ EN</label><input class="input" name="titleEn"></div>
+                <div class="field"><label>Кол. мес</label><input class="input war-months" name="months" type="number" min="0" max="60"></div>
+                <div class="field"><label>Приложение</label><input class="input" value="Fimex iOS · APK" disabled></div>
+                <div class="field"><label>Базовая Гарантия Ru</label><textarea class="textarea war-text" name="baseRu"></textarea></div>
+                <div class="field"><label>Базовая Гарантия En</label><textarea class="textarea war-text" name="baseEn"></textarea></div>
+                <div class="field"><label>Доп. Гарантия Ru</label><textarea class="textarea war-text" name="addRu"></textarea></div>
+                <div class="field"><label>Доп. Гарантия En</label><textarea class="textarea war-text" name="addEn"></textarea></div>
+              </div>
+              <div class="form-section">
+                <div class="row between" style="margin-bottom:6px">
+                  <h4 style="font-size:13px">Блоки гарантии</h4>
+                  <span class="war-lang-hint" id="co-war-lang-hint">Редактируется RU</span>
+                </div>
+                <div class="tabs" data-tabs="war-lang">
+                  <button type="button" class="tab active" data-tab="ru">RU</button>
+                  <button type="button" class="tab" data-tab="en">EN</button>
+                </div>
+                <div class="war-add" id="co-war-add">
+                  <button type="button" class="btn btn-default btn-sm" data-block="heading">+ Заголовок</button>
+                  <button type="button" class="btn btn-default btn-sm" data-block="section">+ Раздел</button>
+                  <button type="button" class="btn btn-default btn-sm" data-block="list">+ Список</button>
+                  <button type="button" class="btn btn-default btn-sm" data-block="quote">+ Цитата</button>
+                  <button type="button" class="btn btn-default btn-sm" data-block="info">+ Инфо</button>
+                </div>
+                <div data-tab-panel="war-lang" data-tab-name="ru">
+                  <div id="co-war-blocks-ru"></div>
+                </div>
+                <div data-tab-panel="war-lang" data-tab-name="en" hidden>
+                  <div id="co-war-blocks-en"></div>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-default" type="button" id="co-warranty-reset">Отмена</button>
+                <button class="btn btn-primary" type="submit">Сохранить</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Предпросмотр</h3><span class="badge badge-gray" id="co-warranty-preview-lang">RU</span></div>
+          <div class="panel-body"><div class="war-preview" id="co-warranty-preview"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================ CUSTOMER DRAWER -->
+<div class="drawer-backdrop" id="co-drawer-customer" hidden>
+  <div class="drawer" data-tabs-container>
+    <div class="drawer-head">
+      <div>
+        <h2 id="co-cust-name">Company</h2>
+        <div class="sub" id="co-cust-sub"></div>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Закрыть">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="tabs" data-tabs="cust">
+        <button type="button" class="tab active" data-tab="card">Карточка</button>
+        <button type="button" class="tab" data-tab="history">История</button>
+        <button type="button" class="tab" data-tab="chat">Чат</button>
+      </div>
+      <div data-tab-panel="cust" data-tab-name="card" style="padding-top:16px">
+        <div class="detail-grid">
+          <div class="field"><label>Company name</label><input class="input" id="co-cf-name"></div>
+          <div class="field"><label>Company address</label><input class="input" id="co-cf-address"></div>
+          <div class="field"><label>Company phone</label><input class="input" id="co-cf-phone"></div>
+          <div class="field"><label>TRN Number</label><input class="input" id="co-cf-trn"></div>
+          <div class="field">
+            <label>License</label>
+            <div class="input-group">
+              <input class="input" id="co-cf-license">
+              <button class="btn btn-default" type="button" id="co-cf-license-view">view</button>
+            </div>
+          </div>
+          <div class="field"><label>License end date</label><input class="input" id="co-cf-license-end" placeholder="DD.MM.YYYY"></div>
+          <div class="field"><label>Deposit</label><input class="input" id="co-cf-deposit" type="number" min="0"></div>
+          <div class="field"><label>Penalty</label><input class="input" id="co-cf-penalty" type="number" min="0"></div>
+          <div class="field"><label>Balance</label><input class="input" id="co-cf-balance" disabled></div>
+          <div class="field"><label>Mode of payment</label><select class="select" id="co-cf-mode"><option value="Cash">Cash</option><option value="Online">Online</option></select></div>
+          <div class="field"><label>Wholesale *</label><select class="select" id="co-cf-wholesale"></select></div>
+          <div class="field"><label>Logistics</label><select class="select" id="co-cf-logistics"></select></div>
+          <div class="field"><label>Subscription type</label><select class="select" id="co-cf-subscription"><option value="active">active</option><option value="expired">expired</option><option value="none">none</option></select></div>
+          <div class="field">
+            <label>App subscription</label>
+            <div class="row" style="height:34px">
+              <label class="switch"><input type="checkbox" id="co-cf-app"><i></i></label>
+              <span class="muted small">isEnableAppSubscription</span>
+            </div>
+          </div>
+          <div class="field"><label>Language *</label><select class="select" id="co-cf-lang"><option value="en">English</option><option value="ru">Русский</option></select></div>
+          <div class="field"><label>Status</label><select class="select" id="co-cf-status"><option value="active">active</option><option value="new">new</option><option value="paused">paused</option></select></div>
+        </div>
+      </div>
+      <div data-tab-panel="cust" data-tab-name="history" hidden>
+        <div class="row between" style="margin-bottom:10px">
+          <span class="strong">Customer History</span>
+          <span class="muted small" id="co-cust-history-id">User ID 2433</span>
+        </div>
+        <div class="kpi-row" id="co-cust-history-kpi" style="margin-bottom:12px"></div>
+        <div class="table-wrap">
+          <table class="table compact">
+            <thead><tr><th>Date</th><th>Type</th><th>Order №</th><th>Description of Goods</th><th class="num">Q-ty</th><th class="num">Amount</th><th>Status</th></tr></thead>
+            <tbody id="co-cust-history-rows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div data-tab-panel="cust" data-tab-name="chat" hidden>
+        <div class="co-chat-wrap">
+          <div class="chat-msgs" id="co-chat-msgs"></div>
+          <div class="chat-compose">
+            <input class="input" id="co-chat-input" placeholder="Message" autocomplete="off">
+            <button class="btn btn-primary" type="button" id="co-chat-send">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-danger" type="button" id="co-cust-delete">Delete Company</button>
+      <span class="spacer"></span>
+      <button class="btn btn-default" type="button" id="co-cust-message">Send Message</button>
+      <button class="btn btn-primary" type="button" id="co-cust-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SUPPLIER DRAWER -->
+<div class="drawer-backdrop" id="co-drawer-supplier" hidden>
+  <div class="drawer" data-tabs-container>
+    <div class="drawer-head">
+      <div>
+        <h2 id="co-sup-name">Supplier</h2>
+        <div class="sub" id="co-sup-sub"></div>
+      </div>
+      <button class="modal-close" type="button" data-close aria-label="Закрыть">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="form-grid">
+        <div class="field"><label>Company name <span class="req">*</span></label><input class="input" id="co-sf-name"></div>
+        <div class="field"><label>Company Address</label><input class="input" id="co-sf-address"></div>
+        <div class="field"><label>Phone</label><input class="input" id="co-sf-phone"></div>
+        <div class="field"><label>Email <span class="req">*</span></label><input class="input" id="co-sf-email"></div>
+        <div class="field"><label>TRN Number</label><input class="input" id="co-sf-trn"></div>
+        <div class="field">
+          <label>License <span class="req">*</span></label>
+          <div class="input-group">
+            <input class="input" id="co-sf-license">
+            <button class="btn btn-default" type="button" id="co-sf-license-view">view</button>
+          </div>
+        </div>
+        <div class="field"><label>License end date</label><input class="input" id="co-sf-license-end" placeholder="DD.MM.YYYY"></div>
+        <div class="field"><label>Admin account · Email</label><input class="input" id="co-sf-admin-email"></div>
+        <div class="field"><label>Admin account · Password</label><input class="input" id="co-sf-admin-pass" type="password" value="demo-pass-2026"></div>
+        <div class="field">
+          <label>Лого в стикере</label>
+          <div class="co-logo">
+            <div class="co-stick">SUPPLIER<br>LOGO</div>
+            <div class="stack tight">
+              <button class="btn btn-default btn-sm" type="button" data-upload>Upload</button>
+              <span class="hint">PNG / SVG</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabs" data-tabs="supp" style="margin-top:18px">
+        <button type="button" class="tab active" data-tab="docs">Документы</button>
+        <button type="button" class="tab" data-tab="purchases">Покупки</button>
+        <button type="button" class="tab" data-tab="catalog">Каталог</button>
+        <button type="button" class="tab" data-tab="managers">Managers</button>
+      </div>
+      <div data-tab-panel="supp" data-tab-name="docs" style="padding-top:14px">
+        <div id="co-sup-docs"></div>
+        <div class="photo-drop" style="margin-top:12px" data-upload>＋ Upload document · PDF, до 5 МБ</div>
+      </div>
+      <div data-tab-panel="supp" data-tab-name="purchases" hidden style="padding-top:14px">
+        <div class="field">
+          <label>Purchases <span class="req">*</span></label>
+          <div class="chips" id="co-sup-purchases"></div>
+          <div class="hint" style="margin-top:8px">Страны, по которым поставщик принимает заказы на закупку.</div>
+        </div>
+      </div>
+      <div data-tab-panel="supp" data-tab-name="catalog" hidden style="padding-top:14px">
+        <div class="status-line" style="margin-bottom:12px">
+          <span>Доступ поставщика к каталогу</span>
+          <label class="switch"><input type="checkbox" id="co-sup-catalog-all" checked><i></i></label>
+        </div>
+        <div id="co-sup-catalog"></div>
+        <div class="hint" style="margin-top:10px">Выключенный бренд скрывает все его категории из каталога поставщика.</div>
+      </div>
+      <div data-tab-panel="supp" data-tab-name="managers" hidden style="padding-top:14px">
+        <div class="co-manager-form">
+          <input class="input" id="co-mgr-name" placeholder="Name" autocomplete="off">
+          <input class="input" id="co-mgr-email" placeholder="Email" autocomplete="off">
+          <button class="btn btn-default" type="button" id="co-mgr-add">Добавить</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table compact">
+            <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th></th></tr></thead>
+            <tbody id="co-sup-managers"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-danger" type="button" id="co-sup-delete">Удалить</button>
+      <span class="spacer"></span>
+      <button class="btn btn-default" type="button" id="co-sup-add-btn">Add</button>
+      <button class="btn btn-primary" type="button" id="co-sup-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ MODALS -->
+<div class="modal-backdrop" id="co-modal-country" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <form id="co-form-country" autocomplete="off">
+      <div class="modal-head"><h3>Add Country of purchase</h3><button class="modal-close" type="button" data-close>×</button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Название <span class="req">*</span></label><input class="input" name="name" required></div>
+          <div class="field"><label>Сокращенное Название <span class="req">*</span></label><input class="input" name="short" required></div>
+          <div class="field"><label>Валюта <span class="req">*</span></label><select class="select" name="currency"></select></div>
+          <div class="field"><label>Time Zone <span class="req">*</span></label><input class="input" name="tz" placeholder="Asia/Dubai" required></div>
+          <div class="field"><label>Скорость доставки (дней)</label><input class="input" name="deliveryDays" type="number" min="1" max="30" value="3"></div>
+          <div class="field"><label>Sales access</label><div class="row" style="height:34px"><label class="switch"><input type="checkbox" name="sales" checked><i></i></label><span class="muted small">Включить продажи</span></div></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-default" type="button" data-close>Отмена</button>
+        <button class="btn btn-primary" type="submit">Добавить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="co-modal-supplier" hidden>
+  <div class="modal wide" role="dialog" aria-modal="true">
+    <form id="co-form-supplier" autocomplete="off">
+      <div class="modal-head"><h3>Add supplier</h3><button class="modal-close" type="button" data-close>×</button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Company name <span class="req">*</span></label><input class="input" name="name" required></div>
+          <div class="field"><label>Country</label><select class="select" name="country"></select></div>
+          <div class="field"><label>Name <span class="req">*</span></label><input class="input" name="manager" required></div>
+          <div class="field"><label>Email <span class="req">*</span></label><input class="input" name="email" type="email" required></div>
+          <div class="field"><label>Phone</label><input class="input" name="phone"></div>
+          <div class="field"><label>TRN Number</label><input class="input" name="trn"></div>
+          <div class="field"><label>License <span class="req">*</span></label><input class="input" name="license" required></div>
+          <div class="field"><label>License end date</label><input class="input" name="licenseEnd" placeholder="DD.MM.YYYY"></div>
+          <div class="field full"><label>Comment</label><input class="input" name="comment" placeholder="Короткая заметка о поставщике"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-default" type="button" data-close>Отмена</button>
+        <button class="btn btn-primary" type="submit">Добавить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="co-modal-currency" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <form id="co-form-currency" autocomplete="off">
+      <div class="modal-head"><h3>Add currency</h3><button class="modal-close" type="button" data-close>×</button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>ISO <span class="req">*</span></label><input class="input" name="iso" maxlength="3" placeholder="AED" required></div>
+          <div class="field"><label>Name <span class="req">*</span></label><input class="input" name="name" placeholder="UAE Dirham" required></div>
+          <div class="field"><label>Symbol</label><input class="input" name="symbol" placeholder="AED"></div>
+          <div class="field"><label>Currency rate</label><input class="input" name="rate" type="number" step="0.0001" value="1"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-default" type="button" data-close>Отмена</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="co-modal-unlock" hidden>
+  <div class="modal narrow" role="dialog" aria-modal="true">
+    <div class="modal-head"><h3>Unlock currency rate</h3><button class="modal-close" type="button" data-close>×</button></div>
+    <div class="modal-body">
+      <div class="stack">
+        <div class="field">
+          <label>Password</label>
+          <input class="input" id="co-unlock-pass" type="password" placeholder="Password" autocomplete="off">
+        </div>
+        <div class="hint" id="co-unlock-hint">Пароль суперадмина. В прототипе — <b>fimex</b>.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" type="button" data-close>Отмена</button>
+      <button class="btn btn-primary" type="button" id="co-unlock-ok">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="co-modal-logistics" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <form id="co-form-logistics" autocomplete="off">
+      <div class="modal-head"><h3 id="co-log-title">Add company</h3><button class="modal-close" type="button" data-close>×</button></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Name <span class="req">*</span></label><input class="input" name="name" required></div>
+          <div class="field"><label>Company phone</label><input class="input" name="phone" placeholder="+971 4 555 00 00"></div>
+          <div class="field full"><label>Company address</label><input class="input" name="address"></div>
+          <div class="field"><label>License <span class="req">*</span></label><input class="input" name="license" required></div>
+          <div class="field"><label>License end date</label><input class="input" name="licenseEnd" placeholder="DD.MM.YYYY"></div>
+          <div class="field full">
+            <label>Upload</label>
+            <div class="photo-drop" data-upload>⇪ License scan · PDF, JPG</div>
+          </div>
+          <div class="field full">
+            <label class="checkbox"><input type="checkbox" name="default"> Default logistics company</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-default" type="button" data-close>Отмена</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="co-modal-message" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head"><h3>Send Message</h3><button class="modal-close" type="button" data-close>×</button></div>
+    <div class="modal-body">
+      <div class="stack">
+        <div class="field"><label>To</label><input class="input" id="co-msg-to" disabled></div>
+        <div class="field"><label>Company</label><input class="input" id="co-msg-company" disabled></div>
+        <div class="field"><label>Message</label><textarea class="textarea" id="co-msg-text" placeholder="Напишите сообщение клиенту…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" type="button" data-close>Отмена</button>
+      <button class="btn btn-primary" type="button" id="co-msg-send">Send</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="co-modal-confirm" hidden>
+  <div class="modal narrow" role="dialog" aria-modal="true">
+    <div class="modal-head"><h3 id="co-confirm-title">Подтверждение</h3><button class="modal-close" type="button" data-close>×</button></div>
+    <div class="modal-body"><p id="co-confirm-text" class="muted"></p></div>
+    <div class="modal-foot">
+      <button class="btn btn-default" type="button" data-close>Отмена</button>
+      <button class="btn btn-danger" type="button" id="co-confirm-ok">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<a class="proto-pill" href="index.html">🛈 Прототип Fimex · вымышленные данные · ← Карта платформы</a>
+<div class="toast-host"></div>
+
+<script src="assets/demo-data.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/admin-shell.js"></script>
+<script>
+/* =====================================================================
+   admin-company.html — page script
+   Все данные вымышленные. Никаких сетевых вызовов: только DOM + Demo.*.
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  var $ = FX.q, $$ = FX.qa, esc = FX.esc;
+  var TODAY_MS = new Date(2026, 10, 21).getTime();
+
+  /* ---------- helpers ---------- */
+  function el(id) { return document.getElementById(id); }
+  function flag(a) { return FimexAdmin.flag(a); }
+  function pad(n, w) { var s = String(n); while (s.length < (w || 2)) s = '0' + s; return s; }
+  function money(n, prefix) { return FX.money(Number(n) || 0, prefix); }
+  function badge(text, kind) { return '<span class="badge badge-' + (kind || 'gray') + '">' + esc(text) + '</span>'; }
+  function parseDMY(s) {
+    var p = String(s || '').split('.');
+    return p.length === 3 ? new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0])).getTime() : 0;
+  }
+  function licenseBadge(end) {
+    var d = parseDMY(end);
+    if (!d) return badge('No license', 'gray');
+    var days = Math.round((d - TODAY_MS) / 864e5);
+    if (days < 0) return badge('Expired', 'red');
+    if (days < 120) return badge('Expires in ' + days + ' d', 'orange');
+    return badge('Active', 'green');
+  }
+  function customerStatusBadge(s) {
+    return s === 'active' ? badge('Active', 'green') : s === 'new' ? badge('New', 'blue') : badge('Paused', 'gray');
+  }
+  function subscriptionBadge(s) {
+    return s === 'active' ? badge('Active', 'green') : s === 'expired' ? badge('Expired', 'red') : badge('None', 'gray');
+  }
+  function resetTabs(wrapSel) {
+    var wrap = $(wrapSel);
+    if (!wrap) return;
+    var first = wrap.querySelector('.tab');
+    if (first) first.click();
+  }
+  var msgSeq = 0;
+  function nowHM() { return '12:' + pad(6 + (msgSeq++ % 50)); }
+
+  /* ---------- local fictional data ---------- */
+  var CITY_ADDRESS = {
+    'Dubai': 'Warehouse 12, Al Quoz Industrial 3, Dubai',
+    'Abu Dhabi': 'Shop 4, Electra Street, Abu Dhabi',
+    'Sharjah': 'Office 218, King Faisal Road, Sharjah',
+    'Almaty': 'Abay Ave 76, Almaty',
+    'Tashkent': 'Navoi Street 18, Tashkent',
+    'Riyadh': 'King Abdullah Road 22, Riyadh',
+    'Doha': 'Salwa Road 31, Doha',
+    'Kuwait City': 'Ahmad Al Jaber Street 9, Kuwait City'
+  };
+  var REGIONS = {
+    AE: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman'],
+    KZ: ['Almaty', 'Astana', 'Shymkent'],
+    UZ: ['Tashkent', 'Samarkand'],
+    SA: ['Riyadh', 'Jeddah', 'Dammam'],
+    QA: ['Doha'],
+    KW: ['Kuwait City', 'Hawalli']
+  };
+  var SUPPLIER_COMMENTS = [
+    'Стабильные поставки, отгрузка за 24 часа',
+    'Работает по предоплате, документы в порядке',
+    'Хорошая цена на Samsung, иногда задержки',
+    'Крупные партии, свой склад в DAFZA',
+    'На паузе — истекла лицензия',
+    'Быстрая отгрузка, полный комплект документов',
+    'Новый поставщик, первые закупки',
+    'Гибкие условия по P2P'
+  ];
+  var MANAGER_POOL = [
+    { name: 'L. Karim', role: 'Operations' },
+    { name: 'T. Nguyen', role: 'Sales manager' },
+    { name: 'S. Al Nuaimi', role: 'Logistics' },
+    { name: 'V. Petrov', role: 'Account manager' },
+    { name: 'M. Hassan', role: 'Sales manager' },
+    { name: 'D. Kim', role: 'Warehouse' }
+  ];
+
+  var C = {};
+
+  C.countries = Demo.countries.map(function (c) {
+    return {
+      id: c.id, name: c.name, short: c.short, abbr: c.abbr, currency: c.currency,
+      symbol: c.symbol, rate: c.rate, tz: c.tz, deliveryDays: c.deliveryDays,
+      minOrder: c.minOrder, p2pStep: c.p2pStep, sales: c.sales, payment: c.payment,
+      checkpoint: c.checkpoint, prefix: c.prefix, calcDays: 3,
+      regions: (REGIONS[c.abbr] || []).slice()
+    };
+  });
+
+  C.customers = Demo.customers.map(function (c) {
+    var chat = null;
+    for (var i = 0; i < Demo.chats.length; i++) {
+      var ch = Demo.chats[i];
+      if (ch.company === c.name || ch.name === c.user) { chat = ch; break; }
+    }
+    return {
+      id: c.id, name: c.name, user: c.user, email: c.email, phone: c.phone,
+      country: c.country, city: c.city, license: c.license, licenseEnd: c.licenseEnd,
+      trn: c.trn, deposit: c.deposit, penalty: c.penalty, balance: c.balance,
+      status: c.status, subscription: c.subscription, mode: c.mode,
+      wholesale: c.wholesale, logistics: c.logistics, lang: c.lang,
+      address: CITY_ADDRESS[c.city] || '',
+      appSub: c.subscription !== 'none',
+      chat: chat ? chat.messages.map(function (m) { return { from: m.from, text: m.text, at: m.at }; }) : []
+    };
+  });
+
+  C.suppliers = Demo.suppliers.map(function (s, i) {
+    var m = MANAGER_POOL[i % MANAGER_POOL.length];
+    var catalog = {};
+    Demo.brands.forEach(function (b) { catalog[b.name] = ['Apple', 'Samsung', 'Xiaomi', 'Google'].indexOf(b.name) !== -1; });
+    return {
+      id: s.id, name: s.name, short: s.short, country: s.country, city: s.city,
+      manager: s.manager, email: s.email, phone: s.phone, trn: s.trn,
+      license: s.license, licenseEnd: s.licenseEnd, purchases: s.purchases.slice(),
+      status: s.status, since: s.since, debt: s.debt,
+      address: CITY_ADDRESS[s.city] || '',
+      comment: SUPPLIER_COMMENTS[i % SUPPLIER_COMMENTS.length],
+      adminEmail: s.email, adminPass: 'sup-demo-2026',
+      docs: [
+        { name: 'Trade License', file: 'trade-license-' + s.id + '.pdf', date: '12.01.2026' },
+        { name: 'TRN Certificate', file: 'trn-certificate-' + s.id + '.pdf', date: '12.01.2026' },
+        { name: 'Bank Account Letter', file: 'bank-letter-' + s.id + '.pdf', date: '03.02.2026' }
+      ],
+      managers: [
+        { id: s.id * 10, name: s.manager, email: s.email, phone: s.phone, role: 'Sales manager' },
+        { id: s.id * 10 + 1, name: m.name, email: 'ops' + s.id + '@supplier.example', phone: '+971 4 555 ' + pad(10 + i * 3, 4), role: m.role }
+      ],
+      catalog: catalog
+    };
+  });
+
+  C.currencies = Demo.currencies.map(function (c) {
+    return { iso: c.iso, symbol: c.symbol, name: c.name, rate: c.rate, locked: c.locked };
+  });
+  C.currencyUnlocked = false;
+
+  C.logistics = Demo.logistics.map(function (l) {
+    return { id: l.id, name: l.name, phone: l.phone, address: l.address, license: l.license, licenseEnd: l.licenseEnd, default: l.default };
+  });
+
+  C.warranty = {};
+
+  var ui = {
+    country: 0,
+    custCountry: 'UAE',
+    customerId: null,
+    supplierId: null,
+    logEdit: null,
+    unlockTarget: null,
+    pendingConfirm: null,
+    warranty: { brand: 'Apple', cat: 1667, lang: 'ru', open: { Apple: true } },
+    pay: { side: 'customers', cashbox: 'ballance', kind: 'receipt', partyId: Demo.customers[0].id, amount: 15000, date: '2026-11-21' }
+  };
+
+  /* ==================================================================
+     COUNTRIES
+     ================================================================== */
+  function deliveryOptions(selected) {
+    var out = '';
+    for (var d = 1; d <= 14; d++) out += '<option value="' + d + '"' + (d === Number(selected) ? ' selected' : '') + '>' + d + ' дн.</option>';
+    return out;
+  }
+  function currencyOptions(selected) {
+    return C.currencies.map(function (c) {
+      return '<option value="' + esc(c.iso) + '"' + (c.iso === selected ? ' selected' : '') + '>' + esc(c.iso) + ' · ' + esc(c.name) + '</option>';
+    }).join('');
+  }
+  function currencyByIso(iso) {
+    for (var i = 0; i < C.currencies.length; i++) if (C.currencies[i].iso === iso) return C.currencies[i];
+    return C.currencies[0];
+  }
+
+  function renderRegions(c) {
+    var box = el('co-regions');
+    if (!box) return;
+    box.innerHTML = c.regions.map(function (r, i) {
+      return '<span class="chip">' + esc(r) + '<span class="x" data-region-del="' + i + '" title="Удалить">×</span></span>';
+    }).join('') +
+      '<span class="co-region-form"><input class="input" id="co-region-input" placeholder="Регион" autocomplete="off">' +
+      '<button class="btn btn-default btn-sm" type="button" id="co-region-add">Add</button></span>';
+  }
+
+  function fillCountryForm() {
+    var c = C.countries[ui.country];
+    var f = el('co-country-form');
+    if (!c || !f) return;
+    f.elements.name.value = c.name;
+    f.elements.short.value = c.short;
+    f.elements.tz.value = c.tz;
+    f.elements.minOrder.value = c.minOrder;
+    f.elements.p2pStep.value = c.p2pStep;
+    f.elements.checkpoint.value = c.checkpoint;
+    f.elements.calcDays.value = c.calcDays;
+    f.elements.prefix.value = c.prefix;
+    f.elements.currency.innerHTML = currencyOptions(c.currency);
+    f.elements.deliveryDays.innerHTML = deliveryOptions(c.deliveryDays);
+    f.elements.payment.value = c.payment;
+    f.elements.rate.value = c.rate;
+    f.elements.sales.checked = c.sales;
+    el('co-country-title').textContent = c.name;
+    var b = el('co-country-badge');
+    b.textContent = c.sales ? 'Sales access: on' : 'Sales access: off';
+    b.className = 'badge ' + (c.sales ? 'badge-green' : 'badge-gray');
+    el('co-sales-hint').textContent = c.sales ? 'Клиенты страны видят каталог и цены' : 'Продажи в стране выключены';
+    updateRateHint();
+    renderRegions(c);
+  }
+
+  function updateRateHint() {
+    var f = el('co-country-form');
+    if (!f) return;
+    var cur = currencyByIso(f.elements.currency.value);
+    f.elements.rate.value = cur.rate;
+    el('co-rate-hint').textContent = '1 USD = ' + cur.rate + ' ' + cur.iso;
+  }
+
+  function renderCountries() {
+    var list = el('co-country-list');
+    list.innerHTML = C.countries.map(function (c, i) {
+      return '<div class="tree-item co-country-row' + (i === ui.country ? ' active' : '') + '" data-country="' + i + '">' +
+        '<span class="row-flag">' + flag(c.abbr) + '</span>' +
+        '<span class="grow"><span class="strong">' + esc(c.name) + '</span>' +
+        '<span class="co-c-meta">' + esc(c.currency) + ' · ' + esc(c.tz) + ' · ' + c.deliveryDays + ' дн.</span></span>' +
+        (c.sales ? '<span class="tag ok">on</span>' : '<span class="tag">off</span>') +
+        '</div>';
+    }).join('');
+    el('co-country-count').textContent = C.countries.length;
+    fillCountryForm();
+  }
+
+  function addRegion() {
+    var inp = el('co-region-input');
+    if (!inp) return;
+    var v = inp.value.trim();
+    var c = C.countries[ui.country];
+    if (!v) { inp.focus(); return; }
+    if (c.regions.indexOf(v) === -1) c.regions.push(v);
+    renderRegions(c);
+    var again = el('co-region-input');
+    if (again) again.focus();
+  }
+
+  /* ==================================================================
+     CUSTOMERS
+     ================================================================== */
+  function customersInCountry(name) {
+    return C.customers.filter(function (c) { return c.country === name; });
+  }
+  function findCustomer(id) { return FX.by(C.customers, 'id', Number(id)); }
+
+  function renderCustomerRail() {
+    var rail = el('co-customer-countries');
+    rail.innerHTML = '<div class="rail-title">Countries</div>' + C.countries.map(function (c) {
+      var n = customersInCountry(c.name).length;
+      return '<div class="folder' + (ui.custCountry === c.name ? ' active' : '') + '" data-cust-country="' + esc(c.name) + '">' +
+        '<span class="ico">' + flag(c.abbr) + '</span>' + esc(c.name) +
+        '<span class="count">' + n + '</span></div>';
+    }).join('');
+  }
+
+  function visibleCustomers() {
+    var q = el('co-customer-search').value.toLowerCase().trim();
+    return customersInCountry(ui.custCountry).filter(function (c) {
+      return !q || (c.name + ' ' + c.user + ' ' + c.email).toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  function renderCustomerRows() {
+    var list = visibleCustomers();
+    el('co-customer-rows').innerHTML = list.map(function (c) {
+      return '<tr class="clickable" data-customer="' + c.id + '">' +
+        '<td><span class="link">' + esc(c.name) + '</span><span class="co-sub2">' + esc(c.city) + ' · ID ' + c.id + '</span></td>' +
+        '<td>' + esc(c.user) + '</td>' +
+        '<td class="muted co-email" title="' + esc(c.email) + '">' + esc(c.email) + '</td>' +
+        '<td>' + customerStatusBadge(c.status) + '</td>' +
+        '<td>' + subscriptionBadge(c.subscription) + '</td>' +
+        '<td class="num">' + money(c.deposit, '$') + '</td>' +
+        '<td class="num">' + money(c.penalty, '$') + '</td>' +
+        '<td class="co-nowrap">' + esc(c.licenseEnd) + '</td>' +
+        '</tr>';
+    }).join('');
+    el('co-customer-count').textContent = list.length + ' из ' + C.customers.length + ' · ' + ui.custCountry;
+    var none = !list.length;
+    el('co-customer-table').closest('.table-wrap').hidden = none;
+    el('co-customer-empty').hidden = !none;
+  }
+
+  function renderCustomers() {
+    renderCustomerRail();
+    renderCustomerRows();
+  }
+
+  function fillSelect(sel, values, current) {
+    if (!sel) return;
+    sel.innerHTML = values.map(function (v) {
+      var val = typeof v === 'string' ? v : v.value, label = typeof v === 'string' ? v : v.label;
+      return '<option value="' + esc(val) + '"' + (String(val) === String(current) ? ' selected' : '') + '>' + esc(label) + '</option>';
+    }).join('');
+  }
+
+  function openCustomer(id) {
+    var c = findCustomer(id);
+    if (!c) return;
+    ui.customerId = c.id;
+    el('co-cust-name').textContent = c.name;
+    el('co-cust-sub').textContent = c.country + ' · ' + c.city + ' · User ID ' + c.id + ' · ' + c.user;
+    el('co-cf-name').value = c.name;
+    el('co-cf-address').value = c.address;
+    el('co-cf-phone').value = c.phone;
+    el('co-cf-trn').value = c.trn;
+    el('co-cf-license').value = c.license;
+    el('co-cf-license-end').value = c.licenseEnd;
+    el('co-cf-deposit').value = c.deposit;
+    el('co-cf-penalty').value = c.penalty;
+    el('co-cf-balance').value = money(c.balance, '$');
+    el('co-cf-mode').value = c.mode;
+    fillSelect(el('co-cf-wholesale'), Demo.wholesaleTypes.map(function (w) { return { value: w.nameAdmin, label: w.nameAdmin }; }), c.wholesale);
+    fillSelect(el('co-cf-logistics'), C.logistics.map(function (l) { return l.name; }), c.logistics);
+    el('co-cf-subscription').value = c.subscription;
+    el('co-cf-app').checked = c.appSub;
+    el('co-cf-lang').value = c.lang;
+    el('co-cf-status').value = c.status;
+    renderCustomerHistory(c);
+    renderCustomerChat(c);
+    FX.drawer('co-drawer-customer');
+    resetTabs('[data-tabs="cust"]');
+  }
+
+  function renderCustomerHistory(c) {
+    var rows = [];
+    Demo.orders.sales.forEach(function (s) {
+      if (s.customerId === c.id) {
+        rows.push({ date: s.date, type: 'Order', num: '#' + s.id, product: s.product, qty: s.qty, total: s.total, status: s.status, color: s.statusColor });
+      }
+    });
+    Demo.p2p.slice(0, 2 + (c.id % 4)).forEach(function (b, i) {
+      rows.push({ date: Demo.date(2026, 10, 8 + i), type: 'P2P', num: 'P2P-' + b.id, product: b.product, qty: b.qty, total: b.bid * b.qty, status: b.status === 'Active' ? 'Активна' : b.status, color: '#3b70ca' });
+    });
+    rows.sort(function (a, b) { return parseDMY(b.date) - parseDMY(a.date); });
+    var total = rows.reduce(function (acc, r) { return acc + r.total; }, 0);
+    var orders = rows.filter(function (r) { return r.type === 'Order'; }).length;
+    var p2p = rows.length - orders;
+    el('co-cust-history-id').textContent = 'User ID ' + c.id + ' · ' + c.user;
+    el('co-cust-history-kpi').innerHTML =
+      '<div class="kpi"><div class="label">Orders</div><div class="value">' + orders + '</div></div>' +
+      '<div class="kpi"><div class="label">P2P</div><div class="value">' + p2p + '</div></div>' +
+      '<div class="kpi"><div class="label">Сумма операций</div><div class="value">' + money(total, '$') + '</div></div>' +
+      '<div class="kpi"><div class="label">Deposit</div><div class="value">' + money(c.deposit, '$') + '</div><div class="hint">Penalty ' + money(c.penalty, '$') + '</div></div>';
+    el('co-cust-history-rows').innerHTML = rows.map(function (r) {
+      return '<tr>' +
+        '<td class="co-nowrap">' + esc(r.date) + '</td>' +
+        '<td>' + (r.type === 'P2P' ? badge('P2P', 'gray') : badge('Order', 'blue')) + '</td>' +
+        '<td class="mono">' + esc(r.num) + '</td>' +
+        '<td>' + esc(r.product) + '</td>' +
+        '<td class="num">' + r.qty + '</td>' +
+        '<td class="num">' + money(r.total, '$') + '</td>' +
+        '<td><span class="status-cell"><span class="dot" style="background:' + r.color + '"></span>' + esc(r.status) + '</span></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function renderCustomerChat(c) {
+    var box = el('co-chat-msgs');
+    if (!c.chat.length) {
+      box.innerHTML = '<div class="empty" style="padding:36px 12px"><div class="icon">💬</div><h4>Empty chat</h4><p>Переписки с клиентом пока нет. Отправьте первое сообщение.</p></div>';
+      return;
+    }
+    box.innerHTML = c.chat.map(function (m) {
+      return '<div class="bubble ' + (m.from === 'me' ? 'me' : 'them') + '">' + esc(m.text) + '<span class="at">' + esc(m.at || '') + '</span></div>';
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function currentCustomer() { return findCustomer(ui.customerId); }
+
+  function saveCustomer() {
+    var c = currentCustomer();
+    if (!c) return;
+    c.name = el('co-cf-name').value.trim() || c.name;
+    c.address = el('co-cf-address').value.trim();
+    c.phone = el('co-cf-phone').value.trim();
+    c.trn = el('co-cf-trn').value.trim();
+    c.license = el('co-cf-license').value.trim();
+    c.licenseEnd = el('co-cf-license-end').value.trim();
+    c.deposit = Number(el('co-cf-deposit').value) || 0;
+    c.penalty = Number(el('co-cf-penalty').value) || 0;
+    c.mode = el('co-cf-mode').value;
+    c.wholesale = el('co-cf-wholesale').value;
+    c.logistics = el('co-cf-logistics').value;
+    c.subscription = el('co-cf-subscription').value;
+    c.appSub = el('co-cf-app').checked;
+    c.lang = el('co-cf-lang').value;
+    c.status = el('co-cf-status').value;
+    el('co-cust-name').textContent = c.name;
+    el('co-cust-sub').textContent = c.country + ' · ' + c.city + ' · User ID ' + c.id + ' · ' + c.user;
+    renderCustomerRows();
+    FX.toast('Сохранено', 'ok');
+  }
+
+  function sendChatMessage() {
+    var c = currentCustomer();
+    var inp = el('co-chat-input');
+    if (!c || !inp) return;
+    var text = inp.value.trim();
+    if (!text) { inp.focus(); return; }
+    c.chat.push({ from: 'me', text: text, at: nowHM() });
+    inp.value = '';
+    renderCustomerChat(c);
+  }
+
+  function openSendMessage() {
+    var c = currentCustomer();
+    if (!c) return;
+    el('co-msg-to').value = c.email;
+    el('co-msg-company').value = c.name + ' · ' + c.country;
+    el('co-msg-text').value = '';
+    FX.modal('co-modal-message');
+    setTimeout(function () { el('co-msg-text').focus(); }, 60);
+  }
+
+  /* ---------- countries: handlers ---------- */
+  function saveCountry(e) {
+    e.preventDefault();
+    var f = el('co-country-form');
+    var c = C.countries[ui.country];
+    if (!c) return;
+    c.name = f.elements.name.value.trim() || c.name;
+    c.short = f.elements.short.value.trim() || c.short;
+    c.currency = f.elements.currency.value;
+    var cur = currencyByIso(c.currency);
+    c.rate = cur.rate;
+    c.symbol = cur.symbol;
+    c.tz = f.elements.tz.value.trim();
+    c.deliveryDays = Number(f.elements.deliveryDays.value) || c.deliveryDays;
+    c.payment = f.elements.payment.value;
+    c.minOrder = Number(f.elements.minOrder.value) || 0;
+    c.p2pStep = Number(f.elements.p2pStep.value) || 0;
+    c.checkpoint = f.elements.checkpoint.value;
+    c.calcDays = Number(f.elements.calcDays.value) || 0;
+    c.prefix = f.elements.prefix.value.trim();
+    c.sales = f.elements.sales.checked;
+    renderCountries();
+    FX.toast('Сохранено', 'ok');
+  }
+
+  function openAddCountry() {
+    var f = el('co-form-country');
+    f.reset();
+    f.elements.currency.innerHTML = currencyOptions('AED');
+    f.elements.deliveryDays.value = 3;
+    FX.modal('co-modal-country');
+    setTimeout(function () { f.elements.name.focus(); }, 60);
+  }
+
+  function addCountry(e) {
+    e.preventDefault();
+    var f = e.target;
+    var name = f.elements.name.value.trim();
+    if (!name) return;
+    var cur = currencyByIso(f.elements.currency.value) || C.currencies[0];
+    var short = f.elements.short.value.trim() || name.slice(0, 3).toUpperCase();
+    C.countries.push({
+      id: 100 + C.countries.length, name: name, short: short, abbr: short.slice(0, 2).toUpperCase(),
+      currency: cur.iso, symbol: cur.symbol, rate: cur.rate,
+      tz: f.elements.tz.value.trim() || 'Asia/Dubai',
+      deliveryDays: Number(f.elements.deliveryDays.value) || 3,
+      minOrder: 10000, p2pStep: 100, sales: f.elements.sales.checked,
+      payment: 'Cash', checkpoint: '18:00', prefix: short.toLowerCase().slice(0, 2), calcDays: 3, regions: []
+    });
+    ui.country = C.countries.length - 1;
+    FX.closeModal('co-modal-country');
+    renderCountries();
+    FX.toast('Страна добавлена', 'ok');
+  }
+
+  /* ---------- customers: handlers ---------- */
+  function deleteCustomer() {
+    var c = currentCustomer();
+    if (!c) return;
+    confirmAction('Delete Company', 'Удалить компанию «' + c.name + '»? В прототипе строка исчезнет из списка клиентов.', 'Delete Company', function () {
+      C.customers = C.customers.filter(function (x) { return x.id !== c.id; });
+      ui.customerId = null;
+      FX.closeDrawer('co-drawer-customer');
+      renderCustomers();
+      FX.toast('Компания удалена', 'ok');
+    });
+  }
+
+  function sendMessageFromModal() {
+    var text = el('co-msg-text').value.trim();
+    if (!text) { FX.toast('Введите сообщение', 'error'); el('co-msg-text').focus(); return; }
+    var c = currentCustomer();
+    if (c) {
+      c.chat.push({ from: 'me', text: text, at: nowHM() });
+      if (!el('co-drawer-customer').hidden) renderCustomerChat(c);
+    }
+    FX.closeModal('co-modal-message');
+    FX.toast('Сообщение отправлено', 'ok');
+  }
+
+  /* ==================================================================
+     SUPPLIERS
+     ================================================================== */
+  function countryAbbr(name) {
+    var c = FX.by(C.countries, 'name', name);
+    return c ? c.abbr : 'AE';
+  }
+  function visibleSuppliers() {
+    var q = el('co-supplier-search').value.toLowerCase().trim();
+    return C.suppliers.filter(function (s) {
+      return !q || (s.name + ' ' + s.manager + ' ' + s.email + ' ' + s.license).toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  function renderSupplierRows() {
+    var list = visibleSuppliers();
+    el('co-supplier-rows').innerHTML = list.map(function (s) {
+      return '<tr class="clickable" data-supplier="' + s.id + '">' +
+        '<td><span class="link">' + esc(s.name) + '</span><span class="co-sub2">ID ' + s.id + ' · since ' + esc(s.since) + '</span></td>' +
+        '<td class="co-nowrap">' + flag(countryAbbr(s.country)) + ' ' + esc(s.country) + '</td>' +
+        '<td class="co-nowrap">' + esc(s.manager) + '</td>' +
+        '<td class="muted">' + esc(s.email) + '</td>' +
+        '<td class="co-nowrap">' + esc(s.phone) + '</td>' +
+        '<td class="mono">' + esc(s.trn) + '</td>' +
+        '<td>' + licenseBadge(s.licenseEnd) + '<span class="co-sub2">' + esc(s.license) + '</span></td>' +
+        '<td class="co-nowrap">' + s.purchases.join(' · ') + '</td>' +
+        '<td class="muted"><div class="co-comment">' + esc(s.comment) + '</div></td>' +
+        '<td class="actions"><button class="btn-icon" type="button" data-supplier-edit="' + s.id + '" title="Открыть">✎</button></td>' +
+        '</tr>';
+    }).join('');
+    el('co-supplier-count').textContent = list.length + ' из ' + C.suppliers.length;
+    var none = !list.length;
+    el('co-supplier-table').closest('.table-wrap').hidden = none;
+    el('co-supplier-empty').hidden = !none;
+  }
+  function findSupplier(id) { return FX.by(C.suppliers, 'id', Number(id)); }
+  function currentSupplier() { return findSupplier(ui.supplierId); }
+
+  function renderSupplierDocs(s) {
+    el('co-sup-docs').innerHTML = s.docs.map(function (d, i) {
+      return '<div class="co-doc-row">' +
+        '<span class="co-doc-ico">📄</span>' +
+        '<div><div class="strong">' + esc(d.name) + '</div><div class="faint xs">' + esc(d.file) + '</div></div>' +
+        '<span class="meta">' + esc(d.date) + '</span>' +
+        '<button class="btn btn-ghost btn-sm" type="button" data-doc-view="' + i + '">view</button>' +
+      '</div>';
+    }).join('');
+  }
+  function renderSupplierPurchases(s) {
+    el('co-sup-purchases').innerHTML = C.countries.map(function (c) {
+      var on = s.purchases.indexOf(c.name) !== -1;
+      return '<button type="button" class="chip' + (on ? ' active' : '') + '" data-purchase="' + esc(c.name) + '">' + flag(c.abbr) + ' ' + esc(c.name) + '</button>';
+    }).join('');
+  }
+  function renderSupplierCatalog(s) {
+    var all = Demo.brands.every(function (b) { return !!s.catalog[b.name]; });
+    el('co-sup-catalog-all').checked = all;
+    el('co-sup-catalog').innerHTML = Demo.brands.map(function (b) {
+      var on = !!s.catalog[b.name];
+      return '<div class="co-switch-row">' +
+        '<span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:' + b.color + '"></span>' +
+        '<span class="grow">' + esc(b.name) + '</span>' +
+        (on ? badge('Access', 'green') : badge('Hidden', 'gray')) +
+        '<label class="switch"><input type="checkbox" data-cat-brand="' + esc(b.name) + '"' + (on ? ' checked' : '') + '><i></i></label>' +
+      '</div>';
+    }).join('');
+  }
+  function renderSupplierManagers(s) {
+    el('co-sup-managers').innerHTML = s.managers.map(function (m) {
+      return '<tr>' +
+        '<td>' + esc(m.name) + '</td>' +
+        '<td class="muted">' + esc(m.email) + '</td>' +
+        '<td class="co-nowrap">' + esc(m.phone) + '</td>' +
+        '<td>' + badge(m.role, 'gray') + '</td>' +
+        '<td class="actions"><button class="btn-icon" type="button" data-mgr-del="' + m.id + '" title="Удалить">×</button></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function openSupplier(id) {
+    var s = findSupplier(id);
+    if (!s) return;
+    ui.supplierId = s.id;
+    el('co-sup-name').textContent = s.name;
+    el('co-sup-sub').textContent = s.country + ' · ' + s.city + ' · ID ' + s.id + ' · ' + s.short;
+    el('co-sf-name').value = s.name;
+    el('co-sf-address').value = s.address;
+    el('co-sf-phone').value = s.phone;
+    el('co-sf-email').value = s.email;
+    el('co-sf-trn').value = s.trn;
+    el('co-sf-license').value = s.license;
+    el('co-sf-license-end').value = s.licenseEnd;
+    el('co-sf-admin-email').value = s.adminEmail;
+    el('co-sf-admin-pass').value = s.adminPass;
+    renderSupplierDocs(s);
+    renderSupplierPurchases(s);
+    renderSupplierCatalog(s);
+    renderSupplierManagers(s);
+    FX.drawer('co-drawer-supplier');
+    resetTabs('[data-tabs="supp"]');
+  }
+
+  function saveSupplier() {
+    var s = currentSupplier();
+    if (!s) return;
+    s.name = el('co-sf-name').value.trim() || s.name;
+    s.address = el('co-sf-address').value.trim();
+    s.phone = el('co-sf-phone').value.trim();
+    s.email = el('co-sf-email').value.trim();
+    s.trn = el('co-sf-trn').value.trim();
+    s.license = el('co-sf-license').value.trim();
+    s.licenseEnd = el('co-sf-license-end').value.trim();
+    s.adminEmail = el('co-sf-admin-email').value.trim();
+    s.adminPass = el('co-sf-admin-pass').value;
+    el('co-sup-name').textContent = s.name;
+    el('co-sup-sub').textContent = s.country + ' · ' + s.city + ' · ID ' + s.id + ' · ' + s.short;
+    renderSupplierRows();
+    FX.toast('Сохранено', 'ok');
+  }
+
+  function openAddSupplier() {
+    var f = el('co-form-supplier');
+    f.reset();
+    fillSelect(f.elements.country, C.countries.map(function (c) { return c.name; }), 'UAE');
+    FX.modal('co-modal-supplier');
+    setTimeout(function () { f.elements.name.focus(); }, 60);
+  }
+
+  function addSupplier(e) {
+    e.preventDefault();
+    var f = e.target;
+    var name = f.elements.name.value.trim();
+    if (!name) return;
+    var id = 500 + C.suppliers.length;
+    var country = f.elements.country.value;
+    var catalog = {};
+    Demo.brands.forEach(function (b) { catalog[b.name] = true; });
+    C.suppliers.push({
+      id: id, name: name, short: name.split(' ')[0], country: country,
+      city: 'Dubai', manager: f.elements.manager.value.trim(),
+      email: f.elements.email.value.trim(), phone: f.elements.phone.value.trim() || '—',
+      trn: f.elements.trn.value.trim() || '—', license: f.elements.license.value.trim(),
+      licenseEnd: f.elements.licenseEnd.value.trim() || '31.12.2027',
+      purchases: [country], status: 'active', since: '2026', debt: 0,
+      address: '', comment: f.elements.comment.value.trim() || 'Новый поставщик',
+      adminEmail: f.elements.email.value.trim(), adminPass: 'sup-demo-2026',
+      docs: [], managers: [{ id: id * 10, name: f.elements.manager.value.trim(), email: f.elements.email.value.trim(), phone: f.elements.phone.value.trim() || '—', role: 'Sales manager' }],
+      catalog: catalog
+    });
+    FX.closeModal('co-modal-supplier');
+    renderSupplierRows();
+    FX.toast('Поставщик добавлен', 'ok');
+  }
+
+  function deleteSupplier() {
+    var s = currentSupplier();
+    if (!s) return;
+    confirmAction('Удалить поставщика', 'Удалить «' + s.name + '» из списка поставщиков? В прототипе действие необратимо.', 'Удалить', function () {
+      C.suppliers = C.suppliers.filter(function (x) { return x.id !== s.id; });
+      ui.supplierId = null;
+      FX.closeDrawer('co-drawer-supplier');
+      renderSupplierRows();
+      FX.toast('Поставщик удалён', 'ok');
+    });
+  }
+
+  function addSupplierManager() {
+    var s = currentSupplier();
+    if (!s) return;
+    var name = el('co-mgr-name').value.trim();
+    var email = el('co-mgr-email').value.trim();
+    if (!name || !email) { FX.toast('Укажите имя и e-mail менеджера', 'error'); return; }
+    s.managers.push({ id: Date.now() % 100000, name: name, email: email, phone: '—', role: 'Manager' });
+    el('co-mgr-name').value = '';
+    el('co-mgr-email').value = '';
+    renderSupplierManagers(s);
+    FX.toast('Менеджер добавлен', 'ok');
+  }
+
+  /* ==================================================================
+     CURRENCIES
+     ================================================================== */
+  function findCurrency(iso) {
+    for (var i = 0; i < C.currencies.length; i++) if (C.currencies[i].iso === iso) return C.currencies[i];
+    return null;
+  }
+  function renderCurrencies() {
+    el('co-currency-rows').innerHTML = C.currencies.map(function (c) {
+      var locked = c.locked && !C.currencyUnlocked;
+      return '<tr>' +
+        '<td class="co-iso">' + esc(c.iso) + '</td>' +
+        '<td>' + esc(c.symbol) + '</td>' +
+        '<td>' + esc(c.name) + '</td>' +
+        '<td class="num"><input class="co-rate-input" data-ciso="' + esc(c.iso) + '" value="' + c.rate + '"' + (locked ? ' disabled' : '') + '></td>' +
+        '<td>' + (locked ? '<span class="co-lock-state">🔒 Locked</span>' : '<span class="co-lock-state">🔓 Unlocked</span>') + '</td>' +
+        '<td class="actions">' + (locked ? '<button class="btn btn-ghost btn-sm" type="button" data-unlock="' + esc(c.iso) + '">Unlock</button>' : '') + '</td>' +
+        '</tr>';
+    }).join('');
+    el('co-currency-count').textContent = C.currencies.length + ' валют';
+    el('co-currency-note').textContent = C.currencyUnlocked
+      ? 'Курсы разблокированы до сохранения. Измените значение и нажмите Save.'
+      : 'Курсы заблокированы. Нажмите Unlock и введите пароль, чтобы менять Currency rate.';
+    el('co-unlock-all').textContent = C.currencyUnlocked ? '🔓 Unlocked' : '🔒 Unlock';
+  }
+  function openUnlock(targetIso) {
+    ui.unlockTarget = targetIso || null;
+    el('co-unlock-pass').value = '';
+    el('co-unlock-hint').innerHTML = 'Пароль суперадмина. В прототипе — <b>fimex</b>.';
+    FX.modal('co-modal-unlock');
+    setTimeout(function () { el('co-unlock-pass').focus(); }, 60);
+  }
+  function tryUnlock() {
+    var pass = el('co-unlock-pass').value;
+    if (pass !== 'fimex') {
+      FX.toast('Invalid password', 'error');
+      el('co-unlock-hint').textContent = 'Invalid password — попробуйте ещё раз.';
+      el('co-unlock-pass').focus();
+      return;
+    }
+    C.currencyUnlocked = true;
+    if (ui.unlockTarget) {
+      var cur = findCurrency(ui.unlockTarget);
+      if (cur) cur.locked = false;
+    }
+    ui.unlockTarget = null;
+    FX.closeModal('co-modal-unlock');
+    renderCurrencies();
+    FX.toast('Unlocked', 'ok');
+  }
+  function saveCurrencies() {
+    if (!C.currencyUnlocked) { FX.toast('Сначала выполните Unlock', 'error'); return; }
+    $$('#co-currency-rows [data-ciso]').forEach(function (inp) {
+      var cur = findCurrency(inp.getAttribute('data-ciso'));
+      if (!cur) return;
+      var v = Number(inp.value);
+      if (isFinite(v) && v > 0) cur.rate = v;
+    });
+    renderCurrencies();
+    FX.toast('Курсы сохранены', 'ok');
+  }
+  function openAddCurrency() {
+    var f = el('co-form-currency');
+    f.reset();
+    FX.modal('co-modal-currency');
+    setTimeout(function () { f.elements.iso.focus(); }, 60);
+  }
+  function addCurrency(e) {
+    e.preventDefault();
+    var f = e.target;
+    var iso = f.elements.iso.value.trim().toUpperCase();
+    var name = f.elements.name.value.trim();
+    if (!iso || !name) return;
+    if (findCurrency(iso)) { FX.toast('Валюта ' + iso + ' уже существует', 'error'); return; }
+    C.currencies.push({
+      iso: iso, symbol: f.elements.symbol.value.trim() || iso, name: name,
+      rate: Number(f.elements.rate.value) || 1, locked: true
+    });
+    FX.closeModal('co-modal-currency');
+    renderCurrencies();
+    FX.toast('Валюта добавлена', 'ok');
+  }
+
+  /* ==================================================================
+     LOGISTICS
+     ================================================================== */
+  function defaultLogistics() {
+    for (var i = 0; i < C.logistics.length; i++) if (C.logistics[i].default) return C.logistics[i];
+    return C.logistics[0] || null;
+  }
+  function renderLogistics() {
+    el('co-logistics-rows').innerHTML = C.logistics.map(function (l) {
+      return '<tr data-log-row="' + l.id + '">' +
+        '<td><span class="link">' + esc(l.name) + '</span>' + (l.default ? ' <span class="tag blue">Default</span>' : '') + '</td>' +
+        '<td class="co-nowrap">' + esc(l.phone) + '</td>' +
+        '<td>' + esc(l.address) + '</td>' +
+        '<td class="mono">' + esc(l.license) + '</td>' +
+        '<td class="co-nowrap">' + esc(l.licenseEnd) + '</td>' +
+        '<td><label class="radio"><input type="radio" name="co-log-default" value="' + l.id + '"' + (l.default ? ' checked' : '') + '></label></td>' +
+        '<td class="actions">' +
+          '<button class="btn-icon" type="button" data-log-edit="' + l.id + '" title="Edit company">✎</button>' +
+          '<button class="btn-icon" type="button" data-log-del="' + l.id + '" title="Удалить">×</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+    var def = defaultLogistics();
+    el('co-logistics-count').textContent = C.logistics.length + ' компаний · по умолчанию: ' + (def ? def.name : '—');
+  }
+  function openLogisticsModal(id) {
+    var f = el('co-form-logistics');
+    f.reset();
+    ui.logEdit = id ? Number(id) : null;
+    if (ui.logEdit) {
+      var l = FX.by(C.logistics, 'id', ui.logEdit);
+      el('co-log-title').textContent = 'Edit company';
+      f.elements.name.value = l.name;
+      f.elements.phone.value = l.phone;
+      f.elements.address.value = l.address;
+      f.elements.license.value = l.license;
+      f.elements.licenseEnd.value = l.licenseEnd;
+      f.elements.default.checked = !!l.default;
+    } else {
+      el('co-log-title').textContent = 'Add company';
+    }
+    FX.modal('co-modal-logistics');
+    setTimeout(function () { f.elements.name.focus(); }, 60);
+  }
+  function saveLogistics(e) {
+    e.preventDefault();
+    var f = e.target;
+    var name = f.elements.name.value.trim();
+    var license = f.elements.license.value.trim();
+    if (!name || !license) { FX.toast('Заполните Name и License', 'error'); return; }
+    var wantDefault = f.elements.default.checked;
+    if (ui.logEdit) {
+      var l = FX.by(C.logistics, 'id', ui.logEdit);
+      l.name = name;
+      l.phone = f.elements.phone.value.trim();
+      l.address = f.elements.address.value.trim();
+      l.license = license;
+      l.licenseEnd = f.elements.licenseEnd.value.trim() || '31.12.2027';
+      if (wantDefault) C.logistics.forEach(function (x) { x.default = x.id === l.id; });
+    } else {
+      var id = C.logistics.reduce(function (m, x) { return Math.max(m, x.id); }, 100) + 1;
+      var item = {
+        id: id, name: name, phone: f.elements.phone.value.trim() || '—',
+        address: f.elements.address.value.trim() || '—', license: license,
+        licenseEnd: f.elements.licenseEnd.value.trim() || '31.12.2027', default: wantDefault
+      };
+      if (wantDefault) C.logistics.forEach(function (x) { x.default = false; });
+      C.logistics.push(item);
+    }
+    FX.closeModal('co-modal-logistics');
+    renderLogistics();
+    FX.toast('Сохранено', 'ok');
+  }
+  function deleteLogistics(id) {
+    var l = FX.by(C.logistics, 'id', Number(id));
+    if (!l) return;
+    confirmAction('Удалить логистическую компанию', 'Удалить «' + l.name + '» из списка логистики?', 'Удалить', function () {
+      C.logistics = C.logistics.filter(function (x) { return x.id !== l.id; });
+      if (l.default && C.logistics.length) C.logistics[0].default = true;
+      renderLogistics();
+      FX.toast('Компания удалена', 'ok');
+    });
+  }
+
+  /* ==================================================================
+     WARRANTY
+     ================================================================== */
+  var BLOCK_LABEL = { heading: 'Заголовок', section: 'Раздел', list: 'Список', quote: 'Цитата', info: 'Инфо' };
+  var BLOCK_TAG = { heading: 'blue', section: '', list: 'ok', quote: 'warn', info: 'blue' };
+
+  function categoryName(catId) {
+    var c = FX.by(Demo.categories, 'id', Number(catId));
+    return c ? c.name : '';
+  }
+  function makeWarranty(brand, catName) {
+    return {
+      months: 12,
+      titleRu: 'Гарантия ' + brand + ' ' + catName,
+      titleEn: brand + ' ' + catName + ' warranty',
+      baseRu: 'Базовая гарантия действует 12 месяцев с даты продажи и распространяется только на производственные дефекты. Устройство принимается в сервис при наличии IMEI и чека.',
+      baseEn: 'The basic warranty is valid for 12 months from the sale date and covers manufacturing defects only. Service accepts the device with IMEI and receipt.',
+      addRu: 'Дополнительная гарантия оформляется отдельно и продлевает срок обслуживания. Повреждения при доставке фиксируются в акте приёмки в день получения.',
+      addEn: 'Additional warranty is issued separately and extends the service period. Delivery damages must be recorded in the acceptance act on the delivery day.',
+      blocks: {
+        ru: [
+          { type: 'heading', text: 'Что входит в гарантию' },
+          { type: 'section', text: 'Бесплатный ремонт или замена при подтверждённом производственном дефекте.' },
+          { type: 'list', text: 'Производственные дефекты\nДефекты аккумулятора\nНеисправности экрана без следов удара' },
+          { type: 'quote', text: 'Гарантия не действует при наличии следов вскрытия и влаги.' },
+          { type: 'info', text: 'Сервисное обращение: укажите IMEI, номер заказа и описание неисправности в чате поддержки.' }
+        ],
+        en: [
+          { type: 'heading', text: 'What the warranty covers' },
+          { type: 'section', text: 'Free repair or replacement for a confirmed manufacturing defect.' },
+          { type: 'list', text: 'Manufacturing defects\nBattery defects\nScreen faults without impact marks' },
+          { type: 'quote', text: 'The warranty is void if the device shows signs of opening or liquid damage.' },
+          { type: 'info', text: 'Service request: provide the IMEI, order number and fault description in the support chat.' }
+        ]
+      }
+    };
+  }
+  function warrantyRec() {
+    var w = ui.warranty;
+    var key = w.brand + '|' + w.cat;
+    if (!C.warranty[key]) C.warranty[key] = makeWarranty(w.brand, categoryName(w.cat));
+    return C.warranty[key];
+  }
+  function renderWarrantyTree() {
+    var count = 0;
+    el('co-warranty-tree').innerHTML = Demo.brands.map(function (b) {
+      var cats = Demo.categories.filter(function (c) { return c.brand === b.name; });
+      count += cats.length;
+      var open = !!ui.warranty.open[b.name];
+      var head = '<div class="tree-item' + (open ? ' open' : '') + '" data-war-brand="' + esc(b.name) + '">' +
+        '<span class="tw">▶</span><span class="ico">🏷️</span><span class="grow">' + esc(b.name) + '</span>' +
+        '<span class="cnt">' + cats.length + '</span></div>';
+      var children = '<div class="tree-children"' + (open ? '' : ' hidden') + '>' + cats.map(function (c) {
+        var active = ui.warranty.brand === b.name && Number(ui.warranty.cat) === c.id;
+        return '<div class="tree-item' + (active ? ' active' : '') + '" data-war-cat="' + c.id + '" data-war-brand="' + esc(b.name) + '">' +
+          esc(c.name) + '</div>';
+      }).join('') + '</div>';
+      return head + children;
+    }).join('');
+    el('co-warranty-tree-count').textContent = count + ' категорий';
+  }
+  function renderWarBlocks(lang) {
+    var rec = warrantyRec();
+    var box = el('co-war-blocks-' + lang);
+    if (!box) return;
+    var blocks = rec.blocks[lang];
+    if (!blocks.length) {
+      box.innerHTML = '<div class="empty" style="padding:26px 12px"><div class="icon">＋</div><h4>Блоков пока нет</h4><p>Добавьте блок кнопками выше.</p></div>';
+    } else {
+      box.innerHTML = blocks.map(function (b, i) {
+        return '<div class="war-block">' +
+          '<div class="war-block-head">' +
+            '<span class="tag ' + (BLOCK_TAG[b.type] || '') + '">' + BLOCK_LABEL[b.type] + '</span>' +
+            '<span class="spacer"></span>' +
+            '<button class="btn-icon" type="button" data-war-del="' + lang + ':' + i + '" title="Удалить блок">×</button>' +
+          '</div>' +
+          '<textarea class="textarea" data-war-text="' + lang + ':' + i + '" rows="2">' + esc(b.text) + '</textarea>' +
+        '</div>';
+      }).join('');
+    }
+  }
+  function defaultBlock(lang, type) {
+    var map = {
+      ru: { heading: 'Новый заголовок', section: 'Текст раздела гарантии…', list: 'Пункт 1\nПункт 2', quote: 'Цитата условия гарантии', info: 'Информация для клиента' },
+      en: { heading: 'New heading', section: 'Warranty section text…', list: 'Item one\nItem two', quote: 'Warranty condition quote', info: 'Information for the customer' }
+    };
+    return map[lang][type];
+  }
+  function renderWarrantyPreview() {
+    var rec = warrantyRec();
+    var lang = ui.warranty.lang;
+    var title = lang === 'ru' ? rec.titleRu : rec.titleEn;
+    var base = lang === 'ru' ? rec.baseRu : rec.baseEn;
+    var add = lang === 'ru' ? rec.addRu : rec.addEn;
+    var html = '<h3>' + esc(title) + '</h3>' +
+      '<div class="base">' + esc(base) + '</div>';
+    rec.blocks[lang].forEach(function (b) {
+      if (b.type === 'heading') html += '<h4>' + esc(b.text) + '</h4>';
+      else if (b.type === 'section') html += '<p>' + esc(b.text) + '</p>';
+      else if (b.type === 'list') html += '<ul>' + b.text.split('\n').filter(Boolean).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      else if (b.type === 'quote') html += '<blockquote>' + esc(b.text) + '</blockquote>';
+      else html += '<div class="info">' + esc(b.text) + '</div>';
+    });
+    html += '<p class="muted small" style="margin-top:10px">' + esc(add) + '</p>' +
+      '<div class="hint">Срок гарантии: ' + rec.months + ' мес · ' + esc(ui.warranty.brand) + ' · ' + esc(categoryName(ui.warranty.cat)) + '</div>';
+    el('co-warranty-preview').innerHTML = html;
+    el('co-warranty-preview-lang').textContent = lang.toUpperCase();
+    el('co-war-lang-hint').textContent = 'Редактируется ' + lang.toUpperCase();
+    el('co-warranty-months-badge').textContent = rec.months + ' мес';
+  }
+  function renderWarrantyEditor() {
+    var rec = warrantyRec();
+    var f = el('co-warranty-form');
+    el('co-warranty-title').textContent = ui.warranty.brand + ' · ' + categoryName(ui.warranty.cat);
+    f.elements.titleRu.value = rec.titleRu;
+    f.elements.titleEn.value = rec.titleEn;
+    f.elements.months.value = rec.months;
+    f.elements.baseRu.value = rec.baseRu;
+    f.elements.baseEn.value = rec.baseEn;
+    f.elements.addRu.value = rec.addRu;
+    f.elements.addEn.value = rec.addEn;
+    renderWarBlocks('ru');
+    renderWarBlocks('en');
+    renderWarrantyPreview();
+  }
+  function saveWarranty() {
+    var rec = warrantyRec();
+    var f = el('co-warranty-form');
+    rec.titleRu = f.elements.titleRu.value;
+    rec.titleEn = f.elements.titleEn.value;
+    rec.months = Number(f.elements.months.value) || 0;
+    rec.baseRu = f.elements.baseRu.value;
+    rec.baseEn = f.elements.baseEn.value;
+    rec.addRu = f.elements.addRu.value;
+    rec.addEn = f.elements.addEn.value;
+    renderWarrantyPreview();
+    FX.toast('Сохранено', 'ok');
+  }
+
+  /* ==================================================================
+     PAYMENT (printable cash documents)
+     ================================================================== */
+  var ONES = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+  var TENS = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+  var CURRENCY_WORDS = {
+    AED: ['UAE Dirham', 'UAE Dirhams', 'fils'],
+    USD: ['US Dollar', 'US Dollars', 'cents'],
+    KZT: ['Kazakhstani Tenge', 'Kazakhstani Tenge', 'tiyn'],
+    UZS: ['Uzbekistani Som', 'Uzbekistani Soms', ''],
+    SAR: ['Saudi Riyal', 'Saudi Riyals', 'halalas'],
+    QAR: ['Qatari Riyal', 'Qatari Riyals', 'dirhams'],
+    KWD: ['Kuwaiti Dinar', 'Kuwaiti Dinars', 'fils']
+  };
+  var CASHBOX_LABEL = { ballance: 'Balance', penalty: 'Penalty', deposit: 'Deposit' };
+
+  function words3(n) {
+    var out = '';
+    if (n >= 100) {
+      out += ONES[Math.floor(n / 100)] + ' hundred';
+      n %= 100;
+      if (n) out += ' ';
+    }
+    if (n >= 20) {
+      out += TENS[Math.floor(n / 10)];
+      if (n % 10) out += '-' + ONES[n % 10];
+    } else if (n > 0) out += ONES[n];
+    return out;
+  }
+  function numWords(n) {
+    n = Math.floor(Math.abs(Number(n) || 0));
+    if (n === 0) return 'zero';
+    var out = [];
+    var scales = [[1e9, 'billion'], [1e6, 'million'], [1e3, 'thousand'], [1, '']];
+    scales.forEach(function (sc) {
+      var v = Math.floor(n / sc[0]) % 1000;
+      if (v) out.push(words3(v) + (sc[1] ? ' ' + sc[1] : ''));
+    });
+    return out.join(' ');
+  }
+  function amountInWords(amount, iso) {
+    var names = CURRENCY_WORDS[iso] || [iso, iso, ''];
+    var whole = Math.floor(Math.abs(amount));
+    var minor = Math.round((Math.abs(amount) - whole) * 100);
+    var out = numWords(whole) + ' ' + (whole === 1 ? names[0] : names[1]);
+    if (minor && names[2]) out += ' and ' + numWords(minor) + ' ' + names[2];
+    return out.charAt(0).toUpperCase() + out.slice(1) + ' only';
+  }
+  function fmt2(n) {
+    var parts = (Math.round((Number(n) || 0) * 100) / 100).toFixed(2).split('.');
+    return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + '.' + parts[1];
+  }
+  function dateDMY(v) {
+    var p = String(v || '').split('-');
+    return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : v;
+  }
+  function payParties() { return ui.pay.side === 'customers' ? C.customers : C.suppliers; }
+  function payParty() {
+    var list = payParties();
+    for (var i = 0; i < list.length; i++) if (list[i].id === ui.pay.partyId) return list[i];
+    if (list.length) { ui.pay.partyId = list[0].id; return list[0]; }
+    return null;
+  }
+  function currencyOfParty() {
+    if (ui.pay.side === 'suppliers') return currencyByIso('AED');
+    var party = payParty();
+    var country = party ? FX.by(C.countries, 'name', party.country) : null;
+    return currencyByIso(country ? country.currency : 'AED');
+  }
+  function defaultPurpose() {
+    var k = ui.pay.kind === 'receipt' ? 'receipt' : 'refund';
+    if (ui.pay.side === 'suppliers') {
+      return k === 'receipt' ? 'Возврат средств от поставщика / Refund received from supplier'
+        : 'Оплата поставщику / Payment to supplier';
+    }
+    var ru = { ballance: 'Пополнение баланса клиента / Balance top-up', penalty: 'Оплата штрафа / Penalty payment', deposit: 'Внесение депозита / Deposit payment' };
+    var en = { ballance: 'Возврат средств с баланса / Balance refund', penalty: 'Возврат штрафа / Penalty refund', deposit: 'Возврат депозита / Deposit refund' };
+    return k === 'receipt' ? ru[ui.pay.cashbox] : en[ui.pay.cashbox];
+  }
+  function paymentSummary() {
+    var cur = currencyOfParty();
+    var amount = Math.max(0, Number(ui.pay.amount) || 0);
+    return (ui.pay.kind === 'receipt' ? 'Receipt · Debit' : 'Refund · Credit') +
+      ' · ' + (ui.pay.side === 'customers' ? CASHBOX_LABEL[ui.pay.cashbox] : 'Supplier cash') +
+      ' · ' + cur.iso + ' ' + fmt2(amount);
+  }
+  function renderPaymentControls() {
+    $$('#co-pay-side [data-side]').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-side') === ui.pay.side);
+    });
+    el('co-pay-cashbox-wrap').hidden = ui.pay.side !== 'customers';
+    $$('#co-pay-cashbox [data-cashbox]').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-cashbox') === ui.pay.cashbox);
+    });
+    $$('#co-pay-kind [data-kind]').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-kind') === ui.pay.kind);
+    });
+    el('co-pay-party-label').textContent = ui.pay.side === 'customers' ? 'Customer' : 'Supplier';
+    var list = payParties();
+    if (!payParty() && list.length) ui.pay.partyId = list[0].id;
+    el('co-pay-party').innerHTML = list.map(function (p) {
+      return '<option value="' + p.id + '"' + (p.id === ui.pay.partyId ? ' selected' : '') + '>' +
+        esc(p.name) + (ui.pay.side === 'customers' ? ' · ' + esc(p.country) : '') + '</option>';
+    }).join('');
+    if (!ui.pay.purpose) ui.pay.purpose = defaultPurpose();
+    el('co-pay-amount').value = ui.pay.amount;
+    el('co-pay-date').value = ui.pay.date;
+    el('co-pay-purpose').value = ui.pay.purpose;
+    var party = payParty();
+    var hint = '';
+    if (party) {
+      if (ui.pay.side === 'customers') {
+        var pcur = currencyOfParty();
+        hint = 'Клиент: ' + party.name + ' · ' + pcur.iso + ' · Balance ' + fmt2(party.balance) +
+          ' · Deposit ' + fmt2(party.deposit) + ' · Penalty ' + fmt2(party.penalty);
+      } else {
+        hint = 'Поставщик: ' + party.name + ' · AED · Purchases: ' + party.purchases.join(', ');
+      }
+    }
+    el('co-pay-hint').textContent = hint;
+    el('co-pay-summary').textContent = paymentSummary();
+    renderPaymentDoc();
+  }
+  function renderPaymentDoc() {
+    var party = payParty();
+    var cur = currencyOfParty();
+    var amount = Math.max(0, Number(ui.pay.amount) || 0);
+    var isReceipt = ui.pay.kind === 'receipt';
+    var purpose = ui.pay.purpose || defaultPurpose();
+    var totalStr = fmt2(amount);
+    var partyName = party ? party.name : '—';
+    var partyTrn = party ? party.trn : '—';
+    var partyLicense = party ? party.license : '—';
+    var partyLicenseEnd = party ? party.licenseEnd : '—';
+    var seq = party ? (party.id % 800) + 100 : 190;
+    var docNo = (isReceipt ? 'CR' : 'CD') + '-2026-' + pad(seq, 5);
+    var titleEn = isReceipt ? 'CASH RECEIPT VOUCHER' : 'CASH REFUND VOUCHER';
+    var titleRu = isReceipt ? 'Приходный кассовый ордер' : 'Расходный кассовый ордер';
+    var date = dateDMY(ui.pay.date);
+    var balanceHtml = '';
+    if (ui.pay.side === 'customers' && party) {
+      var before = Number(party.balance) || 0;
+      var after = before + (isReceipt ? amount : -amount);
+      balanceHtml = '<div class="doc-balance"><span>Balance before: ' + esc(cur.iso) + ' ' + fmt2(before) + '</span>' +
+        '<span>Balance after: ' + esc(cur.iso) + ' ' + fmt2(after) + '</span></div>';
+    } else if (party) {
+      balanceHtml = '<div class="doc-balance"><span>Purchases: ' + party.purchases.join(', ') + '</span>' +
+        '<span>Outstanding: ' + esc(cur.iso) + ' ' + fmt2(party.debt) + '</span></div>';
+    }
+    el('co-doc').innerHTML =
+      '<div class="doc-top">' +
+        '<div>' +
+          '<div class="doc-brand">' + esc(Demo.company.name) + '</div>' +
+          '<div class="muted">' + esc(Demo.company.address) + '</div>' +
+          '<div class="muted">TRN ' + esc(Demo.company.trn) + ' · License ' + esc(Demo.company.license) + ' · ' + esc(Demo.company.licenseEnd) + '</div>' +
+          '<div class="muted">' + esc(Demo.company.phone) + ' · ' + esc(Demo.company.email) + '</div>' +
+        '</div>' +
+        '<div class="doc-title">' +
+          '<h2>' + titleEn + '</h2>' +
+          '<div class="ru">' + titleRu + '</div>' +
+          '<div class="doc-num">№ ' + docNo + '</div>' +
+          '<div class="ru">Date ' + date + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="doc-meta">' +
+        '<div class="box">' +
+          '<div class="lbl">' + (isReceipt ? 'Received from / Плательщик' : 'Paid to / Получатель') + '</div>' +
+          '<div class="strong">' + esc(partyName) + '</div>' +
+          '<div class="line">TRN ' + esc(partyTrn) + '</div>' +
+          '<div class="line">License ' + esc(partyLicense) + ' · ' + esc(partyLicenseEnd) + '</div>' +
+        '</div>' +
+        '<div class="box">' +
+          '<div class="lbl">Cashbox</div>' +
+          '<div class="strong">' + (ui.pay.side === 'customers' ? CASHBOX_LABEL[ui.pay.cashbox] : 'Suppliers') + '</div>' +
+          '<div class="line">Currency ' + esc(cur.iso) + ' · ' + esc(cur.name) + '</div>' +
+          '<div class="lbl" style="margin-top:8px">Document №</div>' +
+          '<div class="strong">' + docNo + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<table class="doc-lines">' +
+        '<thead><tr><th style="width:22px">#</th><th>Назначение / Description</th><th class="num" style="width:104px">Debit (приход)</th><th class="num" style="width:104px">Credit (расход)</th></tr></thead>' +
+        '<tbody><tr><td>1</td><td>' + esc(purpose) + '</td>' +
+          '<td class="num">' + (isReceipt ? esc(cur.iso) + ' ' + totalStr : '—') + '</td>' +
+          '<td class="num">' + (!isReceipt ? esc(cur.iso) + ' ' + totalStr : '—') + '</td>' +
+        '</tr></tbody>' +
+      '</table>' +
+      '<div class="doc-total"><span>Total / Итого</span><b>' + esc(cur.symbol || cur.iso) + ' ' + totalStr + '</b></div>' +
+      '<div class="doc-words"><b>Amount in words:</b> ' + esc(amountInWords(amount, cur.iso)) + '</div>' +
+      balanceHtml +
+      '<div class="doc-sign">' +
+        '<div class="line">Отпустил / Issued by</div>' +
+        '<div class="stamp">Company<br>stamp</div>' +
+        '<div class="line">Получил / Received by</div>' +
+      '</div>' +
+      '<div class="doc-sign" style="margin-top:14px">' +
+        '<div class="line">Главный бухгалтер / Chief accountant</div>' +
+      '</div>' +
+      '<div class="doc-foot"><span>' + esc(Demo.company.name) + ' · ' + esc(Demo.company.number) + '</span>' +
+        '<span>Generated by Fimex Admin · prototype · fictional data</span></div>';
+  }
+  function renderPayment() {
+    renderPaymentControls();
+  }
+
+  /* ==================================================================
+     CONFIRM + UPLOAD
+     ================================================================== */
+  function confirmAction(title, text, okLabel, cb) {
+    el('co-confirm-title').textContent = title;
+    el('co-confirm-text').textContent = text;
+    el('co-confirm-ok').textContent = okLabel;
+    ui.pendingConfirm = cb;
+    FX.modal('co-modal-confirm');
+  }
+
+  /* ==================================================================
+     BINDINGS
+     ================================================================== */
+  function bindCountries() {
+    FX.on(el('co-add-country'), 'click', openAddCountry);
+    FX.on(el('co-form-country'), 'submit', addCountry);
+    FX.on(el('co-country-list'), 'click', function (e) {
+      var row = e.target.closest('[data-country]');
+      if (!row) return;
+      ui.country = Number(row.getAttribute('data-country'));
+      renderCountries();
+    });
+    FX.on(el('co-country-form'), 'submit', saveCountry);
+    FX.on(el('co-country-reset'), 'click', fillCountryForm);
+    FX.on(el('co-country-form').elements.currency, 'change', updateRateHint);
+    FX.delegate(document, '[data-region-del]', 'click', function (e, t) {
+      var c = C.countries[ui.country];
+      c.regions.splice(Number(t.getAttribute('data-region-del')), 1);
+      renderRegions(c);
+    });
+    FX.on(document, 'click', function (e) {
+      if (e.target && e.target.id === 'co-region-add') { e.preventDefault(); addRegion(); }
+    });
+    FX.on(document, 'keydown', function (e) {
+      if (e.key === 'Enter' && e.target && e.target.id === 'co-region-input') { e.preventDefault(); addRegion(); }
+    });
+  }
+
+  function bindCustomers() {
+    FX.on(el('co-customer-countries'), 'click', function (e) {
+      var f = e.target.closest('[data-cust-country]');
+      if (!f) return;
+      ui.custCountry = f.getAttribute('data-cust-country');
+      renderCustomers();
+    });
+    FX.on(el('co-customer-search'), 'input', renderCustomerRows);
+    FX.on(el('co-customer-rows'), 'click', function (e) {
+      var tr = e.target.closest('[data-customer]');
+      if (tr) openCustomer(tr.getAttribute('data-customer'));
+    });
+    FX.on(el('co-cust-save'), 'click', saveCustomer);
+    FX.on(el('co-cust-delete'), 'click', deleteCustomer);
+    FX.on(el('co-cust-message'), 'click', openSendMessage);
+    FX.on(el('co-msg-send'), 'click', sendMessageFromModal);
+    FX.on(el('co-chat-send'), 'click', sendChatMessage);
+    FX.on(el('co-chat-input'), 'keydown', function (e) { if (e.key === 'Enter') sendChatMessage(); });
+    FX.on(el('co-cf-license-view'), 'click', function () {
+      FX.toast('License ' + el('co-cf-license').value + ' · PDF в прототипе недоступен', '', 2600);
+    });
+    FX.on(el('co-customers-export'), 'click', function () {
+      FX.toast('Экспорт клиентов недоступен в прототипе', '', 2400);
+    });
+  }
+
+  function bindSuppliers() {
+    FX.on(el('co-add-supplier'), 'click', openAddSupplier);
+    FX.on(el('co-form-supplier'), 'submit', addSupplier);
+    FX.on(el('co-supplier-search'), 'input', renderSupplierRows);
+    FX.on(el('co-supplier-rows'), 'click', function (e) {
+      var tr = e.target.closest('[data-supplier]');
+      if (tr) openSupplier(tr.getAttribute('data-supplier'));
+    });
+    FX.on(el('co-sup-save'), 'click', saveSupplier);
+    FX.on(el('co-sup-add-btn'), 'click', openAddSupplier);
+    FX.on(el('co-sup-delete'), 'click', deleteSupplier);
+    FX.on(el('co-sup-license-view'), 'click', function () {
+      FX.toast('License ' + el('co-sf-license').value + ' · PDF в прототипе недоступен', '', 2600);
+    });
+    FX.on(el('co-sup-purchases'), 'click', function (e) {
+      var b = e.target.closest('[data-purchase]');
+      if (!b) return;
+      var s = currentSupplier();
+      if (!s) return;
+      var name = b.getAttribute('data-purchase');
+      var i = s.purchases.indexOf(name);
+      if (i === -1) s.purchases.push(name); else s.purchases.splice(i, 1);
+      renderSupplierPurchases(s);
+      renderSupplierRows();
+    });
+    FX.on(el('co-sup-catalog'), 'change', function (e) {
+      var inp = e.target.closest('[data-cat-brand]');
+      if (!inp) return;
+      var s = currentSupplier();
+      if (!s) return;
+      s.catalog[inp.getAttribute('data-cat-brand')] = inp.checked;
+      renderSupplierCatalog(s);
+      FX.toast('Доступ к ' + inp.getAttribute('data-cat-brand') + ': ' + (inp.checked ? 'включён' : 'выключен'), 'ok', 1600);
+    });
+    FX.on(el('co-sup-catalog-all'), 'change', function () {
+      var s = currentSupplier();
+      if (!s) return;
+      var on = el('co-sup-catalog-all').checked;
+      Demo.brands.forEach(function (b) { s.catalog[b.name] = on; });
+      renderSupplierCatalog(s);
+    });
+    FX.on(el('co-mgr-add'), 'click', addSupplierManager);
+    FX.on(el('co-sup-managers'), 'click', function (e) {
+      var b = e.target.closest('[data-mgr-del]');
+      if (!b) return;
+      var s = currentSupplier();
+      if (!s) return;
+      s.managers = s.managers.filter(function (m) { return String(m.id) !== b.getAttribute('data-mgr-del'); });
+      renderSupplierManagers(s);
+      FX.toast('Менеджер удалён', 'ok');
+    });
+    FX.on(el('co-sup-docs'), 'click', function (e) {
+      var b = e.target.closest('[data-doc-view]');
+      if (!b) return;
+      var s = currentSupplier();
+      var d = s ? s.docs[Number(b.getAttribute('data-doc-view'))] : null;
+      if (d) FX.toast(d.file + ' · просмотр в прототипе не выполняется', '', 2600);
+    });
+    FX.on(el('co-supplier-export'), 'click', function () {
+      FX.toast('Экспорт поставщиков недоступен в прототипе', '', 2400);
+    });
+  }
+
+  function bindCurrencies() {
+    FX.on(el('co-add-currency'), 'click', openAddCurrency);
+    FX.on(el('co-form-currency'), 'submit', addCurrency);
+    FX.on(el('co-unlock-all'), 'click', function () { openUnlock(null); });
+    FX.on(el('co-unlock-ok'), 'click', tryUnlock);
+    FX.on(el('co-unlock-pass'), 'keydown', function (e) { if (e.key === 'Enter') tryUnlock(); });
+    FX.on(el('co-save-currencies'), 'click', saveCurrencies);
+    FX.on(el('co-currency-rows'), 'click', function (e) {
+      var b = e.target.closest('[data-unlock]');
+      if (b) openUnlock(b.getAttribute('data-unlock'));
+    });
+  }
+
+  function bindLogistics() {
+    FX.on(el('co-add-logistics'), 'click', function () { openLogisticsModal(null); });
+    FX.on(el('co-form-logistics'), 'submit', saveLogistics);
+    FX.on(el('co-logistics-rows'), 'click', function (e) {
+      var edit = e.target.closest('[data-log-edit]');
+      if (edit) { openLogisticsModal(edit.getAttribute('data-log-edit')); return; }
+      var del = e.target.closest('[data-log-del]');
+      if (del) deleteLogistics(del.getAttribute('data-log-del'));
+    });
+    FX.on(el('co-logistics-rows'), 'change', function (e) {
+      if (!e.target.matches('input[name="co-log-default"]')) return;
+      var id = Number(e.target.value);
+      C.logistics.forEach(function (l) { l.default = l.id === id; });
+      renderLogistics();
+      var def = FX.by(C.logistics, 'id', id);
+      FX.toast('Логист по умолчанию: ' + (def ? def.name : '—'), 'ok');
+    });
+  }
+
+  function bindWarranty() {
+    FX.on(el('co-warranty-tree'), 'click', function (e) {
+      var cat = e.target.closest('[data-war-cat]');
+      if (cat) {
+        ui.warranty.brand = cat.getAttribute('data-war-brand');
+        ui.warranty.cat = Number(cat.getAttribute('data-war-cat'));
+        renderWarrantyTree();
+        renderWarrantyEditor();
+        return;
+      }
+      var brand = e.target.closest('[data-war-brand]');
+      if (brand) {
+        var name = brand.getAttribute('data-war-brand');
+        ui.warranty.open[name] = !ui.warranty.open[name];
+        renderWarrantyTree();
+      }
+    });
+    FX.on(el('co-warranty-form'), 'submit', function (e) { e.preventDefault(); saveWarranty(); });
+    FX.on(el('co-warranty-save'), 'click', saveWarranty);
+    FX.on(el('co-warranty-reset'), 'click', renderWarrantyEditor);
+    FX.on(el('co-warranty-form'), 'input', function (e) {
+      var t = e.target;
+      var rec = warrantyRec();
+      if (t.name && Object.prototype.hasOwnProperty.call(rec, t.name)) {
+        rec[t.name] = t.name === 'months' ? (Number(t.value) || 0) : t.value;
+        renderWarrantyPreview();
+      }
+    });
+    FX.on(el('co-war-add'), 'click', function (e) {
+      var b = e.target.closest('[data-block]');
+      if (!b) return;
+      var lang = ui.warranty.lang;
+      var type = b.getAttribute('data-block');
+      warrantyRec().blocks[lang].push({ type: type, text: defaultBlock(lang, type) });
+      renderWarBlocks(lang);
+      renderWarrantyPreview();
+    });
+    FX.on(document, 'input', function (e) {
+      var t = e.target;
+      if (!t || !t.getAttribute || !t.getAttribute('data-war-text')) return;
+      var parts = t.getAttribute('data-war-text').split(':');
+      var block = warrantyRec().blocks[parts[0]][Number(parts[1])];
+      if (block) { block.text = t.value; renderWarrantyPreview(); }
+    });
+    FX.on(document, 'click', function (e) {
+      var t = e.target.closest && e.target.closest('[data-war-del]');
+      if (!t) return;
+      var parts = t.getAttribute('data-war-del').split(':');
+      warrantyRec().blocks[parts[0]].splice(Number(parts[1]), 1);
+      renderWarBlocks(parts[0]);
+      renderWarrantyPreview();
+    });
+    FX.on($('[data-tabs="war-lang"]'), 'click', function (e) {
+      var tab = e.target.closest('.tab');
+      if (!tab) return;
+      ui.warranty.lang = tab.getAttribute('data-tab');
+      renderWarrantyPreview();
+    });
+  }
+
+  function bindPayment() {
+    FX.on(el('co-pay-side'), 'click', function (e) {
+      var b = e.target.closest('[data-side]');
+      if (!b) return;
+      var side = b.getAttribute('data-side');
+      if (side === ui.pay.side) return;
+      ui.pay.side = side;
+      ui.pay.partyId = payParties().length ? payParties()[0].id : null;
+      ui.pay.purpose = '';
+      renderPaymentControls();
+    });
+    FX.on(el('co-pay-cashbox'), 'click', function (e) {
+      var b = e.target.closest('[data-cashbox]');
+      if (!b) return;
+      ui.pay.cashbox = b.getAttribute('data-cashbox');
+      ui.pay.purpose = '';
+      renderPaymentControls();
+    });
+    FX.on(el('co-pay-kind'), 'click', function (e) {
+      var b = e.target.closest('[data-kind]');
+      if (!b) return;
+      ui.pay.kind = b.getAttribute('data-kind');
+      ui.pay.purpose = '';
+      renderPaymentControls();
+    });
+    FX.on(el('co-pay-party'), 'change', function () {
+      ui.pay.partyId = Number(el('co-pay-party').value);
+      renderPaymentControls();
+    });
+    FX.on(el('co-pay-amount'), 'input', function () {
+      ui.pay.amount = Math.max(0, Number(el('co-pay-amount').value) || 0);
+      el('co-pay-summary').textContent = paymentSummary();
+      renderPaymentDoc();
+    });
+    FX.on(el('co-pay-date'), 'change', function () {
+      ui.pay.date = el('co-pay-date').value;
+      renderPaymentDoc();
+    });
+    FX.on(el('co-pay-purpose'), 'input', function () {
+      ui.pay.purpose = el('co-pay-purpose').value;
+      renderPaymentDoc();
+    });
+    FX.on(el('co-print'), 'click', function () { window.print(); });
+  }
+
+  function bindOverlays() {
+    FX.on(el('co-confirm-ok'), 'click', function () {
+      var cb = ui.pendingConfirm;
+      ui.pendingConfirm = null;
+      FX.closeModal('co-modal-confirm');
+      if (cb) cb();
+    });
+    FX.delegate(document, '[data-upload]', 'click', function (e) {
+      e.preventDefault();
+      FX.toast('Демо: файл license-scan.pdf прикреплён (загрузка в прототипе не выполняется)', 'ok', 2600);
+    });
+  }
+
+  /* ==================================================================
+     INIT
+     ================================================================== */
+  function renderAll() {
+    renderCountries();
+    renderCustomers();
+    renderSupplierRows();
+    renderCurrencies();
+    renderLogistics();
+    renderWarrantyTree();
+    renderWarrantyEditor();
+    renderPayment();
+  }
+
+  function init() {
+    if (location.hash === '#users') { location.replace('admin-catalog.html#users'); return; }
+    window.addEventListener('hashchange', function () {
+      if (location.hash === '#users') location.replace('admin-catalog.html#users');
+    });
+    FimexAdmin.onScreen = function () { FX.closeDrawer(); FX.closeModal(); };
+    FX.tabs(document);
+    bindOverlays();
+    bindCountries();
+    bindCustomers();
+    bindSuppliers();
+    bindCurrencies();
+    bindLogistics();
+    bindWarranty();
+    bindPayment();
+    FimexAdmin.mount({ page: 'company', screen: 'countries' });
+    renderAll();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fimex — как это выяснено · интерактивный прототип</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  .doc { background: #fff; }
+  .doc .top {
+    border-bottom: 1px solid var(--line); background: #fff; position: sticky; top: 0; z-index: 30;
+  }
+  .doc .top .inner { max-width: 1180px; margin: 0 auto; padding: 0 30px; height: 62px; display: flex; align-items: center; gap: 16px; }
+  .doc .top .inner a.back { font-size: 13px; color: var(--text-2); font-family: var(--font-ui); }
+  .doc .top .inner a.back:hover { color: var(--text); }
+  .doc .top .inner .sp { flex: 1; }
+  .doc .top .inner .brand { display: flex; align-items: center; gap: 9px; font-family: var(--font-ui); }
+  .doc .top .inner .brand .mark { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 17px; }
+  .doc .top .inner .brand b { font-size: 14px; letter-spacing: .15em; }
+  .doc .top .inner .brand span { color: var(--muted); font-size: 11.5px; }
+  .doc-wrap { max-width: 1180px; margin: 0 auto; padding: 40px 30px 80px; display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 48px; }
+  .toc { position: sticky; top: 92px; align-self: start; font-family: var(--font-ui); }
+  .toc .t { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .toc a { display: block; padding: 6px 10px; border-left: 2px solid var(--line); color: var(--text-2); font-size: 13px; }
+  .toc a:hover { color: var(--text); text-decoration: none; border-color: var(--accent); background: var(--surface-2); }
+  .toc .sub a { padding-left: 22px; font-size: 12.5px; }
+  .body-doc { font-family: var(--font-ui); min-width: 0; }
+  .body-doc h1 { font-family: var(--font-landing); font-size: 38px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+  .body-doc .lead { margin-top: 14px; color: var(--text-2); font-size: 15px; line-height: 1.6; max-width: 760px; }
+  .body-doc h2 { font-size: 22px; margin: 46px 0 8px; letter-spacing: -.015em; scroll-margin-top: 90px; }
+  .body-doc h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 8px; }
+  .body-doc h3 { font-size: 15px; margin: 26px 0 8px; }
+  .body-doc p { font-size: 13.5px; line-height: 1.62; color: var(--text-2); margin: 8px 0; }
+  .body-doc p b, .body-doc li b { color: var(--text); }
+  .body-doc ul { margin: 8px 0; padding-left: 20px; font-size: 13.5px; line-height: 1.62; color: var(--text-2); }
+  .body-doc li { margin: 4px 0; }
+  .body-doc .table { font-size: 12.5px; }
+  .body-doc .table thead th { padding: 8px 10px; }
+  .body-doc .table tbody td { padding: 8px 10px; }
+  .body-doc .mono { font-size: 11.5px; }
+  .callout {
+    display: flex; gap: 12px; padding: 13px 15px; border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface-2); font-size: 13px; color: var(--text-2); margin: 14px 0; line-height: 1.55;
+  }
+  .callout.warn { border-color: #e6d5b8; background: #fffaf0; color: #6f5524; }
+  .callout.info { border-color: #cdddf7; background: var(--accent-soft); color: #24477f; }
+  .callout b { color: inherit; }
+  .screens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .screen-pill { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 7px; font-size: 12px; background: #fff; }
+  .screen-pill .dot { width: 6px; height: 6px; }
+  .screen-pill .n { color: var(--muted); font-size: 10.5px; margin-left: auto; font-variant-numeric: tabular-nums; }
+  .src-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .src { display: flex; gap: 10px; align-items: flex-start; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  .src .i { width: 26px; height: 26px; border-radius: 6px; background: var(--surface-3); display: flex; align-items: center; justify-content: center; font-size: 13px; flex: none; }
+  .src b { display: block; font-size: 12.5px; }
+  .src span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 1px; line-height: 1.4; }
+  .doc-footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 16px; font-size: 12.5px; color: var(--muted); align-items: center; }
+  .doc-footer a { color: var(--text-2); }
+  @media (max-width: 900px) { .doc-wrap { grid-template-columns: 1fr; gap: 24px; } .toc { display: none; } .screens-grid, .src-list { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="doc">
+<header class="top">
+  <div class="inner">
+    <a class="back" href="index.html">← Карта платформы</a>
+    <span class="sp"></span>
+    <span class="brand"><span class="mark">F</span><b>FIMEX</b><span>как это выяснено</span></span>
+  </div>
+</header>
+
+<div class="doc-wrap">
+  <nav class="toc">
+    <div class="t">Содержание</div>
+    <a href="#sources">Источники и метод</a>
+    <a href="#hosts">1. Хосты</a>
+    <a href="#api">2. API-поверхности</a>
+    <a href="#realtime">3. Realtime-каналы</a>
+    <a href="#apps">4. Приложения и экраны</a>
+    <div class="sub">
+      <a href="#admin">Админ-панель</a>
+      <a href="#supplier">Портал поставщика</a>
+      <a href="#ios">iOS-приложение</a>
+      <a href="#landing">Публичный сайт</a>
+    </div>
+    <a href="#limits">5. Ограничения</a>
+    <a href="#links">6. Прототипы</a>
+    <a href="provenance.html">Провенанс →</a>
+  </nav>
+
+  <main class="body-doc">
+    <h1>Как это выяснено</h1>
+    <p class="lead">
+      Платформа Fimex не имеет публичной документации, поэтому её устройство восстанавливалось
+      неинвазивно: по production-бандлам, публичным страницам, DNS и mitm-дампу мобильного трафика.
+      Ниже — что именно удалось установить и на чём это основано. Прототип построен только на этих
+      фактах; всё, что нельзя было подтвердить, в нём не появляется.
+    </p>
+
+    <section id="sources">
+      <h2><span class="num">0.</span>Источники и метод</h2>
+      <div class="src-list">
+        <div class="src"><span class="i">📦</span><div><b>Production-бандлы</b><span>Admin SPA (Vite/React, 4,25 МБ) и 32 чанка Next.js портала поставщика — статический AST-разбор маршрутов, компонентов и строк.</span></div></div>
+        <div class="src"><span class="i">📱</span><div><b>mitm-дамп iOS-трафика</b><span>74 запроса к /app-api/v1 (26 уникальных URL, 24 пути) и полные JSON-ответы: бренды, категории, прайс-лист, статусы, профиль.</span></div></div>
+        <div class="src"><span class="i">🌐</span><div><b>Публичные страницы</b><span>fimex.ae, страница приложения в App Store (версия 4.7.0, подписки, changelog).</span></div></div>
+        <div class="src"><span class="i">🛰️</span><div><b>DNS и пассивные пробники</b><span>Перечисление поддоменов, HTTP-заголовки, проверка авторизации API без валидных учётных данных.</span></div></div>
+        <div class="src"><span class="i">🔌</span><div><b>Pusher-подписки</b><span>Пассивный listen на каналы в течение 3,6 минут — 75 событий без авторизации.</span></div></div>
+        <div class="src"><span class="i">🧭</span><div><b>Инвентарь роутов</b><span>280 админских вызовов (GET/POST/download), ~36 роутов портала, ~25 мобильных.</span></div></div>
+      </div>
+      <div class="callout info">
+        <span>ℹ️</span>
+        <div><b>Принцип.</b> В прототипе каждое приложение подтверждено хотя бы одним независимым
+        источником. Спорные или неподтверждённые детали трактуются как «неизвестно» и не выдаются
+        за факт; UI реконструирован настолько, насколько его позволяют восстановить подписи и структура.</div>
+      </div>
+    </section>
+
+    <section id="hosts">
+      <h2><span class="num">1.</span>Хосты</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Хост</th><th>Что там</th><th>Стек</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">fimex.ae</td><td>Лендинг + портал поставщика <span class="mono">/dashboard/supplier/*</span></td><td>Next.js 16 (App Router), MUI, RTK Query, Redux</td></tr>
+            <tr><td class="mono">www.fimex.ae</td><td>301 → fimex.ae</td><td>—</td></tr>
+            <tr><td class="mono">supplier.fimex.ae</td><td>301 → fimex.ae</td><td>—</td></tr>
+            <tr><td class="mono">admin.fimex.ae</td><td>Админ-SPA</td><td>Vite + React, axios</td></tr>
+            <tr><td class="mono">app.fimex.ae</td><td>Тот же админ-SPA, байт-в-байт</td><td>Vite + React</td></tr>
+            <tr><td class="mono">front.fimex.ae</td><td>Тот же админ-SPA, байт-в-байт</td><td>Vite + React</td></tr>
+            <tr><td class="mono">api.fimex.ae</td><td>Бэкенд, три неймспейса</td><td>Laravel, PHP 8.2.34, за DDoS-Guard</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Три хоста отдают один и тот же бандл с одинаковым md5 — маршрутизации по hostname в клиенте нет.
+        Мобильное приложение — нативное iOS, bundle id <span class="mono">fzco.fimex.app</span>,
+        App Store id6444686382, пуш-уведомления OneSignal, краши Sentry.</p>
+    </section>
+
+    <section id="api">
+      <h2><span class="num">2.</span>API-поверхности</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Неймспейс</th><th>Потребитель</th><th>Аутентификация</th><th class="num">Размер</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">/api/v1/admin/*</td><td>Админ-SPA</td><td>Bearer JWT из localStorage</td><td class="num">280 роутов</td></tr>
+            <tr><td class="mono">/api/v1/supplier/* + /api/auth/*</td><td>Портал поставщика</td><td>Bearer JWT</td><td class="num">~36 роутов</td></tr>
+            <tr><td class="mono">/app-api/v1/*</td><td>iOS-приложение</td><td>Bearer JWT + статичный заголовок x-app-access</td><td class="num">~25 роутов</td></tr>
+            <tr><td class="mono">/api/broadcasting/auth</td><td>Pusher-авторизация</td><td>Bearer</td><td class="num">1</td></tr>
+            <tr><td class="mono">/uploads/* · /storage/*</td><td>Файлы (логотипы, лицензии, документы)</td><td>—</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>API — RPC-стиль: чтения через GET, все мутации через POST, выгрузки Excel — GET с blob.
+        На каждый вызов без токена API отвечает 401 — авторизация проверяется на сервере.</p>
+      <div class="callout warn">
+        <span>⚠️</span>
+        <div><b>Найденные особенности.</b> Публичные Pusher-каналы (утечка событий склада),
+        500 вместо 401 на некорректный токен, 500 вместо 401 без заголовка <span class="mono">Accept: application/json</span>,
+        неконсистентный CORS, Sentry DSN в публичном бандле. Это детали исследования, не часть прототипа;
+        подробный аудит — в исходных материалах (<span class="mono">AUDIT.md</span>).</div>
+      </div>
+    </section>
+
+    <section id="realtime">
+      <h2><span class="num">3.</span>Realtime-каналы (Pusher)</h2>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Канал</th><th>Кто слушает</th><th>Тип</th><th>События</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">admin-warehouse</td><td>Админ-SPA</td><td><span class="badge badge-orange">public ⚠</span></td><td>update-warehouse, batch-deleted</td></tr>
+            <tr><td class="mono">admin-handler-channel</td><td>Админ-SPA</td><td><span class="badge badge-orange">public ⚠</span></td><td>admin-handler (customer-green-folders, refresh-p2p…)</td></tr>
+            <tr><td class="mono">private-admin-preorder-{id}</td><td>Админ-SPA</td><td><span class="badge badge-green">private ✓</span></td><td>—</td></tr>
+            <tr><td class="mono">stock_provider_{id}</td><td>Портал поставщика</td><td><span class="badge badge-orange">public ⚠</span></td><td>update-position, batch-deleted</td></tr>
+            <tr><td class="mono">private-supplier-handler-channel-{id}</td><td>Портал поставщика</td><td><span class="badge badge-green">private ✓</span></td><td>broadcast-orders, refresh-check-point, refresh-p2p</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Подписка на публичные каналы была подтверждена экспериментально: за 3,6 минуты без
+        авторизации пришло 75 событий с именами поставщиков, товарами, закупочными ценами,
+        наценками и остатками. Приватные каналы при этом защищены корректно.</p>
+    </section>
+
+    <section id="apps">
+      <h2><span class="num">4.</span>Приложения и экраны</h2>
+
+      <h3 id="admin">4.1. Админ-панель — 29 экранов</h3>
+      <p>Восстановлены из route-config и компонентов production-бандла. Основные:</p>
+      <div class="screens-grid">
+        <div class="screen-pill"><span class="dot blue"></span>Чат по странам<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Продажи / preorder (8 табов)<span class="n">1 + 8</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Сервис / возвраты<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Характеристики каталога<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Номенклатура<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Карго-матрица<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Наценки<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Штрафы<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Причины возврата<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Типы опта<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Статусы доставки<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Константы приложений<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Команда и роли<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Страны закупки<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Клиенты (+история, чат)<span class="n">3</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Поставщики<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Касса: 8 печатных форм<span class="n">8</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Валюты<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Логистика<span class="n">1</span></div>
+        <div class="screen-pill"><span class="dot blue"></span>Гарантии<span class="n">1</span></div>
+      </div>
+
+      <h3 id="supplier">4.2. Портал поставщика — 7 экранов</h3>
+      <p>Восстановлены из чанков Next.js и публичных страниц. Меню: Orders, P2P, Packing List,
+        Service, Statistic, Stock; плюс авторизация и настройки профиля/команды.</p>
+      <div class="screens-grid">
+        <div class="screen-pill"><span class="dot green"></span>Stock</div>
+        <div class="screen-pill"><span class="dot green"></span>Orders</div>
+        <div class="screen-pill"><span class="dot green"></span>Packing List</div>
+        <div class="screen-pill"><span class="dot green"></span>P2P</div>
+        <div class="screen-pill"><span class="dot green"></span>Service</div>
+        <div class="screen-pill"><span class="dot green"></span>Statistic</div>
+        <div class="screen-pill"><span class="dot green"></span>Settings / Profile / Team</div>
+        <div class="screen-pill"><span class="dot green"></span>Auth / регистрация</div>
+      </div>
+
+      <h3 id="ios">4.3. iOS-приложение «Fimex» — 12 экранов</h3>
+      <p>Реконструированы по mitm-дампу (74 запроса, 26 уникальных URL), странице App Store и полным
+        JSON-ответам мобильного API. Подписки: Fimex Monthly 7 990 ₽ / Fimex Yearly 44 990 ₽.</p>
+      <div class="screens-grid">
+        <div class="screen-pill"><span class="dot orange"></span>Login / check-email</div>
+        <div class="screen-pill"><span class="dot orange"></span>Подписка (paywall)</div>
+        <div class="screen-pill"><span class="dot orange"></span>Каталог: бренды и категории</div>
+        <div class="screen-pill"><span class="dot orange"></span>Прайс-лист с наценками</div>
+        <div class="screen-pill"><span class="dot orange"></span>Корзина</div>
+        <div class="screen-pill"><span class="dot orange"></span>Мои заказы / выданные</div>
+        <div class="screen-pill"><span class="dot orange"></span>P2P-ставки</div>
+        <div class="screen-pill"><span class="dot orange"></span>Статистика по брендам</div>
+        <div class="screen-pill"><span class="dot orange"></span>Профиль / логистика / опт</div>
+        <div class="screen-pill"><span class="dot orange"></span>Уведомления</div>
+        <div class="screen-pill"><span class="dot orange"></span>Чат поддержки</div>
+        <div class="screen-pill"><span class="dot orange"></span>Настройка наценки</div>
+      </div>
+
+      <h3 id="landing">4.4. Публичный сайт — 1 страница</h3>
+      <p>Одностраничник: hero «We make purchases easier», пять преимуществ (Direct-to-Customer Sales,
+        24/7 Sales Access, Higher Profit Margins, Wide Product Range, Speed and Simplicity),
+        офис DAFZA Dubai, <span class="mono">info@fimex.ae</span>, cookie-баннер.</p>
+    </section>
+
+    <section id="limits">
+      <h2><span class="num">5.</span>Ограничения</h2>
+      <ul>
+        <li><b>Без авторизованного доступа.</b> Внутренние экраны не открывались с валидным токеном;
+          их структура восстановлена статически, а не «прокликана». Поэтому UI — реконструкция,
+          а не скриншоты.</li>
+        <li><b>Данные вымышленные.</b> В прототипе нет ни одной реальной закупочной цены, реального
+          имени поставщика, e-mail или номера лицензии из добытых артефактов. Это осознанное решение:
+          артефакт публикуется, а коммерческие и персональные данные платформы в него не попадают.</li>
+        <li><b>Не всё видно.</b> 16 вызовов в админ-бандле не разрешились статически (пути в переменных),
+          поэтому 280 роутов — нижняя граница. Android-версия приложения вероятна, но не подтверждена.</li>
+        <li><b>Пиксель-перфект не гарантирован.</b> Цвета, шрифты и сетка приближены к реальным
+          (DIN Next W1G, Inter, Bebas Neue; палитра MUI), но не сверены с живым продуктом.</li>
+        <li><b>Что добавлено от себя.</b> Визуальная композиция, KPI, печатные бланки и часть подписей —
+          наша реконструкция. Полный разбор «подтверждено / выведено / добавлено» — на странице
+          <a href="provenance.html">«Провенанс»</a>.</li>
+      </ul>
+    </section>
+
+    <section id="links">
+      <h2><span class="num">6.</span>Прототипы</h2>
+      <div class="screens-grid">
+        <a class="screen-pill" href="admin.html#preorder" style="color:inherit"><span class="dot blue"></span>Админ-панель: операционка<span class="n">→</span></a>
+        <a class="screen-pill" href="admin-catalog.html#chars-settings" style="color:inherit"><span class="dot blue"></span>Админ-панель: каталог и настройки<span class="n">→</span></a>
+        <a class="screen-pill" href="admin-company.html#countries" style="color:inherit"><span class="dot blue"></span>Админ-панель: компания и касса<span class="n">→</span></a>
+        <a class="screen-pill" href="supplier.html" style="color:inherit"><span class="dot green"></span>Портал поставщика<span class="n">→</span></a>
+        <a class="screen-pill" href="ios.html" style="color:inherit"><span class="dot orange"></span>iOS-приложение<span class="n">→</span></a>
+        <a class="screen-pill" href="landing.html" style="color:inherit"><span class="dot"></span>Публичный сайт<span class="n">→</span></a>
+      </div>
+    </section>
+
+    <div class="doc-footer">
+      <a href="index.html">← Вернуться к карте платформы</a>
+      <a href="provenance.html">Провенанс →</a>
+      <span style="flex:1"></span>
+      <span>Исследование · ноябрь 2026 · данные прототипа вымышлены</span>
+    </div>
+  </main>
+</div>
+</body>
+</html>

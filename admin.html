@@ -1,378 +1,1486 @@
 <!DOCTYPE html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin SPA (admin/app/front.fimex.ae) — Fimex wireframes</title>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fimex admin · прототип</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/admin.css">
 <style>
-@font-face { font-family:'Bebas'; src:url('assets/fonts/BebasNeueRegular-s.p.6dc224e2.woff') format('woff'); font-display:swap; }
-@font-face { font-family:'DIN'; src:url('assets/fonts/dinnextw1g-s.p.09a4ca7e.woff2') format('woff2'); font-weight:400; font-display:swap; }
-@font-face { font-family:'DIN'; src:url('assets/fonts/dinnextw1g_medium-s.p.cd040f6c.woff2') format('woff2'); font-weight:500; font-display:swap; }
-@font-face { font-family:'DIN'; src:url('assets/fonts/dinnextw1g_bold-s.p.26af13c1.woff2') format('woff2'); font-weight:700; font-display:swap; }
-:root { --bd:#d4d7de; --bg:#f4f5f7; --blk:#fafbfc; --tx:#1a1a1a; --dim:#7a7f8a; --acc:#113AC8; --red:#C20C0D; }
-* { box-sizing:border-box; margin:0; padding:0; }
-body { font:13px/1.5 'DIN',-apple-system,'Segoe UI',Arial,sans-serif; background:var(--bg); color:var(--tx); }
-.appnav { position:sticky; top:0; z-index:50; background:#0d0d0f; color:#fff; padding:0 28px; display:flex; gap:6px; align-items:center; height:56px;}
-.appnav .logo { font-family:'Bebas'; font-size:24px; letter-spacing:2px; margin-right:24px; }
-.appnav .logo span { color:var(--acc); }
-.appnav a { color:#b9c4e8; text-decoration:none; font-size:12px; padding:6px 12px; border-radius:6px; transition:.15s;}
-.appnav a:hover { background:#22242c; color:#fff; }
-.appnav a.here { background:var(--acc); color:#fff; }
-.pagenav { position:fixed; top:56px; left:0; bottom:0; width:240px; overflow-y:auto; background:#fff; border-right:1px solid #e5e7eb; padding:14px 10px; z-index:49;}
-.pagenav .grp { font-size:10px; text-transform:uppercase; letter-spacing:.6px; color:#9aa0ac; margin:12px 8px 4px; font-weight:700;}
-.pagenav .grp:first-child { margin-top:2px; }
-.pagenav a { display:block; font-size:11.5px; color:#3a3d45; padding:4px 10px 4px 14px; text-decoration:none; border-radius:6px; border-left:2px solid transparent; transition:.12s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.pagenav a:hover { background:#f2f4f9; color:var(--acc); }
-.pagenav a .n { color:#b3b8c4; font-size:10px; margin-right:5px; font-family:ui-monospace,Menlo,monospace;}
-.mainwrap { margin-left:240px; }
-@media (max-width:900px){ .pagenav{position:static;width:auto;max-height:260px} .mainwrap{margin-left:0} }
-.screen { margin:34px auto; max-width:1320px; padding:0 24px;}
-.screentitle { font-family:'Bebas'; font-size:22px; letter-spacing:1px; margin-bottom:4px; display:flex; align-items:baseline; gap:10px;}
-.screentitle .num { color:var(--acc); font-size:15px; }
-.screenmeta { font-size:11px; color:var(--dim); margin-bottom:10px; font-family:ui-monospace,Menlo,monospace;}
-.frame { background:#fff; border:1px solid #d9dbe2; border-radius:10px; overflow:hidden; box-shadow:0 2px 14px rgba(20,25,60,.06);}
-.frame.mobile { width:402px; height:874px; margin:0 auto; display:flex; flex-direction:column;}
-.frame.mobile .block { flex:0 0 auto; }
-.frame.mobile .content { flex:1 1 auto; }
-.frame.desktop { width:1280px; max-width:100%; height:800px; display:flex; flex-direction:column;}
-.bar { border:1px dashed var(--bd); background:var(--blk); color:#444; padding:7px 12px; font-size:11px; min-height:28px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
-.bar b { font-weight:700; }
-.layout { display:flex; flex:1; min-height:0; }
-.sidebar { width:200px; border-right:1px solid #eceef2; background:#fbfbfc; padding:10px; font-size:11.5px; flex-shrink:0;}
-.sidebar .item { padding:6px 10px; border-radius:6px; margin-bottom:2px; color:#3a3d45;}
-.sidebar .item.active { background:#e4eafb; color:var(--acc); font-weight:700; }
-.sidebar .item.sub { padding-left:24px; color:#8a8f9a; font-size:11px;}
-.content { flex:1; padding:12px; overflow:auto; display:flex; flex-direction:column; gap:10px;}
-.tabs { display:flex; gap:4px; flex-wrap:wrap; border-bottom:2px solid #e5e7eb; padding-bottom:0;}
-.tab { border:1px solid #dde0e6; border-bottom:none; background:#f4f5f8; border-radius:6px 6px 0 0; padding:5px 14px; font-size:11.5px; color:#666;}
-.tab.active { background:#fff; font-weight:700; color:var(--acc); position:relative; top:2px; border-bottom:2px solid #fff;}
-.table { border:1px solid #e3e5ea; width:100%; border-collapse:collapse; font-size:11px; border-radius:6px; overflow:hidden;}
-.table th { background:#f2f4f9; border:1px solid #e3e5ea; padding:6px 8px; text-align:left; font-weight:700; white-space:nowrap; color:#3a3d45;}
-.table td { border:1px solid #eef0f4; padding:6px 8px; color:#b9bcc6; }
-.blocks { display:flex; gap:10px; flex-wrap:wrap; }
-.block { border:1px dashed #c9cdd8; background:#fbfbfc; border-radius:8px; padding:12px; font-size:11px; color:#666; flex:1; min-width:120px; min-height:54px;}
-.block b { display:block; color:#1a1a1a; margin-bottom:4px; font-size:12px;}
-.modal { border:1px solid #d5d8e0; background:#fff; border-radius:10px; padding:14px; width:440px; margin:8px auto; box-shadow:0 8px 30px rgba(20,25,60,.10);}
-.modal h4 { font-size:13px; margin-bottom:8px; }
-.field { border:1px solid #d8dbe2; border-radius:6px; background:#fcfcfd; padding:7px 10px; margin:5px 0; color:#9aa0ac; font-size:11px;}
-.btn { display:inline-block; border:1px solid #c6cad4; background:#f2f3f6; border-radius:6px; padding:5px 14px; font-size:11px; margin:2px 4px 2px 0; color:#333; font-weight:500;}
-.btn.primary { background:var(--acc); border-color:var(--acc); color:#fff; font-weight:700;}
-.chip { display:inline-block; border:1px solid #d5d8e0; border-radius:12px; padding:2px 10px; font-size:10px; margin:2px; background:#f7f8fa; color:#666;}
-.note { font-size:10.5px; color:#9aa0ac; margin-top:6px; font-family:ui-monospace,Menlo,monospace;}
-.grid { display:grid; gap:8px; }
-.g2 { grid-template-columns:1fr 1fr; } .g3 { grid-template-columns:1fr 1fr 1fr; } .g4 { grid-template-columns:repeat(4,1fr); }
-.phonebar { text-align:center; font-size:10px; color:#9aa0ac; padding:5px; border-bottom:1px dashed var(--bd); background:#fbfbfc;}
-.tabbar { margin-top:auto; display:flex; border-top:1px solid #e3e5ea; background:#fff;}
-.tabbar div { flex:1; text-align:center; padding:9px 0; font-size:10px; color:#9aa0ac; border-top:2px solid transparent;}
-.tabbar div.active { color:var(--acc); border-top-color:var(--acc); font-weight:700; }
-.hero { padding:56px 24px; text-align:center; border:1px dashed var(--bd); background:linear-gradient(135deg,#f6f8ff,#fbfcfd); border-radius:8px;}
-.hero h2 { font-family:'Bebas'; font-size:34px; letter-spacing:1.5px; font-weight:400;}
-h2.w { font-size:13px; margin:6px 0; color:#333;}
-.wlabel { font-size:10px; color:#9aa0ac; text-transform:uppercase; letter-spacing:.6px; margin-bottom:2px;}
-.cardrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:14px 0;}
-.card { background:#fff; border:1px solid #e3e5ea; border-radius:12px; padding:18px; box-shadow:0 2px 10px rgba(20,25,60,.05);}
-.card h3 { font-family:'Bebas'; font-size:19px; letter-spacing:.8px; margin-bottom:6px;}
-.card .cmeta { font-size:11px; color:var(--dim); margin-bottom:10px; font-family:ui-monospace,Menlo,monospace;}
-.card a.btn { text-decoration:none; margin-top:8px; }
-.card ul { margin:8px 0 0 16px; font-size:11.5px; color:#555;}
-h1.pagetitle { font-family:'Bebas'; font-size:30px; letter-spacing:1.5px; margin:26px 0 4px; font-weight:400;}
-.pagemeta { color:var(--dim); font-size:12px; margin-bottom:10px;}
-.diag { display:flex; gap:8px; align-items:stretch; flex-wrap:wrap; margin:12px 0; font-size:11px;}
-.diag .node { border:1px solid #d5d8e0; background:#fff; border-radius:8px; padding:10px 12px; }
-.diag .node b { display:block; font-size:12px; }
-.diag .arr { align-self:center; color:#b9bcc6; font-size:16px;}
-.legend { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin:12px 0;}
-.litem { background:#fff; border:1px solid #e3e5ea; border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px;}
-.ldemo { border:1px dashed #e0e3ea; border-radius:8px; padding:10px; background:#fcfcfd; overflow:hidden;}
-.lcap { font-size:11px; color:#666; line-height:1.45;}
-</style></head>
-<body>
-<div class="appnav"><div class="logo">FIMEX<span>·</span>WF</div><a href="admin.html" class=here>Admin SPA</a><a href="supplier.html">Портал поставщика</a><a href="ios.html">iOS app</a><a href="supplier.html#p-landing">Лендинг</a></div>
-<div class="pagenav"><a href="#a-login"><span class="n">01</span>Login (OAuth)</a><a href="#a-dash"><span class="n">02</span>Dashboard (index)</a><a href="#a-chat"><span class="n">03</span>Chat</a><div class="grp">Preorder</div><a href="#a-pre-stock"><span class="n">04</span>Stock</a><a href="#a-pre-purch"><span class="n">05</span>список поставщиков</a><a href="#a-pre-purch-order"><span class="n">06</span>заказ поставщика</a><a href="#a-pre-sales"><span class="n">07</span>заказы клиентов</a><a href="#a-pre-deliv-c"><span class="n">08</span>Доставка клиентам</a><a href="#a-pre-deliv-s"><span class="n">09</span>Доставка поставщиков</a><a href="#a-pre-penalty"><span class="n">10</span>Штрафы</a><a href="#a-pre-p2p"><span class="n">11</span>P2P trade</a><a href="#a-pre-stats"><span class="n">12</span>Статистика</a><div class="grp">Settings</div><a href="#a-set-chars"><span class="n">13</span>Chars settings</a><a href="#a-set-nom"><span class="n">14</span>Nomenclature</a><a href="#a-set-cargo"><span class="n">15</span>Cargo</a><a href="#a-set-perc"><span class="n">16</span>Percents (наценки)</a><a href="#a-set-reason"><span class="n">17</span>Reason settings</a><a href="#a-set-whs"><span class="n">18</span>Wholesale types</a><a href="#a-set-ds"><span class="n">19</span>Delivery statuses</a><a href="#a-set-const"><span class="n">20</span>Constants</a><a href="#a-set-pen"><span class="n">21</span>Penalty</a><a href="#a-set-users"><span class="n">22</span>Users</a><a href="#a-set-countries"><span class="n">23</span>Countries</a><div class="grp">Customers</div><a href="#a-cust"><span class="n">24</span>список</a><a href="#a-cust-hist"><span class="n">25</span>история</a><div class="grp">Suppliers</div><a href="#a-sup"><span class="n">26</span>список</a><div class="grp">Payments</div><a href="#a-pay"><span class="n">27</span>печатные формы</a><div class="grp">Settings</div><a href="#a-set-curr"><span class="n">28</span>Currencies</a><a href="#a-set-log"><span class="n">29</span>Logistics</a><a href="#a-set-war"><span class="n">30</span>Warranty</a><div class="grp">Service</div><a href="#a-service"><span class="n">31</span>возвраты</a><a href="#a-404"><span class="n">32</span>404</a></div>
-<div class="mainwrap">
-<h1 class="pagetitle" style="padding:0 24px">Admin SPA (admin/app/front.fimex.ae)</h1>
-<div class="screen" id="a-login">
-  <div class="screentitle"><span class="num">01</span>Login (OAuth)</div>
-  <div class="screenmeta">/oauth/authorize · JWT → localStorage.api_token</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="content"><div class="modal"><h4>Fimex Admin — Sign in</h4><div class="field">Email *</div><div class="field">Password *</div><span class="btn primary">Sign in</span><div class="note">Ошибка 500 вместо 401 при битом токене (F2)</div></div></div></div>
-  </div>
-</div>
+  /* admin.html page-local additions — shared assets stay untouched */
+  .po-pane { display: none; }
+  .po-pane.active { display: block; }
+  .po-subtabs { margin-bottom: 12px; }
+  .filter-rail .field { width: 158px; }
+  .filter-rail .field.wide { width: 205px; }
+  .filter-rail .field.narrow { width: 128px; }
+  .table-tools .row-info { margin-left: 0; }
+  .table-tools .row-info b { color: var(--text); }
+  #poTabs { margin-bottom: 14px; }
+  #statsRange { margin-bottom: 14px; }
+  #statsWrap .chart-bars .col .b { max-width: 72px; }
 
-<div class="screen" id="a-dash">
-  <div class="screentitle"><span class="num">02</span>Dashboard (index)</div>
-  <div class="screenmeta">/dashboard · редирект на redirect_route из app state</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item active">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="blocks"><div class="block"><b>redirect_route → default section</b></div><div class="block"><b>Guards check (VIEW)</b></div></div></div></div>
-  </div>
-</div>
+  .chat-filter { border-bottom: 0; gap: 0; }
+  .chat-filter .tab { padding: 6px 10px 8px; font-size: 12.5px; }
+  .screen[data-screen="chat"] .chat-layout { height: calc(100vh - var(--topbar-h) - 172px); }
+  .chat-date { align-self: center; padding: 3px 10px; border-radius: 999px; background: var(--surface-3); color: var(--muted); font-size: 10.5px; }
+  .chat-seen { align-self: flex-end; margin-top: -4px; font-size: 10px; color: var(--muted); }
+  .last-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .last-row .last { flex: 1; min-width: 0; }
+  .chat-item .company { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-main > .empty { flex: 1; }
 
-<div class="screen" id="a-chat">
-  <div class="screentitle"><span class="num">03</span>Chat</div>
-  <div class="screenmeta">/dashboard/chat · API: chat/fetch-chats, fetch-chat, send, seen, clear, fetch-countries, fetch-total-unseen · Pusher: admin-handler-channel (chat-support)</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item active">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="layout" style="gap:8px"><div style="width:260px"><div class="field">Name or ID</div><div class="block"><b>Фильтры</b><span class="btn">Все</span><span class="btn">Непрочитанные</span></div><div class="block"><b>Список чатов</b>страна → клиенты, unread badges</div></div><div style="flex:1"><div class="bar">Customer Chat · {id}</div><div class="block"><b>Сообщения</b>DD.MM.YYYY separators, attachments (fancybox)</div><div class="field">messageField…</div><span class="btn primary">messageSend</span><span class="btn">Очистить чат</span></div></div></div></div>
-  </div>
-</div>
+  .row-caret { display: inline-block; width: 12px; color: var(--muted); font-size: 10px; transition: transform .12s ease; }
+  tr.open .row-caret { transform: rotate(90deg); }
+  tr.open > td { background: #fbfcfe; }
+  .table-empty { text-align: center; color: var(--text-2); font-size: 12.5px; padding: 26px 12px; }
+  .order-total {
+    display: flex; justify-content: flex-end; align-items: baseline; gap: 24px;
+    padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--line); border-top: 0;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm); font-size: 13px;
+  }
+  .order-total b { font-size: 16px; }
+  .drawer .tabs { margin-bottom: 14px; }
+  .drawer .table-wrap { border-radius: var(--radius-sm); }
+  .drawer .drawer-body input, .drawer .drawer-body select, .drawer .drawer-body textarea { font-size: 13px; }
+  .photo-drop .ico { font-size: 18px; }
+  .stat-share { display: flex; align-items: center; gap: 10px; min-width: 130px; }
+  .stat-share .bar-track { flex: 1; height: 7px; }
+  .stat-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .legend .sw { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+  .svc-comment { display: flex; gap: 8px; align-items: flex-start; }
+  .svc-comment .grow { min-width: 0; }
+  #svcDrawer .section-title { margin: 14px 0 8px; }
+  #svcDrawer .photo-drop { height: 68px; }
+  #svcDiagnostics { min-height: 62px; }
+  @media (max-width: 1280px) {
+    .filter-rail .field { width: 148px; }
+    .filter-rail .field.wide { width: 190px; }
+  }
+</style>
+</head>
+<body class="admin">
+  <div id="shell"></div>
 
-<div class="screen" id="a-pre-stock">
-  <div class="screentitle"><span class="num">04</span>Preorder — Stock</div>
-  <div class="screenmeta">/dashboard/preorder?type=stock · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab active">Stock</div><div class="tab">Закупки</div><div class="tab">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab">P2P</div><div class="tab">Статистика</div></div><div class="bar">Фильтры: Brand · Category · Subcategory · Q-ty · Price</div><table class="table"><tr><th>№</th><th>Image</th><th>Code</th><th>Description of Goods</th><th>Brand</th><th>Category</th><th>Stock price</th><th>Q-ty</th><th>Total $</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>Summary</b>итоги по выборке</div><div class="block"><b>Export</b>GET preorder/stock/fetch-data / fetch-products</div></div></div></div>
-  </div>
-</div>
+  <section id="screens">
+    <!-- ============================================================ CHAT -->
+    <div class="screen" data-screen="chat">
+      <div class="page">
+        <div class="page-head">
+          <div>
+            <h1>Чат</h1>
+            <div class="sub">Клиентские чаты и поддержка · realtime-канал chat-support · фильтр по странам и непрочитанным.</div>
+          </div>
+          <div class="page-actions">
+            <span class="badge badge-blue" id="chatUnreadBadge">3 непрочитанных</span>
+            <button class="btn btn-default btn-sm" data-chat-readall>Отметить прочитанными</button>
+          </div>
+        </div>
+        <div class="chat-layout">
+          <div class="chat-list">
+            <div class="chat-list-head">
+              <div class="search"><input class="input" id="chatSearch" placeholder="Name or ID" autocomplete="off"></div>
+              <div class="tabs chat-filter" id="chatFilterTabs">
+                <button class="tab active" data-chat-filter="all">Все</button>
+                <button class="tab" data-chat-filter="unread">Непрочитанные</button>
+              </div>
+            </div>
+            <div class="chat-items" id="chatItems"></div>
+          </div>
+          <div class="chat-main" id="chatMain"></div>
+        </div>
+      </div>
+    </div>
 
-<div class="screen" id="a-pre-purch">
-  <div class="screentitle"><span class="num">05</span>Preorder — Закупки — список поставщиков</div>
-  <div class="screenmeta">/dashboard/preorder?type=suppliers · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab active">Закупки</div><div class="tab">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab">P2P</div><div class="tab">Статистика</div></div><div class="bar">Apply Filters: Supplier Name · Date · Country</div><table class="table"><tr><th>Supplier Name</th><th>Country</th><th>Orders</th><th>Q-ty</th><th>Total $</th><th>Status</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="note">Состояния: suppliers → supplier → supplier-order → supplier-product → supplier-packing → supplier-imei (drill-down). Права: sales.purchase.orders/.order/.packing_list/.imei</div></div></div>
-  </div>
-</div>
+    <!-- ========================================================= PREORDER -->
+    <div class="screen" data-screen="preorder">
+      <div class="page">
+        <div class="page-head">
+          <div>
+            <h1>Продажи</h1>
+            <div class="sub">Склад, заказы поставщикам и клиентам, доставки, штрафы, P2P и статистика — мега-экран с табами.</div>
+          </div>
+          <div class="page-actions">
+            <span class="tag blue">USD</span>
+            <button class="btn btn-default btn-sm" data-export-table>Export Excel</button>
+          </div>
+        </div>
 
-<div class="screen" id="a-pre-purch-order">
-  <div class="screentitle"><span class="num">06</span>Preorder — Закупки — заказ поставщика</div>
-  <div class="screenmeta">/dashboard/preorder?type=suppliers · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab active">Закупки</div><div class="tab">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab">P2P</div><div class="tab">Статистика</div></div><div class="bar">Supplier: {name} · Order № · Order Date · Status</div><table class="table"><tr><th>Image</th><th>Code</th><th>Description of Goods</th><th>Model</th><th>Q-ty</th><th>Price</th><th>Total $</th><th>Warranty</th><th>Cargo</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>mark/{id}</b>пометки</div><div class="block"><b>change-order-product</b></div><div class="block"><b>IMEI сканер</b>scan-imei / imeis/{id}</div><div class="block"><b>Packing list</b></div><div class="block"><b>Export Excel</b>export-excel-orders / -products</div></div></div></div>
-  </div>
-</div>
+        <div class="tabs" id="poTabs">
+          <button class="tab active" data-po-tab="stock">Stock</button>
+          <button class="tab" data-po-tab="purchases">Закупки</button>
+          <button class="tab" data-po-tab="sales">Продажи</button>
+          <button class="tab" data-po-tab="delivery-customers">Доставка клиентам</button>
+          <button class="tab" data-po-tab="delivery-suppliers">Доставка от поставщиков</button>
+          <button class="tab" data-po-tab="penalty">Штрафы</button>
+          <button class="tab" data-po-tab="p2p">P2P</button>
+          <button class="tab" data-po-tab="stats">Статистика</button>
+        </div>
 
-<div class="screen" id="a-pre-sales">
-  <div class="screentitle"><span class="num">07</span>Preorder — Продажи — заказы клиентов</div>
-  <div class="screenmeta">/dashboard/preorder?type=customers-orders · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab">Закупки</div><div class="tab active">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab">P2P</div><div class="tab">Статистика</div></div><div class="bar">Apply Filters: Customer Name · Order № · Order Date · Status · Country</div><table class="table"><tr><th>Number order</th><th>Customer Name</th><th>Country</th><th>Q-ty</th><th>Total $</th><th>Status</th><th>Logistics</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>change-order-delivery-status</b></div><div class="block"><b>change-logistic</b></div><div class="block"><b>change-wholesale</b></div><div class="block"><b>update-bill-to</b></div><div class="block"><b>remove-pdf</b></div><div class="block"><b>rollback</b></div></div><div class="note">Состояния: customers-orders → customer-order → customer-packing-list → customer-imei. Export: export-excel-order(s), -products, -tax</div></div></div>
-  </div>
-</div>
+        <!-- stock -->
+        <div class="po-pane active" data-po-pane="stock">
+          <div class="filter-rail">
+            <div class="field"><label>Brand</label><select class="select" data-f="brand" data-opts="brands"></select></div>
+            <div class="field"><label>Country</label><select class="select" data-f="country" data-opts="countries"></select></div>
+            <div class="field wide"><label>Supplier Name</label><select class="select" data-f="supplier" data-opts="suppliers"></select></div>
+            <div class="field wide"><label>Search</label><div class="search"><input class="input" data-f="q" placeholder="Code / Model / Description"></div></div>
+            <div class="f-actions">
+              <button class="btn btn-default btn-sm" data-po-clear>Clear</button>
+              <button class="btn btn-primary btn-sm" data-po-apply>Apply Filters</button>
+            </div>
+          </div>
+          <div class="kpi-row" id="stockKpi"></div>
+          <div class="table-wrap" id="stockWrap"></div>
+        </div>
 
-<div class="screen" id="a-pre-deliv-c">
-  <div class="screentitle"><span class="num">08</span>Preorder — Доставка клиентам</div>
-  <div class="screenmeta">/dashboard/preorder?type=delivery-customers · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab">Закупки</div><div class="tab">Продажи</div><div class="tab active">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab">P2P</div><div class="tab">Статистика</div></div><div class="bar">Fetch-filter · даты from/to · folders</div><table class="table"><tr><th>Number order</th><th>Customer Name</th><th>Country</th><th>Delivery status</th><th>Checkpoint at</th><th>Pickup at</th><th>Q-ty</th><th>Total $</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><span class="btn primary">change-deliveries-status</span></div></div>
-  </div>
-</div>
+        <!-- purchases -->
+        <div class="po-pane" data-po-pane="purchases">
+          <div class="filter-rail">
+            <div class="field narrow"><label>Order №</label><input class="input" data-f="order" placeholder="10421"></div>
+            <div class="field wide"><label>Supplier Name</label><select class="select" data-f="supplier" data-opts="suppliers"></select></div>
+            <div class="field"><label>Brand</label><select class="select" data-f="brand" data-opts="brands"></select></div>
+            <div class="field"><label>Status</label><select class="select" data-f="status" data-opts="statuses"></select></div>
+            <div class="field narrow"><label>Date from</label><input class="input" type="date" data-f="from"></div>
+            <div class="field narrow"><label>Date to</label><input class="input" type="date" data-f="to"></div>
+            <div class="f-actions">
+              <button class="btn btn-default btn-sm" data-po-clear>Clear</button>
+              <button class="btn btn-primary btn-sm" data-po-apply>Apply Filters</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="purchasesWrap"></div>
+        </div>
 
-<div class="screen" id="a-pre-deliv-s">
-  <div class="screentitle"><span class="num">09</span>Preorder — Доставка поставщиков</div>
-  <div class="screenmeta">/dashboard/preorder?type=delivery-suppliers · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab">Закупки</div><div class="tab">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab active">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab">P2P</div><div class="tab">Статистика</div></div><div class="bar">Fetch-filter · folders</div><table class="table"><tr><th>Supplier</th><th>Order №</th><th>Status</th><th>Q-ty</th><th>Total $</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table></div></div>
-  </div>
-</div>
+        <!-- sales -->
+        <div class="po-pane" data-po-pane="sales">
+          <div class="filter-rail">
+            <div class="field narrow"><label>Order №</label><input class="input" data-f="order" placeholder="78410"></div>
+            <div class="field wide"><label>Customer Name</label><select class="select" data-f="customer" data-opts="customers"></select></div>
+            <div class="field"><label>Brand</label><select class="select" data-f="brand" data-opts="brands"></select></div>
+            <div class="field"><label>Country</label><select class="select" data-f="country" data-opts="countries"></select></div>
+            <div class="field narrow"><label>Date from</label><input class="input" type="date" data-f="from"></div>
+            <div class="field narrow"><label>Date to</label><input class="input" type="date" data-f="to"></div>
+            <div class="f-actions">
+              <button class="btn btn-default btn-sm" data-po-clear>Clear</button>
+              <button class="btn btn-primary btn-sm" data-po-apply>Apply Filters</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="salesWrap"></div>
+        </div>
 
-<div class="screen" id="a-pre-penalty">
-  <div class="screentitle"><span class="num">10</span>Preorder — Штрафы</div>
-  <div class="screenmeta">/dashboard/preorder?type=penalty-country · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab">Закупки</div><div class="tab">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab active">Штрафы</div><div class="tab">P2P</div><div class="tab">Статистика</div></div><div class="tabs"><div class="tab">penalty-country</div><div class="tab">penalty-supplier</div><div class="tab">penalty-client</div><div class="tab">penalty-number</div></div><table class="table"><tr><th>Country/Supplier/Client</th><th>Number order</th><th>Penalty price</th><th>Reasons</th><th>Status</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>mark-paid</b></div><div class="block"><b>update-qty</b></div><div class="block"><b>change-status</b></div></div></div></div>
-  </div>
-</div>
+        <!-- delivery to customers -->
+        <div class="po-pane" data-po-pane="delivery-customers">
+          <div class="filter-rail">
+            <div class="field narrow"><label>Order №</label><input class="input" data-f="order" placeholder="78410"></div>
+            <div class="field wide"><label>Customer Name</label><select class="select" data-f="party" data-opts="customers"></select></div>
+            <div class="field"><label>Country</label><select class="select" data-f="country" data-opts="countries"></select></div>
+            <div class="field"><label>Delivery Status</label><select class="select" data-f="status" data-opts="statuses"></select></div>
+            <div class="field narrow"><label>Date from</label><input class="input" type="date" data-f="from"></div>
+            <div class="field narrow"><label>Date to</label><input class="input" type="date" data-f="to"></div>
+            <div class="f-actions">
+              <button class="btn btn-default btn-sm" data-po-clear>Clear</button>
+              <button class="btn btn-primary btn-sm" data-po-apply>Apply Filters</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="deliveryClientsWrap"></div>
+        </div>
 
-<div class="screen" id="a-pre-p2p">
-  <div class="screentitle"><span class="num">11</span>Preorder — P2P trade</div>
-  <div class="screenmeta">/dashboard/preorder?type=p2p-trade · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab">Закупки</div><div class="tab">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab active">P2P</div><div class="tab">Статистика</div></div><div class="bar">fetch-filter-meta · fetch-current-bids / fetch-completed-bids</div><table class="table"><tr><th>Bid №</th><th>Product</th><th>Customer</th><th>Price offer</th><th>Q-ty</th><th>Status</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>remove-bid</b></div><div class="block"><b>Pusher: refresh-p2p</b>admin-handler-channel ⚠public</div></div><div class="note">История: fetch-history/{id}</div></div></div>
-  </div>
-</div>
+        <!-- delivery from suppliers -->
+        <div class="po-pane" data-po-pane="delivery-suppliers">
+          <div class="filter-rail">
+            <div class="field narrow"><label>Order №</label><input class="input" data-f="order" placeholder="55210"></div>
+            <div class="field wide"><label>Supplier Name</label><select class="select" data-f="party" data-opts="suppliers"></select></div>
+            <div class="field"><label>Country</label><select class="select" data-f="country" data-opts="countries"></select></div>
+            <div class="field"><label>Delivery Status</label><select class="select" data-f="status" data-opts="statuses"></select></div>
+            <div class="field narrow"><label>Date from</label><input class="input" type="date" data-f="from"></div>
+            <div class="field narrow"><label>Date to</label><input class="input" type="date" data-f="to"></div>
+            <div class="f-actions">
+              <button class="btn btn-default btn-sm" data-po-clear>Clear</button>
+              <button class="btn btn-primary btn-sm" data-po-apply>Apply Filters</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="deliverySuppliersWrap"></div>
+        </div>
 
-<div class="screen" id="a-pre-stats">
-  <div class="screentitle"><span class="num">12</span>Preorder — Статистика</div>
-  <div class="screenmeta">/dashboard/preorder?type=statistics-country · компонент AKt, HOC xb([type])</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item active">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab">Stock</div><div class="tab">Закупки</div><div class="tab">Продажи</div><div class="tab">Доставка клиентов</div><div class="tab">Доставка поставщиков</div><div class="tab">Штрафы</div><div class="tab">P2P</div><div class="tab active">Статистика</div></div><div class="bar">filters: from/to · country</div><div class="blocks"><div class="block"><b>Diagram</b>fetch-diagram</div><div class="block"><b>Customer diagram</b>fetch-customer-diagram</div><div class="block"><b>Chars diagram</b>fetch-chars-diagram</div><div class="block"><b>Rates</b>fetch-rates · Курс</div></div><table class="table"><tr><th>Brand</th><th>Category</th><th>Quantity</th><th>Amount</th><th>Average Rate</th><th>Warranty expenses</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>Sidebar stats</b>fetch-sidebar-stats</div><div class="block"><b>Warranty expenses</b></div></div></div></div>
-  </div>
-</div>
+        <!-- penalty -->
+        <div class="po-pane" data-po-pane="penalty">
+          <div class="tabs po-subtabs" id="penaltyTabs">
+            <button class="tab active" data-penalty-tab="country">Country</button>
+            <button class="tab" data-penalty-tab="supplier">Supplier</button>
+            <button class="tab" data-penalty-tab="client">Client</button>
+            <button class="tab" data-penalty-tab="number">Number</button>
+          </div>
+          <div class="filter-rail">
+            <div class="field wide"><label>Search</label><div class="search"><input class="input" data-f="q" placeholder="Order № / party / reason"></div></div>
+            <div class="field"><label>Paid</label><select class="select" data-f="paid">
+              <option value="">All</option>
+              <option value="paid">Paid</option>
+              <option value="unpaid">Unpaid</option>
+            </select></div>
+            <div class="f-actions">
+              <button class="btn btn-default btn-sm" data-po-clear>Clear</button>
+              <button class="btn btn-primary btn-sm" data-po-apply>Apply Filters</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="penaltyWrap"></div>
+        </div>
 
-<div class="screen" id="a-set-chars">
-  <div class="screentitle"><span class="num">13</span>Settings — Chars settings</div>
-  <div class="screenmeta">/dashboard/settings/catalog/chars-settings · API: catalog/chars/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="blocks"><div class="block"><b>Дерево характеристик</b>TreeView: группы → характеристики</div><div class="block"><b>Правая панель — редактирование</b></div></div><div class="modal" style="width:640px"><h4>Характеристика</h4><div class="grid g2"><div class="field">Название характеристики *</div><div class="field">Название *</div><div class="field">Название в продукт инфо (RU)</div><div class="field">Название в продукт инфо (EN)</div><div class="field">Название товара в прайслисте (приложение)</div><div class="field">Название товара в инфо</div></div><div class="blocks"><div class="block"><b>Использовать как</b>Группировать по / Фильтровать по / Сортировать по</div><div class="block"><b>Вывод в прайс листе</b></div><div class="block"><b>Вывести в фильтре</b></div><div class="block"><b>Обязательно для заполнения</b></div></div><div class="blocks"><div class="block"><b>Тип диаграмы</b>Круговая / Линейная + Цвет диаграммы</div><div class="block"><b>Иконка / Цвет</b></div><div class="block"><b>Добавить эмоджи в название</b></div></div><span class="btn">Добавить значение</span><span class="btn primary">Сохранить</span></div></div></div>
-  </div>
-</div>
+        <!-- p2p -->
+        <div class="po-pane" data-po-pane="p2p">
+          <div class="tabs po-subtabs" id="p2pTabs">
+            <button class="tab active" data-p2p-tab="current">Current bids</button>
+            <button class="tab" data-p2p-tab="completed">Completed bids</button>
+          </div>
+          <div class="filter-rail">
+            <div class="field wide"><label>Search</label><div class="search"><input class="input" data-f="q" placeholder="Product / supplier"></div></div>
+            <div class="field"><label>Country</label><select class="select" data-f="country" data-opts="countries"></select></div>
+            <div class="f-actions">
+              <button class="btn btn-default btn-sm" data-po-clear>Clear</button>
+              <button class="btn btn-primary btn-sm" data-po-apply>Apply Filters</button>
+            </div>
+          </div>
+          <div class="table-wrap" id="p2pWrap"></div>
+        </div>
 
-<div class="screen" id="a-set-nom">
-  <div class="screentitle"><span class="num">14</span>Settings — Nomenclature</div>
-  <div class="screenmeta">/dashboard/settings/catalog/nomenclature · API: catalog/{brand,category,product,tree}/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="layout" style="gap:8px"><div style="width:280px"><div class="block"><b>Дерево</b>Бренд → Категория → Товар (TreeView)</div><span class="btn">Добавить код +</span></div><div style="flex:1"><div class="modal" style="width:100%"><h4>Товар / Бренд / Категория</h4><div class="grid g3"><div class="field">Бренд *</div><div class="field">Группа товаров *</div><div class="field">Название *</div><div class="field">Код товара</div><div class="field">Код производства</div><div class="field">Код товара ВЭД</div><div class="field">Автогенерация кода товара</div><div class="field">Кол-во символов</div><div class="field">Вес г</div><div class="field">Название бренда</div><div class="field">Логотип (белый фон)</div><div class="field">Логотип (темный фон)</div><div class="field">Константа выбора параметров (RU)</div><div class="field">Константа выбора параметров (EN)</div><div class="field">Описание</div></div><div class="block"><b>Изображения</b>upload-images</div><span class="btn primary">Сохранить</span></div></div></div></div></div>
-  </div>
-</div>
+        <!-- statistics -->
+        <div class="po-pane" data-po-pane="stats">
+          <div class="segmented" id="statsRange">
+            <button data-stats-range="1M">1M</button>
+            <button data-stats-range="3M" class="active">3M</button>
+            <button data-stats-range="6M">6M</button>
+            <button data-stats-range="12M">12M</button>
+          </div>
+          <div id="statsWrap"></div>
+        </div>
+      </div>
+    </div>
 
-<div class="screen" id="a-set-cargo">
-  <div class="screentitle"><span class="num">15</span>Settings — Cargo</div>
-  <div class="screenmeta">/dashboard/settings/catalog/cargo · API: catalog/cargo/{fetch-meta,fetch-products,save,batch-save}</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="tabs"><div class="tab active">Клиенты</div><div class="tab">Поставщики</div></div><table class="table"><tr><th>Название</th><th>Карго (UZS)</th><th>…</th><th>…</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><span class="btn">Save</span><span class="btn">Batch save</span></div></div>
-  </div>
-</div>
+    <!-- ========================================================== SERVICE -->
+    <div class="screen" data-screen="service">
+      <div class="page">
+        <div class="page-head">
+          <div>
+            <h1>Сервис</h1>
+            <div class="sub">Возвраты по странам реализации · диагностика, комментарии и фото сервисной команды.</div>
+          </div>
+          <div class="page-actions">
+            <a class="btn btn-default btn-sm" href="admin-catalog.html#reason-settings">Причины возврата</a>
+            <button class="btn btn-default btn-sm" data-export-table>Export Excel</button>
+          </div>
+        </div>
+        <div class="filters">
+          <div class="field"><label>Country</label><select class="select" data-sf="country" data-opts="countries"></select></div>
+          <div class="field narrow"><label>Date of Sale</label><input class="input" type="date" data-sf="date"></div>
+          <div class="field"><label>Status name</label><select class="select" data-sf="cust" data-opts="custStatuses"></select></div>
+          <div class="field"><label>Delivery Status</label><select class="select" data-sf="delivery" data-opts="statuses"></select></div>
+          <div class="field wide"><label>Search</label><div class="search"><input class="input" data-sf="q" placeholder="Serial number / Order №"></div></div>
+          <div class="f-actions">
+            <button class="btn btn-default btn-sm" data-svc-clear>Clear</button>
+            <button class="btn btn-primary btn-sm" data-svc-apply>Apply Filters</button>
+          </div>
+        </div>
+        <div class="table-wrap" id="serviceWrap"></div>
+      </div>
+    </div>
+  </section>
 
-<div class="screen" id="a-set-perc">
-  <div class="screentitle"><span class="num">16</span>Settings — Percents (наценки)</div>
-  <div class="screenmeta">/dashboard/settings/catalog/percents · API: settings/percents/* (НОВОЕ)</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar">Brand / Category</div><table class="table"><tr><th>Brand / Category</th><th>% cats</th><th>% char-groups</th><th>Visibility</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>change-cat-percent</b></div><div class="block"><b>change-cat-visibility</b></div><div class="block"><b>change-char-group-percent</b></div><div class="block"><b>change-char-group-visibility</b></div></div></div></div>
-  </div>
-</div>
+  <!-- order / service drawers -->
+  <div class="drawer-backdrop" id="poDrawer" hidden><div class="drawer" id="poDrawerContent"></div></div>
+  <div class="drawer-backdrop" id="svcDrawer" hidden><div class="drawer" id="svcDrawerContent"></div></div>
 
-<div class="screen" id="a-set-reason">
-  <div class="screentitle"><span class="num">17</span>Settings — Reason settings</div>
-  <div class="screenmeta">/dashboard/settings/reason-settings · API: settings/reason-return/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><table class="table"><tr><th>Название</th><th>Сумма штрафа</th><th>Tax</th><th>Порядок</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal"><h4>Причина возврата</h4><div class="field">Название</div><div class="field">Сумма штрафа</div><div class="field">Tax:</div><span class="btn primary">Сохранить</span></div></div></div>
+  <!-- change delivery status -->
+  <div class="modal-backdrop" id="statusModal" hidden style="z-index:940">
+    <div class="modal narrow" role="dialog" aria-modal="true">
+      <div class="modal-head"><h3>Change delivery status</h3><button class="modal-close" data-close>×</button></div>
+      <div class="modal-body">
+        <div class="field"><label>Delivery Status</label><select class="select" id="statusSelect"></select></div>
+        <div class="hint" style="margin-top:10px">Статус меняется локально; backend в прототипе не вызывается.</div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-default btn-sm" data-close>Cancel</button>
+        <button class="btn btn-primary btn-sm" id="statusApply">Apply</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="screen" id="a-set-whs">
-  <div class="screentitle"><span class="num">18</span>Settings — Wholesale types</div>
-  <div class="screenmeta">/dashboard/settings/wholesale-types · API: settings/wholesale-types/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><table class="table"><tr><th>Название в админке</th><th>Название Ru</th><th>Название En</th><th>Название в приложении Ru</th><th>Название в приложении En</th><th>Иконки</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal"><h4>Тип опта</h4><div class="field">Название в админке</div><div class="field">Название Ru</div><div class="field">Название En</div><div class="field">Название в приложении Ru</div><div class="field">Название в приложении En</div><span class="btn">Upload: Иконка (светлый фон)</span><span class="btn">Upload: Иконка (темный фон)</span><span class="btn primary">Сохранить</span></div></div></div>
+  <!-- generic confirm -->
+  <div class="modal-backdrop" id="confirmModal" hidden style="z-index:960">
+    <div class="modal narrow" role="dialog" aria-modal="true">
+      <div class="modal-head"><h3 id="confirmTitle">Подтверждение</h3><button class="modal-close" data-close>×</button></div>
+      <div class="modal-body"><p class="muted" id="confirmText" style="font-size:13px"></p></div>
+      <div class="modal-foot">
+        <button class="btn btn-default btn-sm" data-close>Отмена</button>
+        <button class="btn btn-primary btn-sm" id="confirmOk">Подтвердить</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="screen" id="a-set-ds">
-  <div class="screentitle"><span class="num">19</span>Settings — Delivery statuses</div>
-  <div class="screenmeta">/dashboard/settings/delivery-status · API: settings/delivery-status/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="blocks"><div class="block"><b>Группы статусов</b>attach-group / sort-statuses</div><div class="block"><b>handle-radio / handle-checkbox</b>флаги поведения</div></div><table class="table"><tr><th>Иконка</th><th>Название</th><th>Название Ru</th><th>Название En</th><th>Цвет</th><th>Цвет тёмная версия</th><th>Выдача</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><span class="btn primary">Add New Status</span></div></div>
-  </div>
-</div>
+  <a class="proto-pill" href="index.html">🛈 Прототип Fimex <span class="sep">·</span> вымышленные данные <span class="sep">·</span> ← Карта платформы</a>
+  <div class="toast-host"></div>
 
-<div class="screen" id="a-set-const">
-  <div class="screentitle"><span class="num">20</span>Settings — Constants</div>
-  <div class="screenmeta">/dashboard/settings/constants · API: settings/constants/* · переопределение текстовок iOS/андроид (fi_/ma_)</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar">Фильтры: Все группы · Все ключи · Оба приложения · Search</div><table class="table"><tr><th>Ключ</th><th>Группа</th><th>Экран</th><th>Текст RU</th><th>Текст EN</th><th>Где применить</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal"><h4>Добавить переопределение</h4><div class="field">Ключ (как в коде, префикс fi_/ma_ добавится)</div><div class="field">Группа</div><div class="field">Экран (необязательно, напр. OrderDetailViewController)</div><div class="field">Текст RU</div><div class="field">Текст EN</div><span class="btn primary">Создать</span></div></div></div>
-  </div>
-</div>
+  <script src="assets/demo-data.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="assets/admin-shell.js"></script>
+  <script>
+  (function () {
+    'use strict';
 
-<div class="screen" id="a-set-pen">
-  <div class="screentitle"><span class="num">21</span>Settings — Penalty</div>
-  <div class="screenmeta">/dashboard/settings/penalty · API: settings/penalty-category/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar">Brand / Category</div><table class="table"><tr><th>Brand / Category</th><th>Penalty %</th><th>…</th></tr><tr><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td></tr></table><span class="btn primary">Сохранить</span></div></div>
-  </div>
-</div>
+    /* ---------------------------------------------------------------- icons */
+    var SVG = {
+      eye: '<circle cx="12" cy="12" r="3"/><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>',
+      download: '<path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/>',
+      camera: '<path d="M4 7h3l2-2h6l2 2h3v12H4V7Z"/><circle cx="12" cy="13" r="3.5"/>',
+      print: '<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><path d="M6 14h12v7H6z"/>',
+      trash: '<path d="M4 7h16M9 7V5h6v2M6 7l1 14h10l1-14M10 11v6M14 11v6"/>',
+      check: '<path d="m4 12 5 5L20 6"/>',
+      refresh: '<path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/>'
+    };
+    function icon(name, size) {
+      return '<svg width="' + (size || 15) + '" height="' + (size || 15) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (SVG[name] || '') + '</svg>';
+    }
 
-<div class="screen" id="a-set-users">
-  <div class="screentitle"><span class="num">22</span>Settings — Users</div>
-  <div class="screenmeta">/dashboard/settings/users · API: settings/users/* + privs/* + autologin</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar"><span class="btn primary">Add Team Member</span></div><table class="table"><tr><th>Name</th><th>Email</th><th>Роль</th><th>Updated</th><th>Actions (edit / autologin / delete)</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal"><h4>Team member</h4><div class="field">Name</div><div class="field">Email</div><div class="field">Роль</div><div class="field">Пароль</div><div class="field">Повторите пароль</div><span class="btn primary">Create</span></div><div class="note">privs: fetch-menu-list, fetch-menu-privs, save-page-privs, save-geo-privs, change-status. autologin — magic-ссылка для входа за пользователя/поставщика (F9)</div></div></div>
-  </div>
-</div>
+    /* ---------------------------------------- local fictional service cases */
+    var SERVICE = [
+      { id: 'SVC-2041', order: '78412', sale: '04.11.2026', country: 'UAE', brand: 'Apple', model: 'iPhone 18 Pro 256Gb Black', serial: '356812345678901', reason: 'Разбит экран', cust: 'Approved', sup: 'In review', delivery: 'В ожидании выдачи', loss: 22, discount: 940, old: 1234, photo: true, diagnostics: 'Экран разбит в верхнем левом углу, тачскрин работает. Требуется замена дисплейного модуля.' },
+      { id: 'SVC-2042', order: '78416', sale: '05.11.2026', country: 'UAE', brand: 'Apple', model: 'iPhone 17 Pro 256Gb Blue', serial: '356823456789012', reason: 'Не включается', cust: 'Waiting', sup: 'Pending', delivery: 'Ожидает сборки', loss: 35, discount: 690, old: 1080, photo: false, diagnostics: '' },
+      { id: 'SVC-2043', order: '78421', sale: '06.11.2026', country: 'Kazakhstan', brand: 'Apple', model: 'iPhone 18 Pro Max 512Gb Desert', serial: '356834567890123', reason: 'Брак аккумулятора', cust: 'Approved', sup: 'Approved', delivery: 'В ожидании вылета', loss: 12, discount: 1280, old: 1479, photo: true, diagnostics: 'Ёмкость АКБ 71%, циклов 412. Замена по гарантии.' },
+      { id: 'SVC-2044', order: '78424', sale: '07.11.2026', country: 'UAE', brand: 'Samsung', model: 'Galaxy S26 Ultra 512Gb Titanium', serial: '356845678901234', reason: 'Не тот цвет', cust: 'Rejected', sup: 'Rejected', delivery: 'Выдан', loss: 8, discount: 1080, old: 1180, photo: false, diagnostics: 'Клиент заказал Titanium, получил Black. Возврат отклонён — товар соответствует заказу.' },
+      { id: 'SVC-2045', order: '78429', sale: '08.11.2026', country: 'Uzbekistan', brand: 'Xiaomi', model: 'Redmi Note 15 Pro 256Gb Black', serial: '356856789012345', reason: 'Повреждение при доставке', cust: 'Approved', sup: 'In review', delivery: 'Вылетел от поставщика', loss: 18, discount: 240, old: 268, photo: true, diagnostics: '' },
+      { id: 'SVC-2046', order: '78433', sale: '09.11.2026', country: 'UAE', brand: 'Apple', model: 'iPhone 18 Pro 256Gb Silver', serial: '356867890123456', reason: 'Не работает камера', cust: 'Waiting', sup: 'Pending', delivery: 'Ожидает сборки', loss: 15, discount: 1050, old: 1292, photo: false, diagnostics: '' },
+      { id: 'SVC-2047', order: '78435', sale: '10.11.2026', country: 'Saudi Arabia', brand: 'Google', model: 'Pixel 11 Pro 256Gb Obsidian', serial: '356878901234567', reason: 'Не включается', cust: 'Approved', sup: 'Approved', delivery: 'В ожидании выдачи', loss: 28, discount: 780, old: 1090, photo: true, diagnostics: 'Плата не реагирует на зарядку, следов влаги нет. Диагностика в процессе.' },
+      { id: 'SVC-2048', order: '78440', sale: '11.11.2026', country: 'UAE', brand: 'Apple', model: 'MacBook Pro 14 M5 512Gb Silver', serial: '356889012345678', reason: 'Разбит экран', cust: 'Rejected', sup: 'Rejected', delivery: 'Выдан', loss: 40, discount: 1280, old: 2140, photo: false, diagnostics: 'Повреждение механическое, не гарантийный случай.' },
+      { id: 'SVC-2049', order: '78444', sale: '12.11.2026', country: 'Qatar', brand: 'Apple', model: 'AirPods Pro 3 White', serial: '356890123456789', reason: 'Возврат без причины', cust: 'Waiting', sup: 'In review', delivery: 'Ожидает сборки', loss: 5, discount: 220, old: 244, photo: false, diagnostics: '' },
+      { id: 'SVC-2050', order: '78449', sale: '13.11.2026', country: 'Kazakhstan', brand: 'Apple', model: 'iPad Pro 13 M5 256Gb Space Black', serial: '356901234567890', reason: 'Брак аккумулятора', cust: 'Approved', sup: 'Approved', delivery: 'В ожидании вылета', loss: 10, discount: 1340, old: 1490, photo: true, diagnostics: '' }
+    ];
 
-<div class="screen" id="a-set-countries">
-  <div class="screentitle"><span class="num">23</span>Settings — Countries</div>
-  <div class="screenmeta">/dashboard/settings/countries · матрица закупка × реализация</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><table class="table"><tr><th>Country of purchase</th><th>Country of Implementation →</th><th>…</th><th>…</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal" style="width:640px"><h4>Edit Country</h4><div class="grid g2"><div class="field">Название *</div><div class="field">Сокращенное Название *</div><div class="field">Валюта *</div><div class="field">Time Zone *</div><div class="field">Префикс констант</div><div class="field">Название приложения</div><div class="field">Контрольная точка накладных *</div><div class="field">Контрольная точка накладных по факту *</div><div class="field">Кол-во дней для вывода заказов полученных товаров</div><div class="field">Минимальная сумма заказа за период *</div><div class="field">Шаг суммы в P2p трейде *</div><div class="field">Оплата по умолчанию</div></div><div class="block"><b>Регионы</b>create-region / sort-regions</div><div class="block"><b>Лого в стикере</b>Upload</div><span class="btn primary">Сохранить</span></div><div class="note">+ Purchase-подраздел (НОВОЕ): settings/countries/purchase/* — закупочные настройки по странам, delivery-days</div></div></div>
-  </div>
-</div>
+    var CARGO = {};
 
-<div class="screen" id="a-cust">
-  <div class="screentitle"><span class="num">24</span>Customers — список</div>
-  <div class="screenmeta">/dashboard/settings/customers/:id_country · API: customers/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar">Filters: fetch-filters · search-customers-by-country · <span class="btn primary">Add New</span></div><table class="table"><tr><th>User Name</th><th>Company name</th><th>Countries / Regions</th><th>Status</th><th>Subscription</th><th>Balance/Deposit/Penalty</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal" style="width:640px"><h4>Client card</h4><div class="grid g2"><div class="field">Company name</div><div class="field">E-mail *</div><div class="field">Company phone</div><div class="field">Company address</div><div class="field">Contract</div><div class="field">TRN / TRN Number</div><div class="field">License</div><div class="field">License end date</div><div class="field">Language *</div><div class="field">Wholesale *</div><div class="field">Mode of payment</div><div class="field">Password *</div></div><div class="blocks"><div class="block"><b>Флаги</b>isEnableAppSubscription / isEnableCompanies / isEnableCustomerCreatable / isFreeZone / Reseller</div><div class="block"><b>Send Message</b></div></div><span class="btn primary">Save</span><span class="btn">Delete Company</span></div><div class="note">Payments: fetch-list/create/update/delete + fetch-last-date. История и чат — отдельные роуты</div></div></div>
-  </div>
-</div>
+    /* ---------------------------------------------------------------- state */
+    var chats = JSON.parse(JSON.stringify(Demo.chats));
+    var store = {
+      chat: { activeId: chats[0].id, filter: 'all', q: '' },
+      po: {
+        tab: 'stock',
+        flt: {
+          stock: { brand: '', country: '', supplier: '', q: '' },
+          purchases: { order: '', supplier: '', brand: '', status: '', from: '', to: '' },
+          sales: { order: '', customer: '', brand: '', country: '', from: '', to: '' },
+          'delivery-customers': { order: '', party: '', country: '', status: '', from: '', to: '' },
+          'delivery-suppliers': { order: '', party: '', country: '', status: '', from: '', to: '' },
+          penalty: { q: '', paid: '' },
+          p2p: { q: '', country: '' }
+        },
+        stockOpen: {},
+        penaltyTab: 'country',
+        p2pTab: 'current',
+        p2pRemoved: {},
+        penaltyPaid: {},
+        status: { sales: {}, deliveries: {} },
+        statusTarget: null,
+        currentOrder: null
+      },
+      service: { flt: { country: '', date: '', cust: '', delivery: '', q: '' }, activeId: null },
+      svcDraft: null,
+      confirmCb: null
+    };
 
-<div class="screen" id="a-cust-hist">
-  <div class="screentitle"><span class="num">25</span>Customers — история</div>
-  <div class="screenmeta">/dashboard/settings/customers/history/:id_country/:id_customer</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar">Date range picker (DD.MM.YY)</div><div class="tabs"><div class="tab active">ORDERS</div><div class="tab">P2P ORDERS</div><div class="tab">P2P</div></div><table class="table"><tr><th>Date</th><th>Order №</th><th>Description of Goods</th><th>Q-ty</th><th>Price</th><th>Total $</th><th>Status</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table></div></div>
-  </div>
-</div>
+    /* -------------------------------------------------------------- helpers */
+    function money(n) { return FX.money(n, '$'); }
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+    function nowLabel() {
+      var d = new Date();
+      return FX.date(d.getFullYear(), d.getMonth() + 1, d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+    }
+    function countryAbbr(name) {
+      var c = FX.by(Demo.countries, 'name', name);
+      return c ? c.abbr : 'AE';
+    }
+    function flagOf(name) { return FimexAdmin.flag(countryAbbr(name)); }
+    function statusColor(name) {
+      var s = FX.by(Demo.statuses, 'ru', name);
+      return s ? s.color : '#9ea2b2';
+    }
+    function findProduct(name) {
+      return FX.by(Demo.products, 'name', name) || Demo.products[0];
+    }
+    function detailItem(label, value) {
+      return '<div><div class="lbl">' + label + '</div><div class="val">' + value + '</div></div>';
+    }
+    function statusCell(name, color) {
+      return '<span class="status-cell"><span class="dot" style="background:' + (color || statusColor(name)) + '"></span>' + FX.esc(name) + '</span>';
+    }
+    function statusBadge(name, color) {
+      var c = color || statusColor(name);
+      return '<span class="badge" style="background:' + c + '1a;color:' + c + '">' + FX.esc(name) + '</span>';
+    }
+    function custBadge(s) {
+      var cls = s === 'Approved' ? 'badge-green' : s === 'Waiting' ? 'badge-orange' : s === 'Rejected' ? 'badge-red' : 'badge-gray';
+      return '<span class="badge ' + cls + '">' + FX.esc(s) + '</span>';
+    }
+    function supBadge(s) {
+      var cls = s === 'Approved' ? 'badge-green' : s === 'In review' ? 'badge-blue' : s === 'Pending' ? 'badge-orange' : 'badge-red';
+      return '<span class="badge ' + cls + '">' + FX.esc(s) + '</span>';
+    }
+    function inDateRange(ruDate, from, to) {
+      if (!from && !to) return true;
+      var m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(ruDate || '');
+      if (!m) return true;
+      var d = new Date(+m[3], +m[2] - 1, +m[1]);
+      if (from) { var a = new Date(from + 'T00:00:00'); if (d < a) return false; }
+      if (to) { var b = new Date(to + 'T23:59:59'); if (d > b) return false; }
+      return true;
+    }
+    function toISODate(ruDate) {
+      var m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(ruDate || '');
+      return m ? m[3] + '-' + m[2] + '-' + m[1] : '';
+    }
+    function emptyRow(cols, text) {
+      return '<tr><td colspan="' + cols + '" class="table-empty">' + FX.esc(text) + '</td></tr>';
+    }
+    function tools(info, hint) {
+      return '<div class="table-tools"><div class="row-info">' + info + '</div><div class="spacer"></div>' +
+        (hint ? '<span class="hint">' + hint + '</span>' : '') + '</div>';
+    }
+    function kpi(label, value, hint, hintClass) {
+      return '<div class="kpi"><div class="label">' + label + '</div><div class="value">' + value + '</div>' +
+        '<div class="hint' + (hintClass ? ' ' + hintClass : '') + '">' + (hint || '') + '</div></div>';
+    }
 
-<div class="screen" id="a-sup">
-  <div class="screentitle"><span class="num">26</span>Suppliers — список</div>
-  <div class="screenmeta">/dashboard/settings/suppliers/:id_country · API: suppliers/* + catalog-access (НОВОЕ)</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar">Filters: fetch-filter-statuses · fetch-managers · <span class="btn primary">Add</span></div><table class="table"><tr><th>Name</th><th>Company name</th><th>Phone</th><th>Email</th><th>Purchases</th><th>Status</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal" style="width:640px"><h4>Supplier</h4><div class="grid g2"><div class="field">Name *</div><div class="field">Company name</div><div class="field">Email *</div><div class="field">Phone</div><div class="field">Company Address</div><div class="field">TRN / TRN Number</div><div class="field">License *</div><div class="field">License end date</div><div class="field">Purchases *</div><div class="field">Password *</div><div class="field">Repeat password *</div><div class="field">Comment</div></div><div class="block"><b>Documents</b>Upload</div><div class="block"><b>Admin account</b></div><div class="block"><b>Catalog access</b>catalog-access / save-access — НОВОЕ</div><span class="btn primary">Save</span></div></div></div>
-  </div>
-</div>
+    /* --------------------------------------------------------------- selects */
+    var OPTIONS = {
+      brands: { label: 'All brands', values: function () { return Demo.brands.map(function (b) { return b.name; }); } },
+      countries: { label: 'All countries', values: function () { return Demo.countries.map(function (c) { return c.name; }); } },
+      suppliers: { label: 'All suppliers', values: function () { return Demo.suppliers.map(function (s) { return s.name; }); } },
+      customers: { label: 'All customers', values: function () { return Demo.customers.map(function (c) { return c.name; }); } },
+      statuses: { label: 'All statuses', values: function () { return Demo.statuses.map(function (s) { return s.ru; }); } },
+      custStatuses: { label: 'All statuses', values: function () { return ['Waiting', 'Approved', 'Rejected', 'Not in the system.']; } }
+    };
+    function fillSelects() {
+      FX.qa('[data-opts]').forEach(function (sel) {
+        var def = OPTIONS[sel.getAttribute('data-opts')];
+        if (!def) return;
+        sel.innerHTML = '<option value="">' + def.label + '</option>' + def.values().map(function (v) {
+          return '<option value="' + FX.esc(v) + '">' + FX.esc(v) + '</option>';
+        }).join('');
+      });
+    }
 
-<div class="screen" id="a-pay">
-  <div class="screentitle"><span class="num">27</span>Payments — печатные формы</div>
-  <div class="screenmeta">/dashboard/settings/payment/{customers,suppliers}/… · 8 форм</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="blocks"><div class="block"><b>customers/:impl/ballance/cash_receipt</b></div><div class="block"><b>customers/:impl/ballance/cash_refund</b></div><div class="block"><b>customers/:impl/penalty/cash_receipt</b></div><div class="block"><b>customers/:impl/penalty/cash_refund</b></div><div class="block"><b>customers/:impl/deposit/cash_receipt</b></div><div class="block"><b>customers/:impl/deposit/cash_refund</b></div><div class="block"><b>suppliers/cash_receipt</b></div><div class="block"><b>suppliers/cash_refund</b></div></div><div class="note">Компоненты Qce/Jce/Zce/tle — receipt/refund шаблоны</div></div></div>
-  </div>
-</div>
+    /* ================================================================== CHAT */
+    function activeChat() {
+      return FX.by(chats, 'id', store.chat.activeId) || null;
+    }
+    function chatUnreadTotal() {
+      return chats.reduce(function (n, c) { return n + (c.unread || 0); }, 0);
+    }
+    function syncChatBadges() {
+      var total = chatUnreadTotal();
+      var side = FX.q('.side-item[data-screen="chat"] .side-badge');
+      if (side) { if (total) side.textContent = String(total); else side.remove(); }
+      var head = FX.q('#chatUnreadBadge');
+      if (head) head.textContent = total ? total + ' непрочитанных' : 'Все прочитаны';
+    }
+    function renderChatList() {
+      var box = FX.q('#chatItems');
+      if (!box) return;
+      var q = store.chat.q.toLowerCase().trim();
+      var list = chats.filter(function (c) {
+        if (store.chat.filter === 'unread' && !c.unread) return false;
+        if (!q) return true;
+        return (c.name + ' ' + c.company + ' ' + c.id + ' ' + c.country).toLowerCase().indexOf(q) !== -1;
+      });
+      if (!list.length) {
+        box.innerHTML = '<div class="empty"><div class="icon">💬</div><h4>No Chats</h4><p>Нет чатов по выбранному фильтру или поиску.</p></div>';
+        syncChatBadges();
+        return;
+      }
+      box.innerHTML = list.map(function (c) {
+        return '<div class="chat-item' + (c.id === store.chat.activeId ? ' active' : '') + '" data-chat-id="' + c.id + '">' +
+          '<span class="avatar ava">' + FX.initials(c.name) + '</span>' +
+          '<div class="body">' +
+            '<div class="top"><b>' + FX.esc(c.name) + '</b><span class="time">' + FX.esc(c.lastAt) + '</span></div>' +
+            '<div class="company">' + flagOf(c.country) + ' ' + FX.esc(c.company) + ' · ID ' + c.id + '</div>' +
+            '<div class="last-row"><span class="last">' + FX.esc(c.last || '—') + '</span>' +
+              (c.unread ? '<span class="unread">' + c.unread + '</span>' : '') + '</div>' +
+          '</div></div>';
+      }).join('');
+      syncChatBadges();
+    }
+    function renderConversation() {
+      var box = FX.q('#chatMain');
+      if (!box) return;
+      var chat = activeChat();
+      if (!chat) {
+        box.innerHTML = '<div class="empty"><div class="icon">💬</div><h4>Empty chat</h4><p>Выберите чат в списке слева.</p></div>';
+        return;
+      }
+      var lastMeIdx = -1;
+      chat.messages.forEach(function (m, i) { if (m.from === 'me') lastMeIdx = i; });
+      var msgs = chat.messages.map(function (m, i) {
+        return '<div class="bubble ' + (m.from === 'me' ? 'me' : 'them') + '">' + FX.esc(m.text) +
+          '<span class="at">' + FX.esc(m.at) + '</span></div>' +
+          (i === lastMeIdx ? '<div class="chat-seen">Seen</div>' : '');
+      }).join('');
+      var body = chat.messages.length
+        ? '<div class="chat-date">20.11.2026</div>' + msgs
+        : '<div class="empty"><div class="icon">✉️</div><h4>Empty chat</h4><p>Сообщений пока нет. Напишите первым.</p></div>';
+      box.innerHTML =
+        '<div class="chat-head">' +
+          '<span class="avatar">' + FX.initials(chat.name) + '</span>' +
+          '<div class="who grow"><b>' + FX.esc(chat.name) + '</b>' +
+          '<span>' + flagOf(chat.country) + ' ' + FX.esc(chat.country) + ' · ' + FX.esc(chat.company) + ' · ID ' + chat.id + '</span></div>' +
+          '<button class="btn btn-ghost btn-sm" data-chat-clear>' + icon('trash') + 'Clear</button>' +
+        '</div>' +
+        '<div class="chat-msgs" id="chatMsgs">' + body + '</div>' +
+        '<div class="chat-compose">' +
+          '<input class="input" id="chatInput" placeholder="Write a message…" autocomplete="off">' +
+          '<button class="btn btn-primary" data-chat-send>Send</button>' +
+        '</div>';
+      var msgsBox = FX.q('#chatMsgs');
+      if (msgsBox) msgsBox.scrollTop = msgsBox.scrollHeight;
+    }
+    function selectChat(id) {
+      store.chat.activeId = id;
+      var c = activeChat();
+      if (c) c.unread = 0;
+      renderChatList();
+      renderConversation();
+    }
+    function sendChat() {
+      var inp = FX.q('#chatInput');
+      if (!inp) return;
+      var text = inp.value.trim();
+      if (!text) { inp.focus(); return; }
+      var chat = activeChat();
+      if (!chat) return;
+      var d = new Date();
+      var at = pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+      chat.messages.push({ from: 'me', text: text, at: at });
+      chat.last = text;
+      chat.lastAt = at;
+      renderChatList();
+      renderConversation();
+      var again = FX.q('#chatInput');
+      if (again) again.focus();
+    }
 
-<div class="screen" id="a-set-curr">
-  <div class="screentitle"><span class="num">28</span>Settings — Currencies</div>
-  <div class="screenmeta">/dashboard/settings/currencies · API: settings/currencies/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar"><span class="btn primary">+ Add currency</span></div><table class="table"><tr><th>Name</th><th>ISO</th><th>Symbol</th><th>Currency rate</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal"><h4>Unlock</h4><div class="field">Password</div><span class="btn primary">Unlock</span><div class="note">unlock защищён паролем</div></div></div></div>
-  </div>
-</div>
+    /* ============================================================== PREORDER */
+    function showPoTab(key) {
+      store.po.tab = key;
+      FX.qa('#poTabs [data-po-tab]').forEach(function (t) {
+        t.classList.toggle('active', t.getAttribute('data-po-tab') === key);
+      });
+      FX.qa('[data-po-pane]').forEach(function (p) {
+        p.classList.toggle('active', p.getAttribute('data-po-pane') === key);
+      });
+      renderPane(key);
+    }
+    function renderPane(key) {
+      if (key === 'stock') renderStock();
+      else if (key === 'purchases') renderPurchases();
+      else if (key === 'sales') renderSales();
+      else if (key === 'delivery-customers') renderDeliveries('client');
+      else if (key === 'delivery-suppliers') renderDeliveries('supplier');
+      else if (key === 'penalty') renderPenalty();
+      else if (key === 'p2p') renderP2P();
+      else if (key === 'stats') renderStats();
+    }
 
-<div class="screen" id="a-set-log">
-  <div class="screentitle"><span class="num">29</span>Settings — Logistics</div>
-  <div class="screenmeta">/dashboard/settings/logistics/:id_country · API: settings/logistics/* (НОВОЕ)</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar"><span class="btn primary">Add company</span></div><table class="table"><tr><th>Name</th><th>Company name</th><th>Phone</th><th>Company address</th><th>License</th><th>License end date</th><th>Default</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal"><h4>Logistics company</h4><div class="field">Name *</div><div class="field">Company name</div><div class="field">Company phone</div><div class="field">Company address</div><div class="field">License *</div><div class="field">License end date</div><div class="field">Address</div><span class="btn">Upload documents</span><span class="btn primary">Save</span></div></div></div>
-  </div>
-</div>
+    /* --------------------------------------------------------------- stock */
+    function cargoLots(p) {
+      if (CARGO[p.id]) return CARGO[p.id];
+      var base = FX.by(Demo.suppliers, 'id', p.supplierId);
+      var idx = base ? Demo.suppliers.indexOf(base) : 0;
+      var sup2 = Demo.suppliers[(idx + 2) % Demo.suppliers.length];
+      var c2 = Demo.countries[(p.id + 2) % Demo.countries.length];
+      var q1 = Math.max(1, Math.round(p.qty * 0.6));
+      var lots = [
+        { country: p.country, supplier: p.supplier, qty: q1, stockPrice: p.stockPrice, price: p.price, availableAt: p.availableAt, visible: true },
+        { country: c2.name, supplier: sup2.name, qty: Math.max(1, p.qty - q1), stockPrice: Math.round(p.stockPrice * 1.04), price: Math.round(p.price * 1.02), availableAt: '20.10.2026', visible: p.id % 3 !== 0 }
+      ];
+      CARGO[p.id] = lots;
+      return lots;
+    }
+    function stockDetail(p) {
+      var lots = cargoLots(p).map(function (lot, i) {
+        return '<tr>' +
+          '<td><span class="country-cell">' + flagOf(lot.country) + ' ' + FX.esc(lot.country) + '</span></td>' +
+          '<td>' + FX.esc(lot.supplier) + '</td>' +
+          '<td class="num">' + lot.qty + '</td>' +
+          '<td class="num">' + money(lot.stockPrice) + '</td>' +
+          '<td class="num">' + money(lot.price) + '</td>' +
+          '<td class="num">' + money(lot.price * lot.qty) + '</td>' +
+          '<td class="nowrap">' + FX.esc(lot.availableAt) + '</td>' +
+          '<td><label class="switch"><input type="checkbox" data-vis="' + p.id + ':' + i + '"' + (lot.visible ? ' checked' : '') + '><i></i></label></td>' +
+        '</tr>';
+      }).join('');
+      return '<tr class="row-detail"><td colspan="11"><div class="inner">' +
+        '<div class="row between" style="margin-bottom:10px"><div class="strong">Партии и cargo</div>' +
+        '<div class="legend"><span><span class="sw" style="background:var(--accent)"></span>Visibility — показывать партию в приложении</span></div></div>' +
+        '<div class="table-wrap"><table class="table compact"><thead><tr>' +
+          '<th>Country</th><th>Supplier Name</th><th class="num">Q-ty</th><th class="num">Stock price</th><th class="num">Price</th><th class="num">Total $</th><th>Available at</th><th>Visibility</th>' +
+        '</tr></thead><tbody>' + lots + '</tbody></table></div>' +
+      '</div></td></tr>';
+    }
+    function renderStock() {
+      var f = store.po.flt.stock;
+      var q = (f.q || '').toLowerCase().trim();
+      var rows = Demo.products.filter(function (p) {
+        if (f.brand && p.brand !== f.brand) return false;
+        if (f.country && p.country !== f.country) return false;
+        if (f.supplier && p.supplier !== f.supplier) return false;
+        if (q && (p.code + ' ' + p.model + ' ' + p.name + ' ' + p.supplier).toLowerCase().indexOf(q) === -1) return false;
+        return true;
+      });
+      var units = rows.reduce(function (a, p) { return a + p.qty; }, 0);
+      var cost = rows.reduce(function (a, p) { return a + p.price * p.qty; }, 0);
+      FX.q('#stockKpi').innerHTML =
+        kpi('Позиций', FX.money(rows.length), 'SKU на складе') +
+        kpi('Единиц', FX.money(units), 'доступно к продаже') +
+        kpi('Стоимость склада', money(cost), 'по текущим ценам');
 
-<div class="screen" id="a-set-war">
-  <div class="screentitle"><span class="num">30</span>Settings — Warranty</div>
-  <div class="screenmeta">/dashboard/settings/warranty · API: settings/warranties/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item active">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><table class="table"><tr><th>Название в админке</th><th>Название Ru/En</th><th>Название2 Ru/En</th><th>Кол. мес</th><th>% по странам</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="modal" style="width:680px"><h4>Редактировать гарантии</h4><div class="bar">Rich-text: Заголовок · Раздел · Список · Цитата · Выделенный блок</div><div class="field">Базовая Гарантия Ru</div><div class="field">Базовая Гарантия En</div><div class="field">Доп. Гарантия Ru</div><div class="field">Доп. Гарантия En</div><span class="btn">Добавить тип гарантии</span><span class="btn primary">Сохранить</span></div></div></div>
-  </div>
-</div>
+      var html = tools('<b>' + rows.length + '</b> позиций · <b>' + FX.money(units) + '</b> единиц', 'Клик по строке раскрывает партии и Visibility');
+      html += '<table class="table" id="stockTable"><thead><tr>' +
+        '<th style="width:26px"></th><th>Supplier</th><th>Code</th><th>Description of Goods</th><th>Model</th>' +
+        '<th class="num">Q-ty</th><th class="num">Stock price</th><th class="num">Price</th><th class="num">Total $</th><th>Available at</th><th>Country</th>' +
+      '</tr></thead><tbody>';
+      if (!rows.length) html += emptyRow(11, 'No Data');
+      rows.forEach(function (p) {
+        var open = !!store.po.stockOpen[p.id];
+        html += '<tr class="clickable' + (open ? ' open' : '') + '" data-stock-id="' + p.id + '">' +
+          '<td><span class="row-caret">▸</span></td>' +
+          '<td>' + FX.esc(p.supplier) + '</td>' +
+          '<td class="mono">' + FX.esc(p.code) + '</td>' +
+          '<td>' + FX.esc(p.name) + '</td>' +
+          '<td class="mono">' + FX.esc(p.model) + '</td>' +
+          '<td class="num">' + p.qty + '</td>' +
+          '<td class="num">' + money(p.stockPrice) + '</td>' +
+          '<td class="num">' + money(p.price) + '</td>' +
+          '<td class="num strong">' + money(p.price * p.qty) + '</td>' +
+          '<td class="nowrap">' + FX.esc(p.availableAt) + '</td>' +
+          '<td><span class="country-cell">' + flagOf(p.country) + ' ' + FX.esc(p.country) + '</span></td>' +
+        '</tr>';
+        if (open) html += stockDetail(p);
+      });
+      html += '</tbody></table>';
+      FX.q('#stockWrap').innerHTML = html;
+    }
 
-<div class="screen" id="a-service">
-  <div class="screentitle"><span class="num">31</span>Service — возвраты</div>
-  <div class="screenmeta">/dashboard/service/:id_country · API: service/*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item active">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="bar">Apply Filters: Brand · Model · Customers status · Suppliers status · Date of Sale · Delivery Status</div><table class="table"><tr><th>Order №</th><th>Serial number / IMEI</th><th>Description of Goods</th><th>Customers</th><th>Suppliers</th><th>Old price</th><th>Discount price</th><th>Loss %</th><th>Status name</th><th>Date of Sale</th><th>Actions</th></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr></table><div class="blocks"><div class="block"><b>Add photo</b></div><div class="block"><b>Add Comment</b></div><div class="block"><b>Diagnostics</b></div><div class="block"><b>Reason for return</b></div><div class="block"><b>Custom statuses</b>save-custom-status</div><div class="block"><b>Export sold-out</b></div></div></div></div>
-  </div>
-</div>
+    /* ----------------------------------------------------- order primitives */
+    function orderLines(o) {
+      var base = findProduct(o.product);
+      var variant = Demo.products.filter(function (p) { return p.subcategory === base.subcategory && p.name !== base.name; })[0] || base;
+      var q1 = Math.max(1, Math.round(o.qty * 0.6));
+      var q2 = o.qty - q1;
+      var lines = [{ code: base.code, name: base.name, model: base.model, qty: q1, price: o.price, total: q1 * o.price }];
+      if (q2 > 0) lines.push({ code: variant.code, name: variant.name, model: variant.model, qty: q2, price: o.price, total: q2 * o.price });
+      return lines;
+    }
+    function packingsFor(o) {
+      var n = Math.max(1, o.packings || 1);
+      var per = Math.ceil(o.qty / n);
+      var seed = Number(o.id) || 1;
+      var rows = [];
+      for (var i = 0; i < n; i++) {
+        var qty = Math.min(per, o.qty - i * per);
+        if (qty <= 0) break;
+        rows.push({ box: 'BOX-' + (seed % 800 + i + 1), qty: qty, items: qty, weight: (qty * 0.62).toFixed(1) });
+      }
+      return rows;
+    }
+    function imeisFor(o) {
+      var p = findProduct(o.product);
+      var count = Math.min(o.imei || o.qty, 20);
+      var seed = Number(o.id) || 1;
+      var rows = [];
+      for (var i = 0; i < count; i++) {
+        rows.push({
+          serial: '35' + String(680000000000 + seed * 137 + i * 7919).slice(0, 13),
+          model: p.model,
+          box: 'BOX-' + (seed % 800 + Math.floor(i / 10) + 1),
+          status: i < Math.ceil(count * 0.75) ? 'Packed' : 'Reserved'
+        });
+      }
+      return rows;
+    }
+    function goodsTable(lines) {
+      return '<div class="table-wrap"><table class="table compact"><thead><tr>' +
+        '<th>Code</th><th>Description of Goods</th><th>Model</th><th class="num">Q-ty</th><th class="num">Price</th><th class="num">Total $</th>' +
+        '</tr></thead><tbody>' + lines.map(function (l) {
+          return '<tr><td class="mono">' + FX.esc(l.code) + '</td><td>' + FX.esc(l.name) + '</td>' +
+            '<td class="mono">' + FX.esc(l.model) + '</td><td class="num">' + l.qty + '</td>' +
+            '<td class="num">' + money(l.price) + '</td><td class="num">' + money(l.total) + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    function packingsTable(rows) {
+      return '<div class="table-wrap"><table class="table compact"><thead><tr>' +
+        '<th>Packing</th><th class="num">Q-ty</th><th class="num">Items</th><th>Weight</th><th>Status</th>' +
+        '</tr></thead><tbody>' + rows.map(function (p) {
+          return '<tr><td>' + FX.esc(p.box) + '</td><td class="num">' + p.qty + '</td><td class="num">' + p.items + '</td>' +
+            '<td>' + p.weight + ' kg</td><td><span class="badge badge-green">Packed</span></td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    function imeiTable(rows) {
+      return '<div class="table-wrap"><table class="table compact"><thead><tr>' +
+        '<th class="num">#</th><th>Serial number</th><th>Model</th><th>Packing</th><th>Status</th>' +
+        '</tr></thead><tbody>' + rows.map(function (s, i) {
+          return '<tr><td class="num">' + (i + 1) + '</td><td class="mono">' + FX.esc(s.serial) + '</td>' +
+            '<td class="mono">' + FX.esc(s.model) + '</td><td>' + FX.esc(s.box) + '</td>' +
+            '<td><span class="badge ' + (s.status === 'Packed' ? 'badge-green' : 'badge-gray') + '">' + s.status + '</span></td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    function totalLine(qty, total) {
+      return '<div class="order-total"><span class="muted">Total:</span>' +
+        '<span>Q-ty: <b>' + qty + '</b></span><span>' + money(total) + '</span></div>';
+    }
+    function saleStatus(o) {
+      var ov = store.po.status.sales[o.id];
+      if (ov) return ov;
+      return { name: o.status, color: o.statusColor || statusColor(o.status) };
+    }
+    function deliveryStatus(d) {
+      var ov = store.po.status.deliveries[d.id];
+      if (ov) return ov;
+      return { name: d.status, color: d.statusColor || statusColor(d.status) };
+    }
+    function openOrderDrawer(kind, id) {
+      var isSale = kind === 'sales';
+      var o = isSale ? FX.by(Demo.orders.sales, 'id', id) : FX.by(Demo.orders.purchases, 'id', id);
+      if (!o) return;
+      store.po.currentOrder = { kind: kind, id: id };
+      var lines = orderLines(o);
+      var total = lines.reduce(function (a, l) { return a + l.total; }, 0);
+      var st = isSale ? saleStatus(o) : { name: o.status, color: o.statusColor || statusColor(o.status) };
+      var party = isSale ? o.customer : o.supplier;
+      var partyLabel = isSale ? 'Customer Name' : 'Supplier Name';
 
-<div class="screen" id="a-404">
-  <div class="screentitle"><span class="num">32</span>404</div>
-  <div class="screenmeta">/page-404, /*</div>
-  <div class="frame desktop">
-    <div class="bar"><b>Fimex Admin</b></div>
-    <div class="layout"><div class="sidebar"><div class="item">Dashboard</div><div class="item">Chat</div><div class="item">Preorder (Sales)</div><div class="item">Service</div><div class="item">Settings</div><div class="item sub">Catalog</div><div class="item sub">— Chars settings</div><div class="item sub">— Nomenclature</div><div class="item sub">— Cargo</div><div class="item sub">— Percents</div><div class="item sub">— Reason settings</div><div class="item sub">— Wholesale types</div><div class="item sub">— Delivery statuses</div><div class="item sub">— Constants</div><div class="item sub">— Penalty</div><div class="item sub">— Users</div><div class="item sub">— Countries</div><div class="item sub">— Customers</div><div class="item sub">— Suppliers</div><div class="item sub">— Payments</div><div class="item sub">— Currencies</div><div class="item sub">— Logistics</div><div class="item sub">— Warranty</div></div><div class="content"><div class="hero"><h2>404</h2><div>Страница не найдена</div></div></div></div>
-  </div>
-</div>
-</div>
-</body></html>
+      var info =
+        detailItem('Order Date', FX.esc(o.date)) +
+        detailItem(partyLabel, FX.esc(party)) +
+        detailItem('Country', flagOf(o.country) + ' ' + FX.esc(o.country)) +
+        detailItem('Logistics', FX.esc(o.logistics || 'Aramex Gulf')) +
+        detailItem('Packings', String(o.packings)) +
+        detailItem('IMEI / Serial', String(o.imei)) +
+        (isSale ? '' : detailItem('ETA', FX.esc(o.eta)));
+
+      var billto = '';
+      if (isSale) {
+        var c = FX.by(Demo.customers, 'id', o.customerId) || {};
+        billto = '<div class="detail-grid">' +
+          detailItem('Company name', FX.esc(c.name || o.customer)) +
+          detailItem('User Name', FX.esc(c.user || '—')) +
+          detailItem('Company address', FX.esc((c.city || '') + ', ' + (c.country || ''))) +
+          detailItem('TRN', FX.esc(c.trn || '—')) +
+          detailItem('License', FX.esc(c.license || '—')) +
+          detailItem('License end date', FX.esc(c.licenseEnd || '—')) +
+          detailItem('Deposit', money(c.deposit || 0)) +
+          detailItem('Balance', money(c.balance || 0)) +
+          detailItem('Mode of payment', FX.esc(c.mode || 'Cash')) +
+          detailItem('Wholesale', FX.esc(c.wholesale || 'Cash')) +
+        '</div>';
+      }
+
+      var html = '' +
+        '<div class="drawer-head">' +
+          '<div><h2>' + (isSale ? 'Заказ клиента' : 'Заказ поставщику') + ' № ' + FX.esc(o.id) + '</h2>' +
+          '<div class="sub">' + FX.esc(party) + ' · ' + FX.esc(o.date) + ' · ' + flagOf(o.country) + ' ' + FX.esc(o.country) + '</div></div>' +
+          '<div class="row" style="gap:12px">' + statusBadge(st.name, st.color) +
+            '<button class="modal-close" data-close title="Закрыть">×</button></div>' +
+        '</div>' +
+        '<div class="drawer-body">' +
+          '<div class="detail-grid">' + info + '</div>' +
+          '<div class="tabs" style="margin-top:20px">' +
+            '<button class="tab active" data-drw-tab="goods">Goods</button>' +
+            '<button class="tab" data-drw-tab="packings">Packings</button>' +
+            '<button class="tab" data-drw-tab="imei">IMEI</button>' +
+            (isSale ? '<button class="tab" data-drw-tab="billto">Bill to</button>' : '') +
+          '</div>' +
+          '<div data-drw-pane="goods">' + goodsTable(lines) + totalLine(o.qty, total) + '</div>' +
+          '<div data-drw-pane="packings" hidden>' + packingsTable(packingsFor(o)) + '</div>' +
+          '<div data-drw-pane="imei" hidden>' + imeiTable(imeisFor(o)) + '</div>' +
+          (isSale ? '<div data-drw-pane="billto" hidden>' + billto + '</div>' : '') +
+        '</div>' +
+        '<div class="drawer-foot">' +
+          '<button class="btn btn-default btn-sm" data-export-order>' + icon('download') + 'Export Excel</button>' +
+          '<button class="btn btn-default btn-sm" data-packing-list>' + icon('print') + 'Packing list</button>' +
+          (isSale ? '<button class="btn btn-primary btn-sm" data-change-status="sales:' + FX.esc(o.id) + '">Change delivery status</button>' : '') +
+          '<button class="btn btn-ghost btn-sm" data-close>Закрыть</button>' +
+        '</div>';
+      var host = FX.q('#poDrawerContent');
+      host.innerHTML = html;
+      host.scrollTop = 0;
+      FX.drawer('poDrawer');
+    }
+
+    /* ------------------------------------------------------------ purchases */
+    function renderPurchases() {
+      var f = store.po.flt.purchases;
+      var rows = Demo.orders.purchases.filter(function (o) {
+        if (f.order && o.id.indexOf(f.order.trim()) === -1) return false;
+        if (f.supplier && o.supplier !== f.supplier) return false;
+        if (f.brand && o.brand !== f.brand) return false;
+        if (f.status && o.status !== f.status) return false;
+        if (!inDateRange(o.date, f.from, f.to)) return false;
+        return true;
+      });
+      var total = rows.reduce(function (a, o) { return a + o.total; }, 0);
+      var html = tools('<b>' + rows.length + '</b> заказов · <b>' + money(total) + '</b>', 'Order № — строки, упаковки и IMEI в дровере');
+      html += '<table class="table" id="purchasesTable"><thead><tr>' +
+        '<th>Order №</th><th>Order Date</th><th>Supplier Name</th><th>Description of Goods</th>' +
+        '<th class="num">Q-ty</th><th class="num">Price</th><th class="num">Total $</th><th>Status</th><th></th>' +
+      '</tr></thead><tbody>';
+      if (!rows.length) html += emptyRow(9, 'No Data');
+      rows.forEach(function (o) {
+        html += '<tr class="clickable" data-order="purchase:' + FX.esc(o.id) + '">' +
+          '<td><span class="link">' + FX.esc(o.id) + '</span></td>' +
+          '<td class="nowrap">' + FX.esc(o.date) + '</td>' +
+          '<td>' + FX.esc(o.supplier) + '</td>' +
+          '<td>' + FX.esc(o.product) + '</td>' +
+          '<td class="num">' + o.qty + '</td>' +
+          '<td class="num">' + money(o.price) + '</td>' +
+          '<td class="num strong">' + money(o.total) + '</td>' +
+          '<td>' + statusCell(o.status, o.statusColor) + '</td>' +
+          '<td class="num"><span class="btn-icon" title="Просмотр">' + icon('eye') + '</span></td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      FX.q('#purchasesWrap').innerHTML = html;
+    }
+
+    /* ---------------------------------------------------------------- sales */
+    function renderSales() {
+      var f = store.po.flt.sales;
+      var rows = Demo.orders.sales.filter(function (o) {
+        if (f.order && o.id.indexOf(f.order.trim()) === -1) return false;
+        if (f.customer && o.customer !== f.customer) return false;
+        if (f.brand && o.brand !== f.brand) return false;
+        if (f.country && o.country !== f.country) return false;
+        if (!inDateRange(o.date, f.from, f.to)) return false;
+        return true;
+      });
+      var units = rows.reduce(function (a, o) { return a + o.qty; }, 0);
+      var total = rows.reduce(function (a, o) { return a + o.total; }, 0);
+      var html = tools('<b>' + rows.length + '</b> заказов · <b>' + FX.money(units) + '</b> единиц · <b>' + money(total) + '</b>', 'Клик по заказу — товары, Packing list, IMEI и Bill to');
+      html += '<table class="table" id="salesTable"><thead><tr>' +
+        '<th>Order №</th><th>Order Date</th><th>Customer Name</th><th>Description of Goods</th>' +
+        '<th class="num">Q-ty</th><th class="num">Price</th><th class="num">Total $</th><th>Logistics</th><th>Status</th><th></th>' +
+      '</tr></thead><tbody>';
+      if (!rows.length) html += emptyRow(10, 'No Data');
+      rows.forEach(function (o) {
+        var st = saleStatus(o);
+        html += '<tr class="clickable" data-order="sales:' + FX.esc(o.id) + '">' +
+          '<td><span class="link">' + FX.esc(o.id) + '</span></td>' +
+          '<td class="nowrap">' + FX.esc(o.date) + '</td>' +
+          '<td>' + FX.esc(o.customer) + '</td>' +
+          '<td>' + FX.esc(o.product) + '</td>' +
+          '<td class="num">' + o.qty + '</td>' +
+          '<td class="num">' + money(o.price) + '</td>' +
+          '<td class="num strong">' + money(o.total) + '</td>' +
+          '<td class="nowrap">' + FX.esc(o.logistics) + '</td>' +
+          '<td>' + statusCell(st.name, st.color) + '</td>' +
+          '<td class="num"><span class="btn-icon" title="Просмотр">' + icon('eye') + '</span></td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      FX.q('#salesWrap').innerHTML = html;
+    }
+
+    /* ----------------------------------------------------------- deliveries */
+    function renderDeliveries(kind) {
+      var isClient = kind === 'client';
+      var paneKey = isClient ? 'delivery-customers' : 'delivery-suppliers';
+      var f = store.po.flt[paneKey];
+      var rows = Demo.orders.deliveries.filter(function (d) {
+        if ((d.side === 'client') !== isClient) return false;
+        if (f.order && (d.order + ' ' + d.id).toLowerCase().indexOf(f.order.trim().toLowerCase()) === -1) return false;
+        if (f.party && d.party !== f.party) return false;
+        if (f.country && d.country !== f.country) return false;
+        if (f.status && deliveryStatus(d).name !== f.status) return false;
+        if (!inDateRange(d.date, f.from, f.to)) return false;
+        return true;
+      });
+      var places = rows.reduce(function (a, d) { return a + d.places; }, 0);
+      var units = rows.reduce(function (a, d) { return a + d.qty; }, 0);
+      var partyLabel = isClient ? 'Customer Name' : 'Supplier Name';
+      var html = tools('<b>' + rows.length + '</b> отгрузок · <b>' + places + '</b> мест · <b>' + FX.money(units) + '</b> единиц', 'Change status меняет статус локально');
+      html += '<table class="table"><thead><tr>' +
+        '<th>Delivery №</th><th>Order №</th><th>Date</th><th>' + partyLabel + '</th><th>Country</th>' +
+        '<th class="num">Places</th><th class="num">Q-ty</th><th>Logistics</th><th>Status</th><th></th>' +
+      '</tr></thead><tbody>';
+      if (!rows.length) html += emptyRow(10, 'No Data');
+      rows.forEach(function (d) {
+        var st = deliveryStatus(d);
+        html += '<tr>' +
+          '<td class="mono">' + FX.esc(d.id) + '</td>' +
+          '<td><span class="link">' + FX.esc(d.order) + '</span></td>' +
+          '<td class="nowrap">' + FX.esc(d.date) + '</td>' +
+          '<td>' + FX.esc(d.party) + '</td>' +
+          '<td><span class="country-cell">' + flagOf(d.country) + ' ' + FX.esc(d.country) + '</span></td>' +
+          '<td class="num">' + d.places + '</td>' +
+          '<td class="num">' + d.qty + '</td>' +
+          '<td class="nowrap">' + FX.esc(d.logistics) + '</td>' +
+          '<td>' + statusCell(st.name, st.color) + '</td>' +
+          '<td class="num nowrap"><button class="btn btn-default btn-sm" data-change-status="delivery:' + FX.esc(d.id) + '">Change status</button></td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      FX.q(isClient ? '#deliveryClientsWrap' : '#deliverySuppliersWrap').innerHTML = html;
+    }
+
+    /* ------------------------------------------------------------- penalties */
+    function penaltyPaid(p) {
+      return store.po.penaltyPaid[p.id] != null ? store.po.penaltyPaid[p.id] : p.paid;
+    }
+    function renderPenalty() {
+      var tab = store.po.penaltyTab;
+      var f = store.po.flt.penalty;
+      var q = (f.q || '').toLowerCase().trim();
+      var rows = Demo.orders.penalties.filter(function (p) {
+        if (tab !== 'number' && p.side.toLowerCase() !== tab) return false;
+        var paid = penaltyPaid(p);
+        if (f.paid === 'paid' && !paid) return false;
+        if (f.paid === 'unpaid' && paid) return false;
+        if (q && (p.order + ' ' + p.party + ' ' + p.reason + ' ' + p.side).toLowerCase().indexOf(q) === -1) return false;
+        return true;
+      });
+      if (tab === 'number') rows = rows.slice().sort(function (a, b) { return a.order.localeCompare(b.order); });
+      var partyLabel = tab === 'country' ? 'Country' : tab === 'supplier' ? 'Supplier Name' : tab === 'client' ? 'Customer Name' : 'Party';
+      var sum = rows.reduce(function (a, p) { return a + p.amount; }, 0);
+      var unpaid = rows.filter(function (p) { return !penaltyPaid(p); }).reduce(function (a, p) { return a + p.amount; }, 0);
+      var html = tools('<b>' + rows.length + '</b> претензий · <b>' + money(sum) + '</b> · Unpaid <b>' + money(unpaid) + '</b>', 'Mark paid меняет статус оплаты');
+      html += '<table class="table" id="penaltyTable"><thead><tr>' +
+        '<th>Order №</th><th>' + partyLabel + '</th><th class="num">Penalty price</th><th>Reasons</th><th>Paid</th><th>Date</th><th></th>' +
+      '</tr></thead><tbody>';
+      if (!rows.length) html += emptyRow(7, 'No Data');
+      rows.forEach(function (p) {
+        var paid = penaltyPaid(p);
+        html += '<tr>' +
+          '<td><span class="link">' + FX.esc(p.order) + '</span></td>' +
+          '<td>' + FX.esc(p.party) + '</td>' +
+          '<td class="num strong">' + money(p.amount) + '</td>' +
+          '<td>' + FX.esc(p.reason) + '</td>' +
+          '<td><span class="badge ' + (paid ? 'badge-green' : 'badge-red') + '">' + (paid ? 'Paid' : 'Unpaid') + '</span></td>' +
+          '<td class="nowrap">' + FX.esc(p.date) + '</td>' +
+          '<td class="num">' + (paid ? '<span class="faint">—</span>' :
+            '<button class="btn btn-default btn-sm" data-mark-paid="' + FX.esc(p.id) + '">' + icon('check') + 'Mark paid</button>') + '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      FX.q('#penaltyWrap').innerHTML = html;
+      FX.qa('#penaltyTabs [data-penalty-tab]').forEach(function (t) {
+        t.classList.toggle('active', t.getAttribute('data-penalty-tab') === tab);
+      });
+    }
+
+    /* ------------------------------------------------------------------ p2p */
+    function renderP2P() {
+      var tab = store.po.p2pTab;
+      var f = store.po.flt.p2p;
+      var q = (f.q || '').toLowerCase().trim();
+      var all = Demo.p2p.filter(function (b) { return !store.po.p2pRemoved[b.id]; });
+      var current = all.filter(function (b) { return b.status !== 'Completed'; });
+      var completed = all.filter(function (b) { return b.status === 'Completed'; });
+      var rows = (tab === 'current' ? current : completed).filter(function (b) {
+        if (f.country && b.country !== f.country) return false;
+        if (q && (b.product + ' ' + b.supplier + ' ' + b.brand + ' ' + b.country).toLowerCase().indexOf(q) === -1) return false;
+        return true;
+      });
+      var info = '<b>' + current.length + '</b> активных ставок · <b>' + completed.length + '</b> завершено';
+      var html = tools(info, 'Remove bid отзывает ставку после подтверждения');
+      html += '<table class="table" id="p2pTable"><thead><tr>' +
+        '<th>Product</th><th>Supplier Name</th><th>Country</th><th class="num">Q-ty</th>' +
+        '<th class="num">Bid price</th><th class="num">Best price</th><th>Ends</th><th>Status</th><th></th>' +
+      '</tr></thead><tbody>';
+      if (!rows.length) html += emptyRow(9, 'No bids');
+      rows.forEach(function (b) {
+        var cls = b.status === 'Completed' ? 'badge-blue' : b.status === 'Approved' ? 'badge-green' : 'badge-gray';
+        html += '<tr>' +
+          '<td>' + FX.esc(b.brand + ' ' + b.product) + '</td>' +
+          '<td>' + FX.esc(b.supplier) + '</td>' +
+          '<td><span class="country-cell">' + flagOf(b.country) + ' ' + FX.esc(b.country) + '</span></td>' +
+          '<td class="num">' + b.qty + '</td>' +
+          '<td class="num strong">' + money(b.bid) + '</td>' +
+          '<td class="num">' + money(b.best) + '</td>' +
+          '<td class="nowrap">' + FX.esc(b.ends) + '</td>' +
+          '<td><span class="badge ' + cls + '">' + FX.esc(b.status) + '</span></td>' +
+          '<td class="num nowrap">' + (tab === 'current'
+            ? '<button class="btn btn-default btn-sm" data-remove-bid="' + b.id + '">Remove bid</button>'
+            : '<span class="faint">—</span>') + '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      FX.q('#p2pWrap').innerHTML = html;
+      FX.qa('#p2pTabs [data-p2p-tab]').forEach(function (t) {
+        t.classList.toggle('active', t.getAttribute('data-p2p-tab') === tab);
+      });
+    }
+
+    /* ----------------------------------------------------------- statistics */
+    function renderStats() {
+      var range = store.po.statsRange || '3M';
+      var n = { '1M': 1, '3M': 3, '6M': 6, '12M': 12 }[range] || 3;
+      var months = Demo.stats.months.slice(-n);
+      var revenue = Demo.stats.revenue.slice(-n);
+      var ordersArr = Demo.stats.orders.slice(-n);
+      var totalK = revenue.reduce(function (a, b) { return a + b; }, 0);
+      var totalUsd = totalK * 1000;
+      var orders = ordersArr.reduce(function (a, b) { return a + b; }, 0);
+      var margin = 0.104 + Math.min(n, 12) * 0.0012;
+      var rate = Demo.countries[0].rate;
+      var avgCheck = orders ? Math.round(totalUsd / orders) : 0;
+
+      var byCountry = Demo.stats.byCountry;
+      var maxCountry = Math.max.apply(null, byCountry.map(function (c) { return c.value; }));
+      var countryBars = byCountry.map(function (c) {
+        var rev = totalUsd * c.value / 100;
+        return '<div class="bar-row"><span>' + FX.esc(c.name) + '</span>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + Math.round(c.value / maxCountry * 100) + '%"></div></div>' +
+          '<span class="val">$' + FX.money(Math.round(rev / 1000)) + 'k</span></div>';
+      }).join('');
+
+      var maxRev = Math.max.apply(null, revenue);
+      var monthCols = revenue.map(function (v, i) {
+        return '<div class="col" title="' + FX.esc(months[i]) + ': ' + money(v * 1000) + '">' +
+          '<div class="b" style="height:' + Math.max(2, Math.round(v / maxRev * 100)) + '%"></div>' +
+          '<div class="x">' + FX.esc(months[i]) + '</div></div>';
+      }).join('');
+
+      var suppliers = Demo.stats.topSuppliers;
+      var maxSup = Math.max.apply(null, suppliers.map(function (s) { return s.value; }));
+      var supplierRows = suppliers.map(function (s) {
+        var rev = totalUsd * s.value / 100;
+        var ords = Math.round(orders * s.value / 100);
+        return '<tr><td>' + FX.esc(s.name) + '</td><td class="num">' + FX.money(ords) + '</td>' +
+          '<td class="num">' + money(Math.round(rev)) + '</td>' +
+          '<td><div class="stat-share"><div class="bar-track"><div class="bar-fill" style="width:' + Math.round(s.value / maxSup * 100) + '%"></div></div>' +
+          '<span class="muted small">' + s.value + '%</span></div></td></tr>';
+      }).join('');
+
+      var brandRows = Demo.stats.byBrand.map(function (b) {
+        var brand = FX.by(Demo.brands, 'name', b.name);
+        var rev = totalUsd * b.value / 100;
+        return '<tr><td><span class="status-cell"><span class="dot" style="background:' + (brand ? brand.color : '#c1c6d0') + '"></span>' + FX.esc(b.name) + '</span></td>' +
+          '<td class="num">' + b.value + '%</td><td class="num">' + money(Math.round(rev)) + '</td>' +
+          '<td><div class="stat-share"><div class="bar-track"><div class="bar-fill" style="width:' + b.value + '%;background:' + (brand ? brand.color : '#c1c6d0') + '"></div></div></div></td></tr>';
+      }).join('');
+
+      FX.q('#statsWrap').innerHTML =
+        '<div class="kpi-row" style="margin-bottom:14px">' +
+          kpi('Total $', money(totalUsd), range + ' · по всем странам') +
+          kpi('Orders', FX.money(orders), 'средний чек ' + money(avgCheck)) +
+          kpi('Average Rate', String(rate), 'AED за 1 USD') +
+          kpi('Avg. margin', FX.pct(margin), 'маржа по реализованным заказам', 'up') +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="card"><div class="card-head"><h3>Доход по странам</h3><span class="muted small">' + range + '</span></div>' +
+            '<div class="card-body"><div class="bars">' + countryBars + '</div></div></div>' +
+          '<div class="card"><div class="card-head"><h3>Динамика по месяцам</h3><span class="muted small">Total $, тыс.</span></div>' +
+            '<div class="card-body"><div class="chart-bars">' + monthCols + '</div></div></div>' +
+        '</div>' +
+        '<div class="grid2" style="margin-top:16px">' +
+          '<div class="card"><div class="card-head"><h3>Top-5 suppliers</h3><span class="muted small">по обороту</span></div>' +
+            '<div class="card-body flush"><table class="table"><thead><tr><th>Supplier Name</th><th class="num">Orders</th><th class="num">Total $</th><th>Share</th></tr></thead><tbody>' + supplierRows + '</tbody></table></div></div>' +
+          '<div class="card"><div class="card-head"><h3>Brands / Categories</h3><span class="muted small">доля продаж</span></div>' +
+            '<div class="card-body flush"><table class="table"><thead><tr><th>Brand</th><th class="num">Share</th><th class="num">Total $</th><th></th></tr></thead><tbody>' + brandRows + '</tbody></table></div></div>' +
+        '</div>';
+      FX.qa('#statsRange button').forEach(function (b) {
+        b.classList.toggle('active', b.getAttribute('data-stats-range') === range);
+      });
+    }
+
+    /* --------------------------------------------------------------- service */
+    function serviceRows() {
+      var f = store.service.flt;
+      return SERVICE.filter(function (r) {
+        if (f.country && r.country !== f.country) return false;
+        if (f.date && toISODate(r.sale) !== f.date) return false;
+        if (f.cust && r.cust !== f.cust) return false;
+        if (f.delivery && r.delivery !== f.delivery) return false;
+        if (f.q) {
+          var q = f.q.toLowerCase();
+          if ((r.serial + ' ' + r.order + ' ' + r.id + ' ' + r.model + ' ' + r.reason).toLowerCase().indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+    }
+    function renderService() {
+      var rows = serviceRows();
+      var avgLoss = rows.length ? Math.round(rows.reduce(function (a, r) { return a + r.loss; }, 0) / rows.length) : 0;
+      var html = tools('<b>' + rows.length + '</b> возвратов · средний Loss <b>' + avgLoss + '%</b>', 'Клик по строке — карточка возврата и диагностика');
+      html += '<table class="table" id="serviceTable"><thead><tr>' +
+        '<th>Order №</th><th>Date of Sale</th><th>Brand</th><th>Model</th><th>Serial number</th>' +
+        '<th>Reason for return</th><th>Customers status</th><th>Suppliers status</th>' +
+        '<th class="num">Loss %</th><th class="num">Discount price</th><th class="num">Old price</th><th>Photo</th>' +
+      '</tr></thead><tbody>';
+      if (!rows.length) html += emptyRow(12, 'No results');
+      rows.forEach(function (r) {
+        html += '<tr class="clickable" data-svc-id="' + FX.esc(r.id) + '">' +
+          '<td><span class="link">' + FX.esc(r.order) + '</span></td>' +
+          '<td class="nowrap">' + FX.esc(r.sale) + '</td>' +
+          '<td class="nowrap">' + FX.esc(r.brand) + '</td>' +
+          '<td>' + FX.esc(r.model) + '</td>' +
+          '<td class="mono nowrap">' + FX.esc(r.serial) + '</td>' +
+          '<td>' + FX.esc(r.reason) + '</td>' +
+          '<td>' + custBadge(r.cust) + '</td>' +
+          '<td>' + supBadge(r.sup) + '</td>' +
+          '<td class="num">' + r.loss + '%</td>' +
+          '<td class="num">' + money(r.discount) + '</td>' +
+          '<td class="num">' + money(r.old) + '</td>' +
+          '<td class="nowrap">' + (r.photo ? '<span class="photo-mini" title="Фото приложено">' + icon('camera', 13) + '</span>' : '<span class="faint">—</span>') + '</td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+      FX.q('#serviceWrap').innerHTML = html;
+    }
+    function renderSvcDraft() {
+      var d = store.svcDraft;
+      if (!d) return;
+      var box = FX.q('#svcComments');
+      if (box) {
+        box.innerHTML = d.comments.length ? d.comments.map(function (c) {
+          return '<div class="svc-comment"><span class="avatar sm">AP</span><div class="grow">' +
+            '<div class="small">' + FX.esc(c.text) + '</div><div class="faint xs">' + FX.esc(c.at) + '</div></div></div>';
+        }).join('') : '<div class="hint">Комментариев пока нет</div>';
+      }
+      var photo = FX.q('#svcPhotoRow');
+      if (photo) photo.hidden = !d.photo;
+    }
+    function openServiceDrawer(id) {
+      var r = FX.by(SERVICE, 'id', id);
+      if (!r) return;
+      store.service.activeId = id;
+      store.svcDraft = { diagnostics: r.diagnostics || '', reason: r.reason, comments: (r.comments || []).slice(), photo: !!r.photo };
+      var reasons = Demo.reasons.map(function (x) {
+        return '<option value="' + FX.esc(x.name) + '"' + (x.name === r.reason ? ' selected' : '') + '>' +
+          FX.esc(x.name) + ' · штраф $' + x.fine + '</option>';
+      }).join('');
+      FX.q('#svcDrawerContent').innerHTML =
+        '<div class="drawer-head">' +
+          '<div><h2>Возврат ' + FX.esc(r.id) + '</h2>' +
+          '<div class="sub">Order № ' + FX.esc(r.order) + ' · ' + FX.esc(r.sale) + ' · ' + flagOf(r.country) + ' ' + FX.esc(r.country) + '</div></div>' +
+          '<div class="row" style="gap:12px">' + statusBadge(r.delivery, statusColor(r.delivery)) +
+            '<button class="modal-close" data-close title="Закрыть">×</button></div>' +
+        '</div>' +
+        '<div class="drawer-body">' +
+          '<div class="card"><div class="card-body row" style="gap:14px;align-items:center">' +
+            '<span class="photo-mini" style="width:44px;height:40px">' + icon('camera', 18) + '</span>' +
+            '<div class="grow"><div class="strong">' + FX.esc(r.brand + ' ' + r.model) + '</div>' +
+            '<div class="muted small">Serial number <span class="mono">' + FX.esc(r.serial) + '</span> · Loss ' + r.loss + '%</div></div>' +
+            '<div style="text-align:right"><div class="strong">' + money(r.discount) + '</div>' +
+            '<div class="faint xs">Old price ' + money(r.old) + '</div></div>' +
+          '</div></div>' +
+          '<div class="detail-grid" style="margin-top:16px">' +
+            detailItem('Brand', FX.esc(r.brand)) +
+            detailItem('Model', FX.esc(r.model)) +
+            detailItem('Serial number', '<span class="mono">' + FX.esc(r.serial) + '</span>') +
+            detailItem('Date of Sale', FX.esc(r.sale)) +
+            detailItem('Customers status', custBadge(r.cust)) +
+            detailItem('Suppliers status', supBadge(r.sup)) +
+            detailItem('Delivery Status', statusCell(r.delivery, statusColor(r.delivery))) +
+            detailItem('Reason for return', FX.esc(r.reason)) +
+          '</div>' +
+          '<div class="section-title">Diagnostics</div>' +
+          '<textarea class="textarea" id="svcDiagnostics" placeholder="Опишите диагностику: что проверено, какие повреждения, что заменить…">' + FX.esc(r.diagnostics || '') + '</textarea>' +
+          '<div class="section-title">Add Comment</div>' +
+          '<div class="row"><input class="input grow" id="svcComment" placeholder="Комментарий сервисной команды…"><button class="btn btn-default btn-sm" data-svc-add-comment>Add Comment</button></div>' +
+          '<div class="stack tight" id="svcComments" style="margin-top:10px"></div>' +
+          '<div class="section-title">Add photo</div>' +
+          '<div class="photo-drop" data-svc-add-photo>' + icon('camera', 18) + '<span>Add photo · нажмите, чтобы приложить (заглушка)</span></div>' +
+          '<div class="row" id="svcPhotoRow" style="margin-top:8px" hidden>' +
+            '<span class="photo-mini">' + icon('camera', 14) + '</span>' +
+            '<span class="small muted">IMG_' + FX.esc(r.id.replace('SVC-', '')) + '.jpg · 1.2 MB</span>' +
+            '<span class="badge badge-gray">placeholder</span>' +
+          '</div>' +
+          '<div class="section-title">Reason for return</div>' +
+          '<div class="field"><select class="select" id="svcReason">' + reasons + '</select></div>' +
+        '</div>' +
+        '<div class="drawer-foot">' +
+          '<button class="btn btn-default btn-sm" data-close>Cancel</button>' +
+          '<button class="btn btn-primary btn-sm" data-svc-save>' + icon('check') + 'Save</button>' +
+        '</div>';
+      renderSvcDraft();
+      FX.drawer('svcDrawer');
+    }
+    function addSvcComment() {
+      var inp = FX.q('#svcComment');
+      if (!inp || !store.svcDraft) return;
+      var text = inp.value.trim();
+      if (!text) return;
+      store.svcDraft.comments.push({ text: text, at: nowLabel() });
+      inp.value = '';
+      renderSvcDraft();
+    }
+    function saveService() {
+      var id = store.service.activeId;
+      var r = FX.by(SERVICE, 'id', id);
+      if (!r || !store.svcDraft) return;
+      var ta = FX.q('#svcDiagnostics');
+      var sel = FX.q('#svcReason');
+      r.diagnostics = ta ? ta.value : r.diagnostics;
+      r.reason = sel ? sel.value : r.reason;
+      r.comments = store.svcDraft.comments.slice();
+      r.photo = store.svcDraft.photo;
+      FX.closeDrawer('svcDrawer');
+      renderService();
+      FX.toast('Сохранено', 'ok');
+    }
+
+    /* -------------------------------------------------------- status change */
+    function openStatusModal(kind, id) {
+      var item = kind === 'sales' ? FX.by(Demo.orders.sales, 'id', id) : FX.by(Demo.orders.deliveries, 'id', id);
+      if (!item) return;
+      store.po.statusTarget = { kind: kind, id: id };
+      var curName = kind === 'sales' ? saleStatus(item).name : deliveryStatus(item).name;
+      FX.q('#statusSelect').innerHTML = Demo.statuses.map(function (s) {
+        return '<option value="' + s.id + '"' + (s.ru === curName ? ' selected' : '') + '>' + s.id + ' · ' + FX.esc(s.ru) + ' — ' + FX.esc(s.en) + '</option>';
+      }).join('');
+      FX.modal('statusModal');
+    }
+    function applyStatus() {
+      var t = store.po.statusTarget;
+      if (!t) return;
+      var s = FX.by(Demo.statuses, 'id', Number(FX.q('#statusSelect').value));
+      if (!s) return;
+      var bucket = t.kind === 'sales' ? 'sales' : 'deliveries';
+      store.po.status[bucket][t.id] = { name: s.ru, color: s.color };
+      FX.closeModal('statusModal');
+      renderPane(store.po.tab);
+      if (t.kind === 'sales' && !FX.q('#poDrawer').hidden) openOrderDrawer('sales', t.id);
+      FX.toast('Статус изменён: ' + s.ru, 'ok');
+    }
+
+    /* --------------------------------------------------------- confirm modal */
+    function confirmAction(title, text, okLabel, cb) {
+      FX.q('#confirmTitle').textContent = title;
+      FX.q('#confirmText').textContent = text;
+      FX.q('#confirmOk').textContent = okLabel || 'Подтвердить';
+      store.confirmCb = cb;
+      FX.modal('confirmModal');
+    }
+
+    /* --------------------------------------------------------------- export */
+    function csvCell(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+    function downloadCSV(filename, rows) {
+      var csv = rows.map(function (r) { return r.map(csvCell).join(';'); }).join('\r\n');
+      var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 200);
+    }
+    function exportTable(table, filename) {
+      var head = FX.qa('thead th', table).map(function (th) { return th.textContent.trim(); });
+      var body = FX.qa('tbody tr', table).filter(function (tr) {
+        return !tr.classList.contains('row-detail') && !tr.hidden;
+      }).map(function (tr) {
+        return FX.qa('td', tr).map(function (td) { return td.textContent.replace(/\s+/g, ' ').trim(); });
+      });
+      downloadCSV(filename || 'fimex-table.csv', [head].concat(body));
+      FX.toast('Экспортировано: ' + (filename || 'таблица'), 'ok');
+    }
+    function exportActiveTable() {
+      var scr = FX.q('.screen.active');
+      var table;
+      if (scr && scr.getAttribute('data-screen') === 'service') table = FX.q('#serviceWrap table');
+      else table = FX.q('.po-pane.active table');
+      if (!table) { FX.toast('Нет данных для экспорта', 'error'); return; }
+      var name = 'fimex-' + (scr ? scr.getAttribute('data-screen') : 'table') + '-' + Date.now() + '.csv';
+      exportTable(table, name);
+    }
+    function exportOrderCSV() {
+      var cur = store.po.currentOrder;
+      if (!cur) return;
+      var item = cur.kind === 'sales' ? FX.by(Demo.orders.sales, 'id', cur.id) : FX.by(Demo.orders.purchases, 'id', cur.id);
+      if (!item) return;
+      var party = cur.kind === 'sales' ? item.customer : item.supplier;
+      var rows = [['Order №', 'Order Date', 'Party', 'Code', 'Description of Goods', 'Model', 'Q-ty', 'Price', 'Total $']];
+      orderLines(item).forEach(function (l) {
+        rows.push([item.id, item.date, party, l.code, l.name, l.model, l.qty, l.price, l.qty * l.price]);
+      });
+      downloadCSV('order-' + item.id + '.csv', rows);
+      FX.toast('Экспортировано: order-' + item.id + '.csv', 'ok');
+    }
+
+    /* ---------------------------------------------------------------- binds */
+    function bindChat() {
+      FX.on(FX.q('#chatSearch'), 'input', function () {
+        store.chat.q = this.value;
+        renderChatList();
+      });
+      FX.delegate(document, '[data-chat-filter]', 'click', function (e, el) {
+        store.chat.filter = el.getAttribute('data-chat-filter');
+        FX.qa('#chatFilterTabs .tab').forEach(function (t) { t.classList.toggle('active', t === el); });
+        renderChatList();
+      });
+      FX.delegate(document, '[data-chat-id]', 'click', function (e, el) {
+        selectChat(Number(el.getAttribute('data-chat-id')));
+      });
+      FX.delegate(document, '[data-chat-send]', 'click', sendChat);
+      FX.delegate(document, '#chatInput', 'keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+      });
+      FX.delegate(document, '[data-chat-clear]', 'click', function () {
+        var chat = activeChat();
+        if (!chat) return;
+        confirmAction('Очистить чат', 'Вся переписка с «' + chat.name + '» будет удалена. В прототипе — только локально.', 'Очистить', function () {
+          chat.messages = [];
+          chat.unread = 0;
+          chat.last = '';
+          chat.lastAt = '';
+          renderChatList();
+          renderConversation();
+          FX.toast('Чат очищен', 'ok');
+        });
+      });
+      FX.delegate(document, '[data-chat-readall]', 'click', function () {
+        chats.forEach(function (c) { c.unread = 0; });
+        renderChatList();
+        renderConversation();
+        FX.toast('Все чаты прочитаны', 'ok');
+      });
+    }
+
+    function bindPreorder() {
+      FX.delegate(document, '#poTabs [data-po-tab]', 'click', function (e, el) {
+        showPoTab(el.getAttribute('data-po-tab'));
+      });
+      FX.delegate(document, '[data-penalty-tab]', 'click', function (e, el) {
+        store.po.penaltyTab = el.getAttribute('data-penalty-tab');
+        FX.qa('#penaltyTabs .tab').forEach(function (t) { t.classList.toggle('active', t === el); });
+        renderPenalty();
+      });
+      FX.delegate(document, '[data-p2p-tab]', 'click', function (e, el) {
+        store.po.p2pTab = el.getAttribute('data-p2p-tab');
+        FX.qa('#p2pTabs .tab').forEach(function (t) { t.classList.toggle('active', t === el); });
+        renderP2P();
+      });
+      FX.delegate(document, '[data-stats-range]', 'click', function (e, el) {
+        store.po.statsRange = el.getAttribute('data-stats-range');
+        renderStats();
+      });
+      FX.delegate(document, '[data-po-apply]', 'click', function (e, btn) {
+        var pane = btn.closest('[data-po-pane]');
+        var key = pane.getAttribute('data-po-pane');
+        var flt = store.po.flt[key];
+        FX.qa('[data-f]', pane).forEach(function (inp) { flt[inp.getAttribute('data-f')] = inp.value; });
+        renderPane(key);
+        FX.toast('Фильтры применены', 'ok', 1500);
+      });
+      FX.delegate(document, '[data-po-clear]', 'click', function (e, btn) {
+        var pane = btn.closest('[data-po-pane]');
+        var key = pane.getAttribute('data-po-pane');
+        var flt = store.po.flt[key];
+        Object.keys(flt).forEach(function (k) { flt[k] = ''; });
+        FX.qa('[data-f]', pane).forEach(function (inp) { inp.value = ''; });
+        renderPane(key);
+      });
+      FX.delegate(document, '[data-stock-id]', 'click', function (e, tr) {
+        if (e.target.closest('.switch')) return;
+        var id = Number(tr.getAttribute('data-stock-id'));
+        store.po.stockOpen[id] = !store.po.stockOpen[id];
+        renderStock();
+      });
+      FX.delegate(document, '[data-vis]', 'change', function (e, inp) {
+        var parts = inp.getAttribute('data-vis').split(':');
+        var lots = CARGO[Number(parts[0])];
+        if (!lots) return;
+        lots[Number(parts[1])].visible = inp.checked;
+        FX.toast('Visibility: ' + (inp.checked ? 'включена' : 'выключена'), 'ok', 1600);
+      });
+      FX.delegate(document, '[data-order]', 'click', function (e, el) {
+        var parts = el.getAttribute('data-order').split(':');
+        openOrderDrawer(parts[0], parts[1]);
+      });
+      FX.delegate(document, '[data-change-status]', 'click', function (e, el) {
+        var parts = el.getAttribute('data-change-status').split(':');
+        openStatusModal(parts[0], parts[1]);
+      });
+      FX.delegate(document, '[data-mark-paid]', 'click', function (e, el) {
+        store.po.penaltyPaid[el.getAttribute('data-mark-paid')] = true;
+        renderPenalty();
+        FX.toast('Штраф отмечен как оплаченный', 'ok');
+      });
+      FX.delegate(document, '[data-remove-bid]', 'click', function (e, el) {
+        var id = Number(el.getAttribute('data-remove-bid'));
+        var bid = FX.by(Demo.p2p, 'id', id);
+        if (!bid) return;
+        confirmAction('Remove bid', 'Ставка на «' + bid.product + '» (' + bid.qty + ' шт.) будет отозвана. Это действие нельзя отменить.', 'Remove bid', function () {
+          store.po.p2pRemoved[id] = true;
+          renderP2P();
+          FX.toast('Ставка отозвана', 'ok');
+        });
+      });
+      FX.delegate(document, '[data-export-table]', 'click', exportActiveTable);
+      FX.delegate(document, '[data-export-order]', 'click', exportOrderCSV);
+      FX.delegate(document, '[data-packing-list]', 'click', function () {
+        var tab = FX.q('.drawer [data-drw-tab="packings"]');
+        if (tab) tab.click();
+        FX.toast('Packing list открыт', 'ok', 1600);
+      });
+      FX.delegate(document, '[data-drw-tab]', 'click', function (e, tab) {
+        var root = tab.closest('.drawer');
+        if (!root) return;
+        var key = tab.getAttribute('data-drw-tab');
+        FX.qa('[data-drw-tab]', root).forEach(function (t) { t.classList.toggle('active', t === tab); });
+        FX.qa('[data-drw-pane]', root).forEach(function (p) { p.hidden = p.getAttribute('data-drw-pane') !== key; });
+      });
+      FX.on(FX.q('#statusApply'), 'click', applyStatus);
+      FX.on(FX.q('#confirmOk'), 'click', function () {
+        var cb = store.confirmCb;
+        store.confirmCb = null;
+        FX.closeModal('confirmModal');
+        if (cb) cb();
+      });
+    }
+
+    function bindService() {
+      FX.delegate(document, '[data-svc-apply]', 'click', function () {
+        var flt = store.service.flt;
+        FX.qa('[data-sf]').forEach(function (inp) { flt[inp.getAttribute('data-sf')] = inp.value; });
+        renderService();
+        FX.toast('Фильтры применены', 'ok', 1500);
+      });
+      FX.delegate(document, '[data-svc-clear]', 'click', function () {
+        store.service.flt = { country: '', date: '', cust: '', delivery: '', q: '' };
+        FX.qa('[data-sf]').forEach(function (inp) { inp.value = ''; });
+        renderService();
+      });
+      FX.delegate(document, '[data-svc-id]', 'click', function (e, tr) {
+        openServiceDrawer(tr.getAttribute('data-svc-id'));
+      });
+      FX.delegate(document, '[data-svc-add-comment]', 'click', addSvcComment);
+      FX.delegate(document, '#svcComment', 'keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); addSvcComment(); }
+      });
+      FX.delegate(document, '[data-svc-add-photo]', 'click', function () {
+        if (!store.svcDraft) return;
+        store.svcDraft.photo = true;
+        renderSvcDraft();
+        FX.toast('Фото добавлено (заглушка)', 'ok');
+      });
+      FX.delegate(document, '[data-svc-save]', 'click', saveService);
+    }
+
+    /* ----------------------------------------------------------------- init */
+    function initPage() {
+      fillSelects();
+      bindChat();
+      bindPreorder();
+      bindService();
+      var openChat = activeChat();
+      if (openChat) openChat.unread = 0;
+      renderChatList();
+      renderConversation();
+      showPoTab('stock');
+      renderService();
+      syncChatBadges();
+    }
+
+    FimexAdmin.mount({ page: 'admin', screen: 'chat' });
+    initPage();
+  })();
+  </script>
+</body>
+</html>

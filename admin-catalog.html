@@ -1,0 +1,2410 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fimex admin — Каталог и настройки (прототип)</title>
+<link rel="icon" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/admin.css">
+<style>
+/* ---------- admin-catalog.html — page-local additions (B1) ---------- */
+.cat-grid3 { display: grid; grid-template-columns: 284px minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.cat-values { position: sticky; top: calc(var(--topbar-h) + 16px); }
+.cat-add-value { width: 100%; margin-top: 10px; border-style: dashed; }
+.cat-check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.cat-check-grid .checkbox { font-size: 12.5px; }
+.cat-values-head { display: flex; gap: 8px; align-items: center; font-weight: 600; font-size: 13px; padding: 4px 2px 8px; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+.cat-value-row { display: flex; align-items: center; gap: 6px; padding: 3px 4px; border-radius: 6px; }
+.cat-value-row:hover { background: var(--surface-2); }
+.cat-value-row .drag { color: var(--muted); cursor: grab; font-size: 12px; letter-spacing: -1px; user-select: none; }
+.cat-value-row .input { height: 28px; font-size: 12.5px; }
+.cat-value-row .rm { border: 0; background: none; color: var(--muted); font-size: 14px; padding: 2px 5px; border-radius: 4px; }
+.cat-value-row .rm:hover { background: var(--red-soft); color: var(--red); }
+.cat-no-values { padding: 10px 6px; }
+
+.cat-mx-scroll { overflow: auto; border: 1px solid var(--line); border-radius: 0 0 var(--radius) var(--radius); background: var(--surface); max-height: calc(100vh - 330px); }
+.cat-mx-scroll table.matrix { border: 0; width: 100%; }
+.cat-matrix thead th:first-child { text-align: left; }
+.cat-matrix tfoot th { text-align: left; }
+.cat-matrix tfoot th, .cat-matrix tfoot td { background: var(--surface-2); font-weight: 600; color: var(--text-2); }
+.cat-matrix td.rowtotal, .cat-matrix th.rowtotal { background: var(--surface-2); text-align: right; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.cat-mx-input { width: 88px; }
+#penalty-brand .cat-mx-input, #penalty-category .cat-mx-input { width: 68px; }
+.pct-btn { min-width: 62px; height: 26px; padding: 0 8px; border: 1px solid transparent; border-radius: 4px; background: transparent; font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--text); }
+.pct-btn:hover { border-color: var(--line); background: var(--surface-2); }
+.pct-btn.off { color: var(--muted); }
+.pct-btn.on { color: var(--accent-dark); font-weight: 600; }
+.cat-pct-select { width: 100%; min-width: 72px; height: 27px; padding: 0 6px; border: 1px solid var(--accent); border-radius: 4px; background: var(--surface); font-size: 12px; }
+.cat-matrix thead th .sub { display: block; font-size: 10px; color: var(--muted); font-weight: 400; }
+
+.cat-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.cat-img { position: relative; display: flex; align-items: center; justify-content: center; aspect-ratio: 4 / 3; border: 1px solid var(--line); border-radius: var(--radius-sm); background: linear-gradient(135deg, #f2f5ff, #f8f9fb); color: var(--text-2); font-size: 30px; }
+.cat-img.main { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.cat-img .tile-actions { position: absolute; top: 4px; right: 4px; display: flex; gap: 2px; }
+.cat-img .tile-actions button { width: 22px; height: 22px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--text-2); font-size: 11px; padding: 0; line-height: 1; }
+.cat-img .tile-actions button:hover { color: var(--text); border-color: var(--line-strong); }
+.cat-img .tag { position: absolute; left: 6px; bottom: 6px; font-size: 9.5px; }
+.cat-drop { margin-top: 10px; }
+
+.cat-icons-row { display: flex; gap: 22px; margin: 2px 0 16px; }
+.cat-icon-box { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.cat-icon-box .hint { font-size: 10.5px; }
+.cat-card-icon { display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 10px; background: var(--surface-3); font-size: 26px; border: 1px solid var(--line); }
+.cat-card-icon.dark { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.cat-card-icon.sm { width: 38px; height: 38px; font-size: 18px; }
+
+.cat-color { position: relative; display: inline-block; vertical-align: middle; }
+.cat-color input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: 0; padding: 0; }
+.cat-color .color-swatch { display: block; width: 30px; height: 24px; }
+.cat-drag { cursor: grab; color: var(--muted); user-select: none; font-size: 13px; letter-spacing: -1px; }
+.ts-row.dragging td { opacity: .45; }
+.cat-status-icon { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface-3); font-size: 16px; padding: 0; }
+.cat-status-icon:hover { border-color: var(--line-strong); }
+
+.cat-priv-chips .chip { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; height: 24px; }
+.cat-key { cursor: pointer; }
+.cat-key:hover { color: var(--accent-dark); }
+.cat-const-ru, .cat-const-en { max-width: 250px; white-space: normal; font-size: 12.5px; }
+.cat-role-badge { text-transform: none; }
+.cat-team-actions { display: flex; gap: 2px; justify-content: flex-end; }
+.cat-login-toast { font-size: 12px; }
+
+@media (max-width: 1400px) {
+  .cat-grid3 { grid-template-columns: 250px minmax(0, 1fr); }
+  .cat-values { grid-column: 1 / -1; position: static; }
+}
+@media (max-width: 1000px) {
+  .cat-grid3 { grid-template-columns: 1fr; }
+  .cat-mx-scroll { max-height: none; }
+}
+</style>
+</head>
+<body class="admin">
+<div id="shell"></div>
+
+<section id="screens">
+
+  <!-- ============================================================ -->
+  <!-- 1. Характеристики товаров -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="chars-settings">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Характеристики товаров</h1>
+          <div class="sub">Дерево характеристик: значения, правила фильтрации и вывод в названии товара и прайс-листе.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-default" data-chars-add>Добавить</button>
+          <button class="btn btn-primary" data-chars-save>Сохранить</button>
+        </div>
+      </div>
+
+      <div class="cat-grid3">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Дерево</h3>
+            <span class="badge badge-gray" id="chars-count">0</span>
+          </div>
+          <div class="tree" id="chars-tree"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Характеристика</h3>
+            <span class="muted small mono" id="chars-id">#—</span>
+          </div>
+          <div class="panel-body">
+            <form id="chars-form" autocomplete="off" onsubmit="return false">
+              <div class="form-grid">
+                <div class="field full">
+                  <label>Название характеристики <span class="req">*</span></label>
+                  <input class="input" id="cf-name" placeholder="Например, Цвет">
+                </div>
+                <div class="field">
+                  <label>Название характеристики в продукт инфо (RU)</label>
+                  <input class="input" id="cf-ru">
+                </div>
+                <div class="field">
+                  <label>Название характеристики в продукт инфо (EN)</label>
+                  <input class="input" id="cf-en">
+                </div>
+                <div class="field">
+                  <label>Название товара в инфо</label>
+                  <input class="input" id="cf-title-info" placeholder="Например, Цвет товара">
+                </div>
+                <div class="field">
+                  <label>Название товара в прайслисте (приложение)</label>
+                  <input class="input" id="cf-title-price" placeholder="Например, Цвет">
+                </div>
+                <div class="field">
+                  <label>Использовать как</label>
+                  <select class="select" id="cf-use">
+                    <option>Не выбрано</option>
+                    <option>Фильтровать по</option>
+                    <option>Группировать по</option>
+                    <option>Сортировать по</option>
+                    <option>Статистика поставщика</option>
+                    <option>Товар при выборе в приложении</option>
+                    <option>Таргет</option>
+                    <option>Бот</option>
+                    <option>Приложение</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Иконка</label>
+                  <div class="row" style="gap:10px">
+                    <input class="input" id="cf-icon" maxlength="4" style="width:64px;text-align:center">
+                    <label class="checkbox" style="font-size:12px"><input type="checkbox" id="cf-emoji"><span>Добавить эмоджи в название</span></label>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Тип диаграмы</label>
+                  <div class="row" style="gap:16px;height:34px">
+                    <label class="radio"><input type="radio" name="cf-type" value="Круговая"> Круговая</label>
+                    <label class="radio"><input type="radio" name="cf-type" value="Линейная"> Линейная</label>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Цвет диаграммы</label>
+                  <div class="row" style="gap:8px;height:34px">
+                    <input type="color" id="cf-color" value="#3B70CA" style="width:34px;height:34px;padding:2px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface)">
+                    <span class="mono muted" id="cf-color-hex">#3B70CA</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h4>Вывод и связь</h4>
+                <div class="cat-check-grid">
+                  <label class="checkbox"><input type="checkbox" id="cf-filter"><span>Вывести в фильтре</span></label>
+                  <label class="checkbox"><input type="checkbox" id="cf-required"><span>Обязательно для заполнения</span></label>
+                  <label class="checkbox"><input type="checkbox" id="cf-title"><span>Использовать для названия товара</span></label>
+                  <label class="checkbox"><input type="checkbox" id="cf-price"><span>Вывод в прайс листе</span></label>
+                  <label class="checkbox"><input type="checkbox" id="cf-info"><span>Информация о товаре</span></label>
+                  <label class="checkbox"><input type="checkbox" id="cf-p2p"><span>Вывод характеристик в истории P2P</span></label>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-ghost" data-chars-remove>Удалить</button>
+                <span class="spacer"></span>
+                <button type="button" class="btn btn-default" data-chars-add>Добавить</button>
+                <button type="button" class="btn btn-primary" data-chars-save>Сохранить</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="panel cat-values">
+          <div class="panel-head">
+            <h3>Значения</h3>
+            <button class="btn btn-sm btn-default" data-value-add>+ Добавить</button>
+          </div>
+          <div class="panel-body">
+            <div id="chars-values"></div>
+            <button class="btn btn-default cat-add-value" data-value-add>Добавить значение</button>
+            <div class="hint" style="margin-top:10px">Предпросмотр дерева характеристик. Изменения применяются кнопкой «Сохранить».</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 2. Номенклатура -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="nomenclature">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Номенклатура</h1>
+          <div class="sub">Бренд → категория → подкатегория → товар. Карточка товара: коды, вес, характеристики и изображения.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-default" data-nom-add>Добавить товар</button>
+          <button class="btn btn-primary" data-nom-save>Сохранить</button>
+        </div>
+      </div>
+
+      <div class="split-pane wide-left">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Дерево товаров</h3>
+            <span class="badge badge-gray" id="nom-count">0</span>
+          </div>
+          <div class="panel-body" style="padding:10px 12px 8px">
+            <div class="search"><input class="input" id="nom-search" placeholder="Поиск по названию или коду"></div>
+          </div>
+          <div class="tree" id="nom-tree" style="max-height:calc(100vh - 316px);overflow:auto"></div>
+        </div>
+
+        <div class="panel" id="nom-card" data-tabs-container>
+          <div class="panel-head">
+            <div class="row" style="gap:10px;min-width:0">
+              <span class="cat-card-icon sm" id="nom-icon">📦</span>
+              <div style="min-width:0">
+                <h3 id="nom-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Товар не выбран</h3>
+                <div class="muted small" id="nom-subtitle">Выберите товар в дереве слева</div>
+              </div>
+            </div>
+            <div class="row" style="gap:8px">
+              <button class="btn btn-danger btn-sm" data-nom-delete>Удалить</button>
+              <button class="btn btn-primary btn-sm" data-nom-save>Сохранить</button>
+            </div>
+          </div>
+          <div style="padding:0 14px">
+            <div class="tabs" data-tabs="nom">
+              <button class="tab active" data-tab="main">Основные</button>
+              <button class="tab" data-tab="chars">Характеристики</button>
+              <button class="tab" data-tab="images">Изображения</button>
+            </div>
+          </div>
+
+          <div class="panel-body" data-tab-panel="nom" data-tab-name="main">
+            <div class="form-grid">
+              <div class="field full">
+                <label>Название <span class="req">*</span></label>
+                <input class="input" id="nom-name" autocomplete="off">
+              </div>
+              <div class="field">
+                <label>Бренд <span class="req">*</span></label>
+                <select class="select" id="nom-brand"></select>
+              </div>
+              <div class="field">
+                <label>Группа товаров <span class="req">*</span></label>
+                <select class="select" id="nom-group"></select>
+              </div>
+              <div class="field">
+                <label>Категория</label>
+                <select class="select" id="nom-category"></select>
+              </div>
+              <div class="field">
+                <label>Подкатегория</label>
+                <select class="select" id="nom-subcategory"></select>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4>Коды</h4>
+              <div class="form-grid">
+                <div class="field">
+                  <label>Код товара</label>
+                  <input class="input mono" id="nom-code">
+                </div>
+                <div class="field">
+                  <label>Кол-во символов</label>
+                  <input class="input" id="nom-code-len" readonly tabindex="-1" style="background:var(--surface-2)">
+                </div>
+                <div class="field">
+                  <label>Код производства</label>
+                  <input class="input mono" id="nom-prod-code">
+                </div>
+                <div class="field">
+                  <label>Код товара ВЭД</label>
+                  <input class="input mono" id="nom-vat-code">
+                </div>
+              </div>
+              <div class="row" style="margin-top:12px">
+                <label class="checkbox"><input type="checkbox" id="nom-autogen"><span>Автогенерация кода товара</span></label>
+                <span class="spacer"></span>
+                <button class="btn btn-sm btn-default" id="nom-add-code">Добавить код +</button>
+              </div>
+              <div id="nom-extra-codes" class="stack tight" style="margin-top:10px"></div>
+            </div>
+
+            <div class="form-section">
+              <h4>Параметры</h4>
+              <div class="form-grid">
+                <div class="field">
+                  <label>Вес (г)</label>
+                  <input class="input" id="nom-weight" type="number" min="0">
+                </div>
+                <div class="field">
+                  <label>Тип серийника</label>
+                  <select class="select" id="nom-serial">
+                    <option>IMEI</option>
+                    <option>Serial number</option>
+                    <option>Без серийника</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Цвет отображения в статистике</label>
+                  <div class="row" style="gap:8px">
+                    <input type="color" id="nom-stat-color" value="#3B70CA" style="width:34px;height:34px;padding:2px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface)">
+                    <span class="mono muted" id="nom-stat-hex">#3B70CA</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Отображать на главной</label>
+                  <label class="switch"><input type="checkbox" id="nom-home"><i></i></label>
+                </div>
+              </div>
+              <div class="cat-check-grid" style="margin-top:12px">
+                <label class="checkbox"><input type="checkbox" id="nom-imei-excel"><span>Отображать имеи в эксэле (статистика)</span></label>
+                <label class="checkbox"><input type="checkbox" id="nom-export"><span>Для экспорта</span></label>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="field">
+                <label>Описание</label>
+                <textarea class="textarea" id="nom-desc" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body" data-tab-panel="nom" data-tab-name="chars" hidden>
+            <div class="row between" style="margin-bottom:10px">
+              <div class="hint">Значения берутся из справочника «Характеристики товаров».</div>
+              <span class="badge badge-gray" id="nom-chars-count">0</span>
+            </div>
+            <table class="table compact" id="nom-chars">
+              <thead><tr><th>Характеристика</th><th>Значение</th><th style="width:110px">В фильтре</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <div class="empty" id="nom-chars-empty" hidden>
+              <div class="icon">🏷️</div>
+              <h4>Нет характеристик</h4>
+              <p>Для этого товара не заданы характеристики. Добавьте их в разделе «Характеристики товаров».</p>
+            </div>
+          </div>
+
+          <div class="panel-body" data-tab-panel="nom" data-tab-name="images" hidden>
+            <div class="row between" style="margin-bottom:10px">
+              <div class="hint">Изображения товара для мобильного приложения и прайс-листа.</div>
+              <span class="badge badge-gray" id="nom-img-count">0</span>
+            </div>
+            <div class="cat-images" id="nom-images"></div>
+            <div class="photo-drop cat-drop" id="nom-drop">
+              <span style="font-size:18px">⬆</span>
+              <span>Перетащите изображение или нажмите, чтобы выбрать файл</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 3. Карго -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="cargo">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Карго</h1>
+          <div class="sub">Карго (UZS) — стоимость доставки по брендам и странам. Значения редактируются в ячейках.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" data-matrix-save="cargo">Сохранить</button>
+        </div>
+      </div>
+
+      <div data-tabs-container>
+        <div class="tabs" data-tabs="cargo">
+          <button class="tab active" data-tab="suppliers">Поставщики</button>
+          <button class="tab" data-tab="clients">Клиенты</button>
+        </div>
+        <div class="panel" style="border-top:0;border-radius:0 0 var(--radius) var(--radius)">
+          <div class="panel-head">
+            <h3>Карго (UZS) · <span data-cargo-title>Поставщики</span></h3>
+            <div class="row" style="gap:10px">
+              <span class="badge badge-blue">UZS</span>
+              <span class="hint">Итого по странам пересчитывается автоматически</span>
+            </div>
+          </div>
+          <div class="panel-body flush" data-tab-panel="cargo" data-tab-name="suppliers">
+            <div class="cat-mx-scroll" id="cargo-suppliers"></div>
+          </div>
+          <div class="panel-body flush" data-tab-panel="cargo" data-tab-name="clients" hidden>
+            <div class="cat-mx-scroll" id="cargo-clients"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 4. Наценки -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="percents">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Наценки</h1>
+          <div class="sub">Brand / Category — видимость и процент наценки. «—» означает, что наценка к категории не применяется.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" data-matrix-save="percents">Сохранить</button>
+        </div>
+      </div>
+
+      <div data-tabs-container>
+        <div class="tabs" data-tabs="percents">
+          <button class="tab active" data-tab="brand">Brand</button>
+          <button class="tab" data-tab="category">Category</button>
+        </div>
+        <div class="panel" style="border-top:0;border-radius:0 0 var(--radius) var(--radius)">
+          <div class="panel-head">
+            <h3>Brand / Category</h3>
+            <div class="legend">
+              <span><span class="dot" style="background:#3B70CA"></span> наценка включена</span>
+              <span><span class="dot" style="background:#d5d8e0"></span> — не применяется</span>
+            </div>
+          </div>
+          <div class="panel-body flush" data-tab-panel="percents" data-tab-name="brand">
+            <div class="cat-mx-scroll" id="percents-brand"></div>
+          </div>
+          <div class="panel-body flush" data-tab-panel="percents" data-tab-name="category" hidden>
+            <div class="cat-mx-scroll" id="percents-category"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 5. Штрафы -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="penalty">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Штрафы</h1>
+          <div class="sub">Brand / Category — сумма штрафа по бренду и категории. Матрица используется при расчёте претензий.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" data-matrix-save="penalty">Сохранить</button>
+        </div>
+      </div>
+
+      <div data-tabs-container>
+        <div class="tabs" data-tabs="penalty">
+          <button class="tab active" data-tab="brand">Brand</button>
+          <button class="tab" data-tab="category">Category</button>
+        </div>
+        <div class="panel" style="border-top:0;border-radius:0 0 var(--radius) var(--radius)">
+          <div class="panel-head">
+            <h3>Brand / Category</h3>
+            <div class="row" style="gap:10px">
+              <span class="badge badge-orange">USD</span>
+              <span class="hint">Суммы штрафов указаны в долларах</span>
+            </div>
+          </div>
+          <div class="panel-body flush" data-tab-panel="penalty" data-tab-name="brand">
+            <div class="cat-mx-scroll" id="penalty-brand"></div>
+          </div>
+          <div class="panel-body flush" data-tab-panel="penalty" data-tab-name="category" hidden>
+            <div class="cat-mx-scroll" id="penalty-category"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 6. Причины возврата -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="reason-settings">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Причины возврата</h1>
+          <div class="sub">Причины возврата и суммы штрафов. Используются в разделе «Сервис» и при расчёте претензий.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-default" data-reason-add>+ Add reason</button>
+          <button class="btn btn-primary" data-reason-save>Сохранить</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-tools">
+          <span class="strong">Все причины</span>
+          <span class="hint">Название и сумму можно изменить прямо в таблице</span>
+          <span class="row-info" id="reason-count"></span>
+        </div>
+        <table class="table" id="reason-table">
+          <thead>
+            <tr>
+              <th style="width:48px">#</th>
+              <th>Название</th>
+              <th style="width:190px">Сумма штрафа</th>
+              <th style="width:130px">Tax:</th>
+              <th style="width:90px" class="num">Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 7. Типы опта -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="wholesale-types">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Типы опта</h1>
+          <div class="sub">Иконки и названия типов опта в админке и мобильном приложении.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-default" data-ws-add>Add More</button>
+          <button class="btn btn-primary" data-ws-save>Сохранить</button>
+        </div>
+      </div>
+      <div class="grid2" id="wholesale-grid"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 8. Статусы доставки -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="delivery-statuses">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Статусы доставки</h1>
+          <div class="sub">Цвета иконок, названия RU/EN и отметка «Выдача». Порядок меняется перетаскиванием за ручку.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-default" data-status-add>Add status</button>
+          <button class="btn btn-primary" data-status-save>Сохранить</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-tools">
+          <span class="strong">Статусы доставки</span>
+          <span class="hint">Цвет иконки задаётся для светлой и тёмной темы приложения</span>
+          <span class="row-info" id="status-count"></span>
+        </div>
+        <table class="table" id="status-table">
+          <thead>
+            <tr>
+              <th style="width:62px">#</th>
+              <th style="width:64px">Иконка</th>
+              <th>Название Ru</th>
+              <th>Название En</th>
+              <th style="width:96px">Цвет иконки</th>
+              <th style="width:150px">Цвет иконки тёмная версия</th>
+              <th style="width:82px">Выдача</th>
+              <th style="width:96px" class="num">Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 9. Константы приложения -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="constants">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Константы приложения</h1>
+          <div class="sub">Переопределение текстовок мобильного приложения по ключам fi_/ma_. Клик по ключу копирует его.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" data-const-add>Добавить переопределение</button>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="field wide">
+          <label>Search</label>
+          <div class="search"><input class="input" id="const-search" placeholder="Ключ или текст"></div>
+        </div>
+        <div class="field">
+          <label>Все группы</label>
+          <select class="select" id="const-group"></select>
+        </div>
+        <div class="field">
+          <label>Все ключи</label>
+          <select class="select" id="const-key"></select>
+        </div>
+        <div class="field">
+          <label>Где применить</label>
+          <select class="select" id="const-where">
+            <option value="">Все приложения</option>
+            <option value="Оба приложения">Оба приложения</option>
+            <option value="Приложение">Приложение</option>
+            <option value="Админка">Админка</option>
+          </select>
+        </div>
+        <div class="f-actions">
+          <button class="btn btn-default" id="const-reset">Сбросить</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-tools">
+          <span class="strong">Переопределения</span>
+          <span class="hint">Вводите ровно как в коде приложения. Префикс fi_/ma_ добавится автоматически.</span>
+          <span class="row-info" id="const-count"></span>
+        </div>
+        <table class="table" id="const-table">
+          <thead>
+            <tr>
+              <th style="width:120px">Группа</th>
+              <th style="width:290px">Ключ</th>
+              <th>Текст RU</th>
+              <th>Текст EN</th>
+              <th style="width:170px">Экран (необязательно)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 10. Команда -->
+  <!-- ============================================================ -->
+  <div class="screen" data-screen="users">
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Команда</h1>
+          <div class="sub">Роли, статусы и права доступа участников. Приглашение по e-mail и автовход.</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-primary" data-team-add>Add Team Member</button>
+        </div>
+      </div>
+
+      <div class="kpi-row" style="margin-bottom:16px" id="team-kpis"></div>
+
+      <div class="filter-rail">
+        <span class="label">Роль</span>
+        <div class="chips" id="role-chips"></div>
+        <span class="row-info" id="team-count"></span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" id="team-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th style="width:170px">Роль</th>
+              <th style="width:130px">Статус</th>
+              <th style="width:110px" class="num">Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<a class="proto-pill" href="index.html">🛈 Прототип Fimex · вымышленные данные · ← Карта платформы</a>
+
+<!-- ============================================================== -->
+<!-- Modals (вне #screens — общий слой)                              -->
+<!-- ============================================================== -->
+
+<div class="modal-backdrop" id="m-char" hidden>
+  <div class="modal narrow" role="dialog" aria-modal="true" aria-label="Добавить характеристику">
+    <div class="modal-head"><h3>Добавить характеристику</h3><button class="modal-close" data-close>×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Название характеристики <span class="req">*</span></label>
+          <input class="input" id="nc-name" placeholder="Например, Цвет">
+        </div>
+        <div class="field">
+          <label>Иконка</label>
+          <input class="input" id="nc-icon" value="🏷️" maxlength="4">
+        </div>
+        <div class="field">
+          <label>Тип диаграмы</label>
+          <select class="select" id="nc-type"><option>Круговая</option><option>Линейная</option></select>
+        </div>
+      </div>
+      <div class="hint" style="margin-top:12px">После создания добавьте значения в панели «Значения».</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" data-close>Отмена</button>
+      <button class="btn btn-primary" id="nc-save">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="m-nom-delete" hidden>
+  <div class="modal narrow" role="dialog" aria-modal="true" aria-label="Удалить товар">
+    <div class="modal-head"><h3>Удалить товар?</h3><button class="modal-close" data-close>×</button></div>
+    <div class="modal-body">
+      <p class="muted">Товар <b id="nd-name"></b> будет удалён из номенклатуры. В прототипе действие необратимо.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" data-close>Отмена</button>
+      <button class="btn btn-danger" id="nd-confirm">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="m-reason" hidden>
+  <div class="modal narrow" role="dialog" aria-modal="true" aria-label="Add reason">
+    <div class="modal-head"><h3>Add reason</h3><button class="modal-close" data-close>×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Название <span class="req">*</span></label>
+          <input class="input" id="nr-name" placeholder="Например, Повреждение при доставке">
+        </div>
+        <div class="field">
+          <label>Сумма штрафа</label>
+          <input class="input" id="nr-fine" type="number" min="0" step="1" value="100">
+        </div>
+        <div class="field">
+          <label>Tax:</label>
+          <input class="input" id="nr-tax" type="number" min="0" step="1" value="5">
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" data-close>Отмена</button>
+      <button class="btn btn-primary" id="nr-save">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="m-status" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Статус доставки">
+    <div class="modal-head"><h3 id="ns-title">Add status</h3><button class="modal-close" data-close>×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Название Ru <span class="req">*</span></label>
+          <input class="input" id="ns-ru" placeholder="Например, В пути">
+        </div>
+        <div class="field">
+          <label>Название En</label>
+          <input class="input" id="ns-en" placeholder="In transit">
+        </div>
+        <div class="field">
+          <label>Иконка</label>
+          <input class="input" id="ns-icon" value="🚚" maxlength="4">
+        </div>
+        <div class="field">
+          <label>Цвет иконки</label>
+          <div class="row" style="gap:8px">
+            <input type="color" id="ns-color" value="#37A0FA" style="width:34px;height:34px;padding:2px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface)">
+            <input class="input mono" id="ns-color-hex" value="#37A0FA" style="width:96px">
+          </div>
+        </div>
+        <div class="field">
+          <label>Цвет иконки тёмная версия</label>
+          <div class="row" style="gap:8px">
+            <input type="color" id="ns-color-dark" value="#1F6FB5" style="width:34px;height:34px;padding:2px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface)">
+            <input class="input mono" id="ns-color-dark-hex" value="#1F6FB5" style="width:96px">
+          </div>
+        </div>
+        <div class="field full">
+          <label>Выдача</label>
+          <label class="checkbox"><input type="checkbox" id="ns-issue"><span>Статус соответствует выдаче заказа</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" data-close>Отмена</button>
+      <button class="btn btn-primary" id="ns-save">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="m-const" hidden>
+  <div class="modal wide" role="dialog" aria-modal="true" aria-label="Добавить переопределение">
+    <div class="modal-head"><h3>Добавить переопределение</h3><button class="modal-close" data-close>×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Группа</label>
+          <select class="select" id="ncm-group"></select>
+        </div>
+        <div class="field">
+          <label>Где применить</label>
+          <select class="select" id="ncm-where">
+            <option>Оба приложения</option>
+            <option>Приложение</option>
+            <option>Админка</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Ключ <span class="req">*</span></label>
+          <input class="input mono" id="ncm-key" placeholder="Например, cart_empty_title">
+        </div>
+        <div class="field full" id="ncm-new-group-wrap" hidden>
+          <label>Название новой группы</label>
+          <input class="input" id="ncm-group-new" placeholder="Например, Warranty">
+        </div>
+        <div class="field full">
+          <label>Экран (необязательно)</label>
+          <input class="input" id="ncm-screen" placeholder="Например, OrderDetailViewController">
+        </div>
+        <div class="field">
+          <label>Текст RU <span class="req">*</span></label>
+          <textarea class="textarea" id="ncm-ru" rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label>Текст EN</label>
+          <textarea class="textarea" id="ncm-en" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="screen-intro" style="margin:14px 0 0">
+        <div class="note">ⓘ Вводите ровно как в коде приложения. Префикс fi_/ma_ добавится автоматически.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" data-close>Отмена</button>
+      <button class="btn btn-primary" id="ncm-save">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="m-member" hidden>
+  <div class="modal wide" role="dialog" aria-modal="true" aria-label="Add Team Member">
+    <div class="modal-head"><h3>Add Team Member</h3><button class="modal-close" data-close>×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Name <span class="req">*</span></label>
+          <input class="input" id="tm-name" placeholder="Имя и фамилия">
+        </div>
+        <div class="field">
+          <label>Email <span class="req">*</span></label>
+          <input class="input" id="tm-email" placeholder="name@company.example">
+        </div>
+        <div class="field">
+          <label>Пароль</label>
+          <input class="input" id="tm-pass" type="password" placeholder="Минимум 8 символов">
+        </div>
+        <div class="field">
+          <label>Повторите пароль</label>
+          <input class="input" id="tm-pass2" type="password" placeholder="Повторите пароль">
+        </div>
+        <div class="field full">
+          <label>Роль</label>
+          <select class="select" id="tm-role"></select>
+        </div>
+      </div>
+      <div class="form-section">
+        <h4>Права доступа</h4>
+        <div class="chips cat-priv-chips" id="tm-privs"></div>
+        <div class="hint" style="margin-top:8px">Клик по чипу включает или отключает право. Набор по умолчанию зависит от роли.</div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" data-close>Отмена</button>
+      <button class="btn btn-primary" id="tm-save">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="m-user-delete" hidden>
+  <div class="modal narrow" role="dialog" aria-modal="true" aria-label="Удалить участника">
+    <div class="modal-head"><h3>Удалить участника?</h3><button class="modal-close" data-close>×</button></div>
+    <div class="modal-body">
+      <p class="muted">Участник <b id="ud-name"></b> потеряет доступ к админке. В прототипе действие необратимо.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" data-close>Отмена</button>
+      <button class="btn btn-danger" id="ud-confirm">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/demo-data.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/admin-shell.js"></script>
+<script>
+/* Fimex prototype — admin-catalog.html page logic (B1).
+   All data is fictional (Demo.* + invented local seeds). No network calls. */
+(function () {
+  'use strict';
+  var q = FX.q, qa = FX.qa, esc = FX.esc, toast = FX.toast;
+
+  /* ---------------- helpers ---------------- */
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function flag(a) { return FimexAdmin.flag(a); }
+  function pct(v) { return Math.round(v * 100) + '%'; }
+  function parseNum(v) { return Number(String(v == null ? '' : v).replace(/[^\d.-]/g, '')) || 0; }
+  function uniq(arr) { var out = []; arr.forEach(function (x) { if (out.indexOf(x) === -1) out.push(x); }); return out; }
+  function brandColor(name) { var b = Demo.by(Demo.brands, 'name', name); return b ? b.color : '#3B70CA'; }
+  function brandIcon(name) {
+    var map = { Apple: '🍎', Samsung: '🌀', Xiaomi: '🟠', Google: '🔵', OnePlus: '1️⃣', Honor: '✨', Meta: '🥽', Whoop: '⌚', DJI: '🚁' };
+    return map[name] || '📦';
+  }
+  var CAT_ICON = { iPhone: '📱', iPad: '📲', MacBook: '💻', 'Apple Watch': '⌚', AirPods: '🎧', 'Galaxy S': '📱', 'Galaxy Z': '📱', 'Galaxy A': '📱', Redmi: '📱', Poco: '📱', Xiaomi: '📱', Pixel: '📱', OnePlus: '📱', Honor: '📱', 'Meta Quest': '🥽', Whoop: '⌚', Osmo: '📷' };
+  function productIcon(p) { return CAT_ICON[p.category] || brandIcon(p.brand); }
+  function dot(color) { return '<span class="dot" style="background:' + esc(color || '#9EA2B2') + '"></span>'; }
+  function shade(hex, k) {
+    var h = String(hex || '#888888').replace('#', '');
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    function ch(v) { v = Math.max(0, Math.min(255, Math.round(v * (1 + k)))); return ('0' + v.toString(16)).slice(-2); }
+    return '#' + ch(r) + ch(g) + ch(b);
+  }
+  function setVal(id, v) { var el = q('#' + id); if (el) el.value = v == null ? '' : v; }
+  function getVal(id) { var el = q('#' + id); return el ? el.value : ''; }
+  function getCheck(id) { var el = q('#' + id); return !!(el && el.checked); }
+  function setCheck(id, v) { var el = q('#' + id); if (el) el.checked = !!v; }
+  function fillSelect(el, items, value) {
+    if (!el) return;
+    el.innerHTML = items.map(function (it) {
+      var v = it && typeof it === 'object' ? it.value : it;
+      var l = it && typeof it === 'object' ? it.label : it;
+      return '<option value="' + esc(v) + '">' + esc(l) + '</option>';
+    }).join('');
+    if (value != null) el.value = value;
+  }
+  function copyText(text) {
+    function fallback() {
+      var area = document.createElement('textarea');
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      try { document.execCommand('copy'); toast('Скопировано: ' + text, 'ok'); }
+      catch (err) { toast('Не удалось скопировать', 'error'); }
+      area.remove();
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () { toast('Скопировано: ' + text, 'ok'); },
+          function () { fallback(); }
+        );
+        return;
+      }
+    } catch (err) { /* ignore, fall back below */ }
+    fallback();
+  }
+  function tableEmpty(cols, icon, title, text, actionHtml) {
+    return '<tr><td colspan="' + cols + '"><div class="empty"><div class="icon">' + icon + '</div><h4>' + esc(title) + '</h4><p>' + esc(text) + '</p>' + (actionHtml || '') + '</div></td></tr>';
+  }
+
+  /* ================================================================
+     LOCAL DATA (fictional)
+     ================================================================ */
+  var D = {};
+
+  /* ---- characteristics ---- */
+  var CHAR_COLORS = ['#3B70CA', '#7B61FF', '#37A0FA', '#FF9901', '#68CC66', '#F02727'];
+  D.chars = Demo.chars.map(function (c, i) {
+    return {
+      id: i + 1, name: c.name, icon: c.icon, ru: c.name, en: c.name,
+      titleInfo: '', titlePrice: '', useAs: 'Не выбрано',
+      type: c.type || 'Круговая', color: CHAR_COLORS[i % CHAR_COLORS.length],
+      filter: !!c.filter, required: !!c.required, title: !!c.title, price: !!c.price,
+      info: !!c.info, p2p: false, emojiName: false, values: c.values.slice()
+    };
+  });
+  D.nextCharId = D.chars.length + 1;
+  D.selChar = 0;
+
+  /* ---- nomenclature: unique product definitions ---- */
+  D.products = [];
+  var seenProducts = {};
+  Demo.products.forEach(function (p) {
+    var key = [p.brand, p.category, p.subcategory, p.chars].join('|');
+    if (seenProducts[key]) return;
+    seenProducts[key] = 1;
+    var parts = String(p.chars || '').split(' ');
+    var memory = parts[0] || '';
+    var color = parts.slice(1).join(' ') || '';
+    var id = p.id;
+    var item = {
+      id: id, code: p.code, brand: p.brand, category: p.category, subcategory: p.subcategory,
+      chars: p.chars, name: p.subcategory + ' ' + p.chars,
+      model: p.model || '', vat: '8517 13 000 0',
+      weight: 145 + (id % 520), serial: /Watch|Whoop/.test(p.category) ? 'Serial number' : 'IMEI',
+      home: id % 3 === 0, imeiExcel: id % 4 === 0, export: id % 5 === 0,
+      statColor: brandColor(p.brand), extraCodes: [], autogen: false,
+      desc: 'Товар в оригинальной упаковке, полный комплект. Данные прототипа: характеристики и состояние уточняются при приёмке.',
+      charValues: {}, images: null
+    };
+    D.chars.forEach(function (c) {
+      if (c.name === 'Память' && memory) item.charValues[c.name] = memory;
+      else if (c.name === 'Цвет' && color) item.charValues[c.name] = color;
+      else item.charValues[c.name] = c.values[0] || '';
+    });
+    D.products.push(item);
+  });
+  function defaultImages(p) {
+    var ic = productIcon(p);
+    return [ic, '📦', '📄'].slice(0, 2 + (p.id % 2));
+  }
+  D.selProduct = 0;
+  D.nomOpen = {};
+  D.pendingDelete = -1;
+
+  /* ---- cargo: brand x country matrix, UZS ---- */
+  var CARGO_COUNTRIES = Demo.countries;
+  var CARGO_BRANDS = Demo.brands;
+  function seedCargo(kind) {
+    var map = {};
+    CARGO_BRANDS.forEach(function (b, bi) {
+      map[b.id] = {};
+      CARGO_COUNTRIES.forEach(function (c, ci) {
+        var base = 64000 + ((bi * 7 + ci * 13) % 12) * 27000;
+        map[b.id][c.id] = Math.round(base * (kind === 'clients' ? 1.16 : 1) / 1000) * 1000;
+      });
+    });
+    return map;
+  }
+  D.cargo = { suppliers: seedCargo('suppliers'), clients: seedCargo('clients') };
+
+  /* ---- percents / penalty matrices ---- */
+  D.pctCats = ['iPhone', 'iPad', 'MacBook', 'Apple Watch', 'AirPods', 'Galaxy S', 'Galaxy Z', 'Redmi', 'Pixel', 'OnePlus'];
+  var brandRows = Demo.brands.map(function (b) { return { key: b.name, label: b.name, color: b.color }; });
+  var catRows = D.pctCats.map(function (n) { return { key: n, label: n }; });
+  var brandCols = ['Apple', 'Samsung', 'Xiaomi', 'Google', 'OnePlus', 'Honor'].map(function (n) { return { key: n, label: n }; });
+  D.pctRows = { brand: brandRows, category: catRows };
+  D.pctCols = { brand: catRows, category: brandCols };
+  D.penRows = { brand: brandRows, category: catRows };
+  D.penCols = { brand: catRows, category: brandCols };
+  function seedPct(mode) {
+    var rows = D.pctRows[mode], cols = D.pctCols[mode], map = {};
+    rows.forEach(function (r, ri) {
+      map[r.key] = {};
+      cols.forEach(function (c, ci) {
+        var on = (ri * 3 + ci * 5) % 7 !== 0 && (ri + ci) % 5 !== 0;
+        map[r.key][c.key] = on ? Demo.percentOptions[(ri * 4 + ci * 3) % Demo.percentOptions.length] : null;
+      });
+    });
+    return map;
+  }
+  function seedPen(mode) {
+    var rows = D.penRows[mode], cols = D.penCols[mode], map = {};
+    rows.forEach(function (r, ri) {
+      map[r.key] = {};
+      cols.forEach(function (c, ci) {
+        var off = (ri + ci) % 6 === 0;
+        map[r.key][c.key] = off ? null : 25 + ((ri * 37 + ci * 53) % 9) * 15;
+      });
+    });
+    return map;
+  }
+  D.percents = { brand: seedPct('brand'), category: seedPct('category') };
+  D.penalty = { brand: seedPen('brand'), category: seedPen('category') };
+
+  /* ---- return reasons ---- */
+  D.reasons = Demo.reasons.map(function (r) { return { id: r.id, name: r.name, fine: r.fine, tax: 5 }; });
+  D.nextReasonId = D.reasons.length + 1;
+
+  /* ---- wholesale types ---- */
+  D.wholesale = Demo.wholesaleTypes.map(function (w) {
+    return { id: w.id, icon: w.icon, nameEn: w.nameEn, nameRu: w.nameRu, nameAdmin: w.nameAdmin, appEn: w.appEn, appRu: w.appRu };
+  });
+  D.nextWholesaleId = 100;
+
+  /* ---- delivery statuses ---- */
+  var STATUS_ICONS = { 216: '📦', 217: '🧰', 218: '⏳', 219: '✈️', 220: '🏬', 221: '✅' };
+  D.statuses = Demo.statuses.map(function (s) {
+    return { id: s.id, ru: s.ru, en: s.en, color: s.color, colorDark: shade(s.color, -0.34), icon: STATUS_ICONS[s.id] || '🚚', issue: s.id === 221 };
+  });
+  D.nextStatusId = 300;
+  D.editStatus = null;
+
+  /* ---- app constants ---- */
+  D.constants = Demo.constants.map(function (c, i) {
+    var where = (c.group === 'Auth' || c.group === 'Paywall') ? 'Приложение' : (c.group === 'Profile' ? 'Админка' : 'Оба приложения');
+    return { id: i + 1, group: c.group, key: c.key, ru: c.ru, en: c.en, screen: c.screen || '', where: where };
+  });
+  if (D.constants[7]) D.constants[7].screen = '';
+  D.nextConstId = D.constants.length + 1;
+
+  /* ---- team ---- */
+  D.team = Demo.team.map(function (t) { return { id: t.id, name: t.name, email: t.email, role: t.role, status: t.status, last: t.last }; });
+  D.nextTeamId = 100;
+  D.roles = ['superadmin', 'manager', 'sales', 'warehouse', 'service', 'accountant'];
+  D.roleFilter = 'all';
+  D.pendingUser = -1;
+  D.privs = [
+    'settings.users', 'settings.catalog', 'settings.reasons',
+    'sales.purchase.orders', 'sales.sales.orders', 'sales.penalty', 'sales.p2p',
+    'warehouse.stock', 'warehouse.packing', 'service.returns',
+    'finance.payment', 'finance.currencies'
+  ];
+  D.privDefaults = {
+    superadmin: D.privs.slice(),
+    manager: ['settings.catalog', 'settings.reasons', 'sales.purchase.orders', 'sales.sales.orders', 'sales.penalty', 'sales.p2p', 'warehouse.stock', 'service.returns'],
+    sales: ['sales.purchase.orders', 'sales.sales.orders', 'sales.penalty', 'sales.p2p'],
+    warehouse: ['warehouse.stock', 'warehouse.packing', 'sales.purchase.orders'],
+    service: ['service.returns', 'sales.sales.orders'],
+    accountant: ['finance.payment', 'finance.currencies']
+  };
+  D.tmPrivs = [];
+  D.tmRole = 'sales';
+
+  /* ================================================================
+     1. ХАРАКТЕРИСТИКИ ТОВАРОВ
+     ================================================================ */
+  function charsTreeHtml() {
+    var html = '';
+    D.chars.forEach(function (c, idx) {
+      var open = idx === D.selChar;
+      html += '<div class="tree-item' + (open ? ' open' : '') + (idx === D.selChar ? ' active' : '') + '" data-char="' + idx + '">' +
+        '<span class="tw">▸</span><span class="ico">' + esc(c.icon) + '</span>' + esc(c.name) +
+        '<span class="cnt">' + c.values.length + '</span></div>';
+      html += '<div class="tree-children" data-char-children="' + idx + '"' + (open ? '' : ' hidden') + '>';
+      c.values.forEach(function (v, vi) {
+        html += '<div class="tree-item" data-char="' + idx + '" data-value="' + vi + '"><span class="ico" style="color:' + esc(c.color) + '">•</span>' + esc(v) + '</div>';
+      });
+      if (!c.values.length) html += '<div class="tree-item" style="cursor:default;color:var(--muted)"><span class="ico">–</span>Нет значений</div>';
+      html += '</div>';
+    });
+    if (!D.chars.length) html = '<div class="empty" style="padding:30px 10px"><p>Характеристик пока нет</p></div>';
+    return html;
+  }
+  function renderCharsTree() {
+    var host = q('#chars-tree');
+    if (!host) return;
+    host.innerHTML = charsTreeHtml();
+    q('#chars-count').textContent = D.chars.length;
+  }
+  function renderCharForm() {
+    var c = D.chars[D.selChar];
+    if (!c) return;
+    setVal('cf-name', c.name); setVal('cf-ru', c.ru); setVal('cf-en', c.en);
+    setVal('cf-title-info', c.titleInfo); setVal('cf-title-price', c.titlePrice);
+    setVal('cf-use', c.useAs);
+    setVal('cf-icon', c.icon);
+    qa('input[name="cf-type"]').forEach(function (r) { r.checked = r.value === c.type; });
+    setVal('cf-color', c.color);
+    q('#cf-color-hex').textContent = c.color;
+    setVal('cf-color', c.color);
+    setCheck('cf-emoji', c.emojiName);
+    setCheck('cf-filter', c.filter); setCheck('cf-required', c.required); setCheck('cf-title', c.title);
+    setCheck('cf-price', c.price); setCheck('cf-info', c.info); setCheck('cf-p2p', c.p2p);
+    q('#chars-id').textContent = '#' + c.id;
+  }
+  function renderCharValues() {
+    var c = D.chars[D.selChar];
+    var host = q('#chars-values');
+    if (!host) return;
+    if (!c) { host.innerHTML = '<div class="hint">Выберите характеристику</div>'; return; }
+    var rows = c.values.map(function (v, i) {
+      return '<div class="cat-value-row">' +
+        '<span class="drag" title="Перетащить">⋮⋮</span>' +
+        '<input class="input" data-value-input="' + i + '" value="' + esc(v) + '" placeholder="Значение">' +
+        '<button class="rm" data-value-rm="' + i + '" title="Удалить">×</button>' +
+        '</div>';
+    }).join('');
+    if (!c.values.length) rows = '<div class="hint cat-no-values">Значений пока нет — добавьте первое.</div>';
+    host.innerHTML = '<div class="cat-values-head">' +
+      '<span class="ico" data-vhead-ico>' + esc(c.icon) + '</span>' +
+      '<span data-vhead-name>' + esc(c.name) + '</span>' +
+      '<span class="cnt" style="margin-left:auto">' + c.values.length + '</span></div>' + rows;
+  }
+  function selectChar(idx) {
+    D.selChar = idx;
+    renderCharsTree();
+    renderCharForm();
+    renderCharValues();
+  }
+  function charsSave() {
+    var c = D.chars[D.selChar];
+    if (!c) return;
+    c.name = getVal('cf-name').trim() || c.name;
+    c.ru = getVal('cf-ru').trim();
+    c.en = getVal('cf-en').trim();
+    c.titleInfo = getVal('cf-title-info').trim();
+    c.titlePrice = getVal('cf-title-price').trim();
+    c.useAs = getVal('cf-use');
+    c.icon = getVal('cf-icon').trim() || c.icon;
+    var type = qa('input[name="cf-type"]').filter(function (r) { return r.checked; })[0];
+    c.type = type ? type.value : c.type;
+    c.color = getVal('cf-color');
+    c.emojiName = getCheck('cf-emoji');
+    c.filter = getCheck('cf-filter'); c.required = getCheck('cf-required');
+    c.title = getCheck('cf-title'); c.price = getCheck('cf-price');
+    c.info = getCheck('cf-info'); c.p2p = getCheck('cf-p2p');
+    renderCharsTree(); renderCharValues(); renderCharForm();
+    toast('Сохранено', 'ok');
+  }
+  function charsRemove() {
+    if (!D.chars.length) return;
+    var name = D.chars[D.selChar].name;
+    D.chars.splice(D.selChar, 1);
+    D.selChar = Math.max(0, Math.min(D.selChar, D.chars.length - 1));
+    renderCharsTree(); renderCharForm(); renderCharValues();
+    toast('Характеристика «' + name + '» удалена', '');
+  }
+  function openCharModal() {
+    setVal('nc-name', ''); setVal('nc-icon', '🏷️'); setVal('nc-type', 'Круговая');
+    FX.modal('m-char');
+    setTimeout(function () { var el = q('#nc-name'); if (el) el.focus(); }, 60);
+  }
+  function saveCharModal() {
+    var name = getVal('nc-name').trim();
+    if (!name) { toast('Укажите название характеристики', 'error'); return; }
+    var c = {
+      id: D.nextCharId++, name: name, icon: getVal('nc-icon').trim() || '🏷️', ru: name, en: name,
+      titleInfo: '', titlePrice: '', useAs: 'Не выбрано', type: getVal('nc-type'),
+      color: CHAR_COLORS[D.chars.length % CHAR_COLORS.length],
+      filter: false, required: false, title: false, price: false, info: false, p2p: false, emojiName: false, values: []
+    };
+    D.chars.push(c);
+    FX.closeModal('m-char');
+    selectChar(D.chars.length - 1);
+    toast('Характеристика добавлена', 'ok');
+  }
+  function initChars() {
+    var screen = q('.screen[data-screen="chars-settings"]');
+    FX.on(q('#chars-tree'), 'click', function (e) {
+      var item = e.target.closest('.tree-item[data-char]');
+      if (!item) return;
+      var idx = Number(item.getAttribute('data-char'));
+      if (idx !== D.selChar) { selectChar(idx); return; }
+      var open = !item.classList.contains('open');
+      item.classList.toggle('open', open);
+      var kids = q('[data-char-children="' + idx + '"]', q('#chars-tree'));
+      if (kids) kids.hidden = !open;
+    });
+    FX.on(q('#chars-form'), 'input', function (e) {
+      var c = D.chars[D.selChar];
+      if (!c) return;
+      if (e.target.id === 'cf-name' || e.target.id === 'cf-icon') {
+        c.name = e.target.id === 'cf-name' ? e.target.value : c.name;
+        c.icon = e.target.id === 'cf-icon' ? (e.target.value || '🏷️') : c.icon;
+        renderCharsTree();
+        var head = q('#chars-values .cat-values-head');
+        if (head) {
+          var ico = q('[data-vhead-ico]', head), nm = q('[data-vhead-name]', head);
+          if (ico) ico.textContent = c.icon;
+          if (nm) nm.textContent = c.name;
+        }
+      }
+      if (e.target.id === 'cf-color') {
+        c.color = e.target.value;
+        q('#cf-color-hex').textContent = e.target.value;
+      }
+    });
+    FX.on(q('#chars-values'), 'input', function (e) {
+      var inp = e.target.closest('[data-value-input]');
+      if (!inp) return;
+      var c = D.chars[D.selChar];
+      if (c) c.values[Number(inp.getAttribute('data-value-input'))] = inp.value;
+    });
+    FX.on(q('#chars-values'), 'click', function (e) {
+      var rm = e.target.closest('[data-value-rm]');
+      if (!rm) return;
+      var c = D.chars[D.selChar];
+      if (!c) return;
+      c.values.splice(Number(rm.getAttribute('data-value-rm')), 1);
+      renderCharValues(); renderCharsTree();
+    });
+    FX.qa('[data-chars-save]', screen).forEach(function (b) { FX.on(b, 'click', charsSave); });
+    FX.qa('[data-chars-add]', screen).forEach(function (b) { FX.on(b, 'click', openCharModal); });
+    FX.on(q('[data-chars-remove]', screen), 'click', charsRemove);
+    FX.on(q('#nc-save'), 'click', saveCharModal);
+    FX.qa('[data-value-add]', screen).forEach(function (b) {
+      FX.on(b, 'click', function () {
+        var c = D.chars[D.selChar];
+        if (!c) return;
+        c.values.push('');
+        renderCharValues(); renderCharsTree();
+        var inputs = qa('#chars-values [data-value-input]');
+        var last = inputs[inputs.length - 1];
+        if (last) { last.focus(); }
+        toast('Значение добавлено — заполните его', '');
+      });
+    });
+    renderCharsTree(); renderCharForm(); renderCharValues();
+  }
+
+  /* ================================================================
+     2. НОМЕНКЛАТУРА
+     ================================================================ */
+  function brandNames() { return Demo.brands.map(function (b) { return b.name; }); }
+  function catsOf(brand) { return Demo.categories.filter(function (c) { return c.brand === brand; }); }
+  function subsOf(catName) {
+    var cat = Demo.by(Demo.categories, 'name', catName);
+    if (!cat) return [];
+    return Demo.subcategories.filter(function (s) { return s.categoryId === cat.id; });
+  }
+  function nomTreeBuild(query) {
+    var term = String(query || '').toLowerCase();
+    function match(p) { return !term || (p.name + ' ' + p.code + ' ' + p.chars).toLowerCase().indexOf(term) !== -1; }
+    var brands = [];
+    Demo.brands.forEach(function (b) {
+      var brandProducts = D.products.filter(function (p) { return p.brand === b.name; });
+      if (!brandProducts.length) return;
+      var cats = [];
+      Demo.categories.filter(function (c) { return c.brand === b.name; }).forEach(function (cat) {
+        var catProducts = brandProducts.filter(function (p) { return p.category === cat.name; });
+        if (!catProducts.length) return;
+        var subs = [];
+        Demo.subcategories.filter(function (s) { return s.categoryId === cat.id; }).forEach(function (sub) {
+          var subProducts = catProducts.filter(function (p) { return p.subcategory === sub.name; });
+          if (!subProducts.length) return;
+          subs.push({ name: sub.name, products: subProducts });
+        });
+        var rest = catProducts.filter(function (p) {
+          return !subs.some(function (s) { return s.products.indexOf(p) !== -1; });
+        });
+        if (rest.length) subs.push({ name: 'Без подкатегории', products: rest });
+        if (subs.length) cats.push({ name: cat.name, subs: subs });
+      });
+      if (cats.length) {
+        brands.push({
+          name: b.name,
+          cats: cats.map(function (cat) {
+            return {
+              name: cat.name,
+              subs: cat.subs.map(function (sub) {
+                return { name: sub.name, products: sub.products.filter(match) };
+              }).filter(function (sub) { return sub.products.length; })
+            };
+          }).filter(function (cat) { return cat.subs.length; })
+        });
+      }
+    });
+    brands = brands.filter(function (b) { return b.cats.length; });
+    return brands;
+  }
+  function nomNodeOpen(key) { return !!D.nomOpen[key] || q('#nom-search').value.trim() !== ''; }
+  function renderNomTree() {
+    var host = q('#nom-tree');
+    if (!host) return;
+    var query = q('#nom-search').value.trim();
+    var brands = nomTreeBuild(query);
+    var total = D.products.length;
+    q('#nom-count').textContent = total;
+    if (!brands.length) {
+      host.innerHTML = '<div class="empty" style="padding:34px 14px"><div class="icon">🗂️</div><h4>No products</h4><p>Измените поисковый запрос или добавьте товар.</p></div>';
+      return;
+    }
+    var sel = D.products[D.selProduct];
+    var html = '';
+    brands.forEach(function (b) {
+      var bkey = 'b:' + b.name;
+      var bopen = nomNodeOpen(bkey);
+      var cnt = 0;
+      b.cats.forEach(function (cat) { cat.subs.forEach(function (sub) { cnt += sub.products.length; }); });
+      html += '<div class="tree-item' + (bopen ? ' open' : '') + '" data-node="' + esc(bkey) + '">' +
+        '<span class="tw">▸</span><span class="ico">' + brandIcon(b.name) + '</span>' + esc(b.name) +
+        '<span class="cnt">' + cnt + '</span></div>';
+      html += '<div class="tree-children"' + (bopen ? '' : ' hidden') + '>';
+      b.cats.forEach(function (cat) {
+        var ckey = 'c:' + b.name + '|' + cat.name;
+        var copen = nomNodeOpen(ckey);
+        var ccnt = 0;
+        cat.subs.forEach(function (sub) { ccnt += sub.products.length; });
+        html += '<div class="tree-item' + (copen ? ' open' : '') + '" data-node="' + esc(ckey) + '">' +
+          '<span class="tw">▸</span><span class="ico">▣</span>' + esc(cat.name) +
+          '<span class="cnt">' + ccnt + '</span></div>';
+        html += '<div class="tree-children"' + (copen ? '' : ' hidden') + '>';
+        cat.subs.forEach(function (sub) {
+          var skey = 's:' + b.name + '|' + cat.name + '|' + sub.name;
+          var sopen = nomNodeOpen(skey);
+          html += '<div class="tree-item' + (sopen ? ' open' : '') + '" data-node="' + esc(skey) + '">' +
+            '<span class="tw">▸</span><span class="ico">◈</span>' + esc(sub.name) +
+            '<span class="cnt">' + sub.products.length + '</span></div>';
+          html += '<div class="tree-children"' + (sopen ? '' : ' hidden') + '>';
+          sub.products.forEach(function (p) {
+            var active = sel && sel.id === p.id;
+            html += '<div class="tree-item' + (active ? ' active' : '') + '" data-product="' + p.id + '">' +
+              '<span class="tw"></span><span class="ico">' + productIcon(p) + '</span>' +
+              '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(p.chars || p.name) + '</span>' +
+              '<span class="cnt mono" style="font-size:9.5px">' + esc(p.code) + '</span></div>';
+          });
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    host.innerHTML = html;
+  }
+  function openAncestorsFor(p) {
+    if (!p) return;
+    D.nomOpen['b:' + p.brand] = true;
+    D.nomOpen['c:' + p.brand + '|' + p.category] = true;
+    D.nomOpen['s:' + p.brand + '|' + p.category + '|' + p.subcategory] = true;
+  }
+  function fillNomSelects() {
+    var p = D.products[D.selProduct];
+    if (!p) return;
+    fillSelect(q('#nom-brand'), brandNames(), p.brand);
+    fillSelect(q('#nom-group'), brandNames(), p.brand);
+    fillSelect(q('#nom-category'), catsOf(p.brand).map(function (c) { return c.name; }), p.category);
+    fillSelect(q('#nom-subcategory'), subsOf(p.category).map(function (s) { return s.name; }), p.subcategory);
+  }
+  function renderNomExtraCodes() {
+    var host = q('#nom-extra-codes');
+    var p = D.products[D.selProduct];
+    if (!host) return;
+    if (!p) { host.innerHTML = ''; return; }
+    host.innerHTML = p.extraCodes.map(function (c, i) {
+      return '<div class="row" style="gap:8px"><input class="input mono" data-extra-code="' + i + '" style="max-width:300px" value="' + esc(c) + '" placeholder="Дополнительный код"><button class="btn btn-icon" data-extra-rm="' + i + '" title="Удалить">×</button></div>';
+    }).join('');
+  }
+  function renderNomChars() {
+    var tbody = q('#nom-chars tbody');
+    var p = D.products[D.selProduct];
+    if (!tbody) return;
+    if (!p) { tbody.innerHTML = ''; q('#nom-chars-empty').hidden = false; q('#nom-chars-count').textContent = 0; return; }
+    q('#nom-chars-empty').hidden = D.chars.length > 0;
+    q('#nom-chars-count').textContent = D.chars.length;
+    tbody.innerHTML = D.chars.map(function (c) {
+      var val = p.charValues[c.name];
+      if (val == null || c.values.indexOf(val) === -1) val = c.values[0] || '';
+      p.charValues[c.name] = val;
+      return '<tr><td><span class="row" style="gap:7px"><span>' + esc(c.icon) + '</span><b>' + esc(c.name) + '</b></span></td>' +
+        '<td><select class="select" data-pchar="' + esc(c.name) + '" style="min-width:160px">' +
+        c.values.map(function (v) { return '<option value="' + esc(v) + '"' + (v === val ? ' selected' : '') + '>' + esc(v) + '</option>'; }).join('') +
+        '</select></td>' +
+        '<td><label class="checkbox"><input type="checkbox" data-pfilter="' + esc(c.name) + '"' + (c.filter ? ' checked' : '') + '></label></td></tr>';
+    }).join('');
+  }
+  function renderNomImages() {
+    var host = q('#nom-images');
+    var p = D.products[D.selProduct];
+    if (!host) return;
+    if (!p) { host.innerHTML = ''; return; }
+    if (!p.images) p.images = defaultImages(p);
+    host.innerHTML = p.images.map(function (ic, i) {
+      return '<div class="cat-img' + (i === 0 ? ' main' : '') + '">' +
+        '<div class="tile-actions">' +
+        '<button data-img-main="' + i + '" title="Сделать главным">★</button>' +
+        '<button data-img-rm="' + i + '" title="Удалить">×</button>' +
+        '</div>' + (i === 0 ? '<span class="tag blue">Главное</span>' : '') +
+        '<span>' + ic + '</span></div>';
+    }).join('');
+    q('#nom-img-count').textContent = p.images.length;
+  }
+  function renderNomCard() {
+    var p = D.products[D.selProduct];
+    if (!p) {
+      q('#nom-title').textContent = 'Товар не выбран';
+      q('#nom-subtitle').textContent = 'Выберите товар в дереве слева';
+      q('#nom-icon').textContent = '📦';
+      qa('#nom-card input, #nom-card select, #nom-card textarea').forEach(function (el) { if (el.type !== 'checkbox') el.value = ''; });
+      q('#nom-extra-codes').innerHTML = '';
+      q('#nom-chars tbody').innerHTML = '';
+      q('#nom-chars-empty').hidden = false;
+      q('#nom-images').innerHTML = '';
+      q('#nom-img-count').textContent = 0;
+      return;
+    }
+    q('#nom-title').textContent = p.name;
+    q('#nom-subtitle').textContent = p.brand + ' · ' + p.category + ' / ' + p.subcategory + ' · Код ' + p.code;
+    q('#nom-icon').textContent = productIcon(p);
+    fillNomSelects();
+    setVal('nom-name', p.name);
+    setVal('nom-code', p.code);
+    setVal('nom-code-len', String(p.code.length));
+    setVal('nom-prod-code', p.model);
+    setVal('nom-vat-code', p.vat);
+    setVal('nom-weight', p.weight);
+    setVal('nom-serial', p.serial);
+    setVal('nom-stat-color', p.statColor);
+    q('#nom-stat-hex').textContent = p.statColor;
+    setCheck('nom-autogen', p.autogen);
+    setCheck('nom-home', p.home);
+    setCheck('nom-imei-excel', p.imeiExcel);
+    setCheck('nom-export', p.export);
+    setVal('nom-desc', p.desc);
+    renderNomExtraCodes();
+    renderNomChars();
+    renderNomImages();
+  }
+  function selectNomProduct(id) {
+    var idx = -1;
+    D.products.forEach(function (p, i) { if (p.id === id) idx = i; });
+    if (idx < 0) return;
+    D.selProduct = idx;
+    openAncestorsFor(D.products[idx]);
+    renderNomTree();
+    renderNomCard();
+  }
+  function nomSave() {
+    var p = D.products[D.selProduct];
+    if (!p) { toast('Выберите товар в дереве', 'error'); return; }
+    p.name = getVal('nom-name').trim() || p.name;
+    p.brand = getVal('nom-brand');
+    p.category = getVal('nom-category');
+    p.subcategory = getVal('nom-subcategory');
+    p.code = getVal('nom-code').trim();
+    p.model = getVal('nom-prod-code').trim();
+    p.vat = getVal('nom-vat-code').trim();
+    p.weight = Number(getVal('nom-weight')) || p.weight;
+    p.serial = getVal('nom-serial');
+    p.statColor = getVal('nom-stat-color');
+    p.autogen = getCheck('nom-autogen');
+    p.home = getCheck('nom-home');
+    p.imeiExcel = getCheck('nom-imei-excel');
+    p.export = getCheck('nom-export');
+    p.desc = getVal('nom-desc');
+    p.extraCodes = qa('[data-extra-code]', q('#nom-extra-codes')).map(function (i) { return i.value.trim(); }).filter(Boolean);
+    qa('[data-pchar]', q('#nom-chars')).forEach(function (sel) { p.charValues[sel.getAttribute('data-pchar')] = sel.value; });
+    openAncestorsFor(p);
+    renderNomTree();
+    renderNomCard();
+    toast('Сохранено', 'ok');
+  }
+  function nomAddProduct() {
+    var brand = 'Apple';
+    var cat = catsOf(brand)[0].name;
+    var sub = subsOf(cat)[0].name;
+    var n = D.products.length + 1;
+    var id = 99000 + n;
+    var p = {
+      id: id, code: 'NEW-' + (100 + n), brand: brand, category: cat, subcategory: sub,
+      chars: '', name: 'Новый товар ' + n, model: '', vat: '', weight: 300,
+      serial: 'IMEI', home: false, imeiExcel: false, export: false, statColor: brandColor(brand),
+      extraCodes: [], autogen: false, desc: '', charValues: {}, images: null
+    };
+    D.chars.forEach(function (c) { p.charValues[c.name] = c.values[0] || ''; });
+    D.products.push(p);
+    D.selProduct = D.products.length - 1;
+    openAncestorsFor(p);
+    renderNomTree(); renderNomCard();
+    toast('Товар добавлен — заполните карточку', 'ok');
+  }
+  function initNom() {
+    var screen = q('.screen[data-screen="nomenclature"]');
+    FX.on(q('#nom-search'), 'input', function () { renderNomTree(); });
+    FX.on(q('#nom-tree'), 'click', function (e) {
+      var prod = e.target.closest('[data-product]');
+      if (prod) {
+        var id = Number(prod.getAttribute('data-product'));
+        if (!(D.products[D.selProduct] && D.products[D.selProduct].id === id)) selectNomProduct(id);
+        return;
+      }
+      var node = e.target.closest('[data-node]');
+      if (!node) return;
+      var key = node.getAttribute('data-node');
+      D.nomOpen[key] = !D.nomOpen[key];
+      renderNomTree();
+    });
+    FX.on(q('#nom-brand'), 'change', function () {
+      var brand = this.value;
+      fillSelect(q('#nom-group'), brandNames(), brand);
+      fillSelect(q('#nom-category'), catsOf(brand).map(function (c) { return c.name; }), '');
+      fillSelect(q('#nom-subcategory'), [], '');
+    });
+    FX.on(q('#nom-category'), 'change', function () {
+      fillSelect(q('#nom-subcategory'), subsOf(this.value).map(function (s) { return s.name; }), '');
+    });
+    FX.on(q('#nom-code'), 'input', function () { setVal('nom-code-len', String(this.value.length)); });
+    FX.on(q('#nom-stat-color'), 'input', function () { q('#nom-stat-hex').textContent = this.value; });
+    FX.on(q('#nom-add-code'), 'click', function () {
+      var p = D.products[D.selProduct];
+      if (!p) return;
+      p.extraCodes = p.extraCodes || [];
+      p.extraCodes.push('');
+      renderNomExtraCodes();
+      var inputs = qa('#nom-extra-codes [data-extra-code]');
+      var last = inputs[inputs.length - 1];
+      if (last) last.focus();
+    });
+    FX.on(q('#nom-extra-codes'), 'click', function (e) {
+      var rm = e.target.closest('[data-extra-rm]');
+      if (!rm) return;
+      var p = D.products[D.selProduct];
+      if (!p) return;
+      p.extraCodes.splice(Number(rm.getAttribute('data-extra-rm')), 1);
+      renderNomExtraCodes();
+    });
+    FX.on(q('#nom-drop'), 'click', function () {
+      var p = D.products[D.selProduct];
+      if (!p) return;
+      if (!p.images) p.images = defaultImages(p);
+      if (p.images.length >= 6) { toast('Максимум 6 изображений', 'error'); return; }
+      p.images.push('🖼️');
+      renderNomImages();
+      toast('Изображение добавлено (заглушка)', 'ok');
+    });
+    FX.on(q('#nom-images'), 'click', function (e) {
+      var p = D.products[D.selProduct];
+      if (!p || !p.images) return;
+      var rm = e.target.closest('[data-img-rm]');
+      var main = e.target.closest('[data-img-main]');
+      if (rm) { p.images.splice(Number(rm.getAttribute('data-img-rm')), 1); renderNomImages(); return; }
+      if (main) {
+        var i = Number(main.getAttribute('data-img-main'));
+        var img = p.images.splice(i, 1)[0];
+        p.images.unshift(img);
+        renderNomImages();
+      }
+    });
+    FX.qa('[data-nom-save]', screen).forEach(function (b) { FX.on(b, 'click', nomSave); });
+    FX.on(q('[data-nom-add]', screen), 'click', nomAddProduct);
+    FX.on(q('[data-nom-delete]', screen), 'click', function () {
+      var p = D.products[D.selProduct];
+      if (!p) { toast('Выберите товар', 'error'); return; }
+      D.pendingDelete = D.selProduct;
+      q('#nd-name').textContent = p.name;
+      FX.modal('m-nom-delete');
+    });
+    FX.on(q('#nd-confirm'), 'click', function () {
+      if (D.pendingDelete < 0) return;
+      D.products.splice(D.pendingDelete, 1);
+      D.selProduct = Math.max(0, Math.min(D.pendingDelete, D.products.length - 1));
+      D.pendingDelete = -1;
+      FX.closeModal('m-nom-delete');
+      renderNomTree(); renderNomCard();
+      toast('Товар удалён', '');
+    });
+    openAncestorsFor(D.products[D.selProduct]);
+    renderNomTree();
+    renderNomCard();
+  }
+
+  /* ================================================================
+     3-5. МАТРИЦЫ: КАРГО / НАЦЕНКИ / ШТРАФЫ
+     ================================================================ */
+  function matrixHead(rows, cols, rowHead) {
+    var h = '<table class="matrix cat-matrix"><thead><tr><th style="min-width:170px">' + esc(rowHead) + '</th>';
+    cols.forEach(function (c) { h += '<th class="num">' + esc(c.label) + '</th>'; });
+    h += '<th class="rowtotal">Итого</th></tr></thead><tbody>';
+    return h;
+  }
+  function matrixRowHead(r) {
+    return '<th>' + (r.color ? dot(r.color) : '') + esc(r.label) + '</th>';
+  }
+  function rowSum(obj, cols) {
+    var s = 0;
+    cols.forEach(function (c) { s += Number(obj[c.key]) || 0; });
+    return s;
+  }
+  function colSum(data, rows, colKey) {
+    var s = 0;
+    rows.forEach(function (r) { s += Number(data[r.key][colKey]) || 0; });
+    return s;
+  }
+  function grandSum(data, rows, cols) {
+    var s = 0;
+    rows.forEach(function (r) { s += rowSum(data[r.key], cols); });
+    return s;
+  }
+  function updateMoneyTotals(host, rows, cols, data) {
+    qa('[data-foot]', host).forEach(function (td) { td.textContent = FX.money(colSum(data, rows, td.getAttribute('data-foot'))); });
+    qa('[data-rowtotal]', host).forEach(function (td) { td.textContent = FX.money(rowSum(data[td.getAttribute('data-rowtotal')], cols)); });
+    var g = q('[data-grand]', host);
+    if (g) g.textContent = FX.money(grandSum(data, rows, cols));
+  }
+  function bindMoneyMatrix(host, rows, cols, data) {
+    FX.on(host, 'focusin', function (e) {
+      var inp = e.target.closest('.cat-mx-input');
+      if (inp) inp.value = String(parseNum(inp.value));
+    });
+    FX.on(host, 'focusout', function (e) {
+      var inp = e.target.closest('.cat-mx-input');
+      if (inp) inp.value = FX.money(parseNum(inp.value));
+    });
+    FX.on(host, 'change', function (e) {
+      var inp = e.target.closest('.cat-mx-input');
+      if (!inp) return;
+      var row = inp.getAttribute('data-mx-row'), col = inp.getAttribute('data-mx-col');
+      if (!data[row]) return;
+      data[row][col] = Math.max(0, Math.round(parseNum(inp.value)));
+      inp.value = FX.money(data[row][col]);
+      updateMoneyTotals(host, rows, cols, data);
+    });
+  }
+  function renderMoneyMatrix(host, rows, cols, data, rowHead) {
+    if (!host) return;
+    var body = '';
+    rows.forEach(function (r) {
+      body += '<tr>' + matrixRowHead(r);
+      cols.forEach(function (c) {
+        var v = data[r.key][c.key];
+        body += '<td class="cell"><input class="input cat-mx-input" data-mx-row="' + esc(r.key) + '" data-mx-col="' + esc(c.key) + '" value="' + (v == null ? '' : esc(FX.money(v))) + '"></td>';
+      });
+      body += '<td class="rowtotal" data-rowtotal="' + esc(r.key) + '">' + FX.money(rowSum(data[r.key], cols)) + '</td></tr>';
+    });
+    var foot = '<tfoot><tr><th>Итого</th>';
+    cols.forEach(function (c) { foot += '<td data-foot="' + esc(c.key) + '">' + FX.money(colSum(data, rows, c.key)) + '</td>'; });
+    foot += '<td data-grand>' + FX.money(grandSum(data, rows, cols)) + '</td></tr></tfoot>';
+    host.innerHTML = matrixHead(rows, cols, rowHead) + body + foot + '</table>';
+    bindMoneyMatrix(host, rows, cols, data);
+  }
+  function pctBtn(v) {
+    return '<button class="pct-btn ' + (v == null ? 'off' : 'on') + '">' + (v == null ? '—' : pct(v)) + '</button>';
+  }
+  function pctRowCount(obj, cols) {
+    var n = 0;
+    cols.forEach(function (c) { if (obj[c.key] != null) n++; });
+    return n;
+  }
+  function pctColCount(data, rows, colKey) {
+    var n = 0;
+    rows.forEach(function (r) { if (data[r.key][colKey] != null) n++; });
+    return n;
+  }
+  function pctTotal(data, rows, cols) {
+    var n = 0;
+    rows.forEach(function (r) { n += pctRowCount(data[r.key], cols); });
+    return n;
+  }
+  function updatePctTotals(host, rows, cols, data) {
+    qa('[data-pct-foot]', host).forEach(function (td) { td.textContent = pctColCount(data, rows, td.getAttribute('data-pct-foot')); });
+    qa('[data-pct-rowtotal]', host).forEach(function (td) { td.textContent = pctRowCount(data[td.getAttribute('data-pct-rowtotal')], cols); });
+    var g = q('[data-pct-grand]', host);
+    if (g) g.textContent = pctTotal(data, rows, cols);
+  }
+  function openPctEditor(td, row, col, data, host, rows, cols) {
+    if (td.querySelector('select')) return;
+    var sel = document.createElement('select');
+    sel.className = 'cat-pct-select';
+    sel.innerHTML = '<option value="">—</option>' + Demo.percentOptions.map(function (p) {
+      return '<option value="' + p + '">' + pct(p) + '</option>';
+    }).join('');
+    var cur = data[row][col];
+    sel.value = cur == null ? '' : String(cur);
+    td.innerHTML = '';
+    td.appendChild(sel);
+    sel.focus();
+    var done = false;
+    function restore(save) {
+      if (done) return;
+      done = true;
+      if (save) data[row][col] = sel.value === '' ? null : Number(sel.value);
+      td.innerHTML = pctBtn(data[row][col]);
+      updatePctTotals(host, rows, cols, data);
+    }
+    sel.addEventListener('change', function () { restore(true); });
+    sel.addEventListener('blur', function () { restore(false); });
+    sel.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') sel.blur();
+      if (e.key === 'Enter') restore(true);
+    });
+  }
+  function renderPctMatrix(host, rows, cols, data) {
+    if (!host) return;
+    var body = '';
+    rows.forEach(function (r) {
+      body += '<tr>' + matrixRowHead(r);
+      cols.forEach(function (c) {
+        body += '<td class="cell" data-pct-row="' + esc(r.key) + '" data-pct-col="' + esc(c.key) + '">' + pctBtn(data[r.key][c.key]) + '</td>';
+      });
+      body += '<td class="rowtotal" data-pct-rowtotal="' + esc(r.key) + '">' + pctRowCount(data[r.key], cols) + '</td></tr>';
+    });
+    var foot = '<tfoot><tr><th>Активно</th>';
+    cols.forEach(function (c) { foot += '<td data-pct-foot="' + esc(c.key) + '">' + pctColCount(data, rows, c.key) + '</td>'; });
+    foot += '<td data-pct-grand>' + pctTotal(data, rows, cols) + '</td></tr></tfoot>';
+    host.innerHTML = matrixHead(rows, cols, 'Brand / Category') + body + foot + '</table>';
+    FX.on(host, 'click', function (e) {
+      var btn = e.target.closest('.pct-btn');
+      if (!btn) return;
+      var td = btn.parentNode;
+      var row = td.getAttribute('data-pct-row'), col = td.getAttribute('data-pct-col');
+      openPctEditor(td, row, col, data, host, rows, cols);
+    });
+  }
+  function cargoRows() { return CARGO_BRANDS.map(function (b) { return { key: String(b.id), label: b.name, color: b.color }; }); }
+  function cargoCols() {
+    return CARGO_COUNTRIES.map(function (c) { return { key: String(c.id), label: flag(c.abbr) + ' ' + c.short, title: c.name }; });
+  }
+  function initCargo() {
+    var screen = q('.screen[data-screen="cargo"]');
+    var rows = cargoRows(), cols = cargoCols();
+    renderMoneyMatrix(q('#cargo-suppliers'), rows, cols, D.cargo.suppliers, 'Бренд');
+    renderMoneyMatrix(q('#cargo-clients'), rows, cols, D.cargo.clients, 'Бренд');
+    FX.qa('.tabs[data-tabs="cargo"] .tab', screen).forEach(function (t) {
+      FX.on(t, 'click', function () { q('[data-cargo-title]').textContent = t.textContent.trim(); });
+    });
+    FX.on(q('[data-matrix-save="cargo"]', screen), 'click', function () { toast('Карго (UZS) сохранено', 'ok'); });
+  }
+  function initPercents() {
+    var screen = q('.screen[data-screen="percents"]');
+    ['brand', 'category'].forEach(function (mode) {
+      renderPctMatrix(q('#percents-' + mode), D.pctRows[mode], D.pctCols[mode], D.percents[mode]);
+    });
+    FX.on(q('[data-matrix-save="percents"]', screen), 'click', function () {
+      var total = pctTotal(D.percents.brand, D.pctRows.brand, D.pctCols.brand) + pctTotal(D.percents.category, D.pctRows.category, D.pctCols.category);
+      toast('Наценки сохранены (' + total + ' активных ячеек)', 'ok');
+    });
+  }
+  function initPenalty() {
+    var screen = q('.screen[data-screen="penalty"]');
+    ['brand', 'category'].forEach(function (mode) {
+      renderMoneyMatrix(q('#penalty-' + mode), D.penRows[mode], D.penCols[mode], D.penalty[mode], 'Brand / Category');
+    });
+    FX.on(q('[data-matrix-save="penalty"]', screen), 'click', function () { toast('Штрафы сохранены', 'ok'); });
+  }
+
+  /* ================================================================
+     6. ПРИЧИНЫ ВОЗВРАТА
+     ================================================================ */
+  function renderReasons() {
+    var tbody = q('#reason-table tbody');
+    if (!tbody) return;
+    if (!D.reasons.length) {
+      tbody.innerHTML = tableEmpty(5, '↩️', 'Причин возврата пока нет', 'Добавьте первую причину — она появится здесь.');
+    } else {
+      tbody.innerHTML = D.reasons.map(function (r, i) {
+        return '<tr>' +
+          '<td class="muted">' + (i + 1) + '</td>' +
+          '<td><input class="input" data-reason-name="' + i + '" value="' + esc(r.name) + '"></td>' +
+          '<td><input class="input num" data-reason-fine="' + i + '" type="number" min="0" step="1" value="' + r.fine + '"></td>' +
+          '<td><div class="row" style="gap:6px"><input class="input num" data-reason-tax="' + i + '" type="number" min="0" max="100" step="1" value="' + (r.tax == null ? 5 : r.tax) + '" style="max-width:72px"><span class="muted small">%</span></div></td>' +
+          '<td><div class="actions"><button class="btn-icon" data-reason-rm="' + i + '" title="Удалить">🗑</button></div></td>' +
+          '</tr>';
+      }).join('');
+    }
+    q('#reason-count').textContent = D.reasons.length + ' причин · USD';
+  }
+  function initReasons() {
+    var screen = q('.screen[data-screen="reason-settings"]');
+    FX.on(q('#reason-table'), 'click', function (e) {
+      var rm = e.target.closest('[data-reason-rm]');
+      if (rm) {
+        D.reasons.splice(Number(rm.getAttribute('data-reason-rm')), 1);
+        renderReasons();
+        toast('Причина удалена', '');
+      }
+    });
+    FX.on(q('#reason-table'), 'input', function (e) {
+      var nm = e.target.closest('[data-reason-name]');
+      if (nm) D.reasons[Number(nm.getAttribute('data-reason-name'))].name = nm.value;
+      var fn = e.target.closest('[data-reason-fine]');
+      if (fn) D.reasons[Number(fn.getAttribute('data-reason-fine'))].fine = Math.max(0, Math.round(Number(fn.value) || 0));
+      var tx = e.target.closest('[data-reason-tax]');
+      if (tx) D.reasons[Number(tx.getAttribute('data-reason-tax'))].tax = Math.min(100, Math.max(0, Number(tx.value) || 0));
+    });
+    FX.on(q('[data-reason-add]', screen), 'click', function () {
+      setVal('nr-name', ''); setVal('nr-fine', 100); setVal('nr-tax', 5);
+      FX.modal('m-reason');
+      setTimeout(function () { var el = q('#nr-name'); if (el) el.focus(); }, 60);
+    });
+    FX.on(q('#nr-save'), 'click', function () {
+      var name = getVal('nr-name').trim();
+      if (!name) { toast('Укажите название причины', 'error'); return; }
+      D.reasons.push({ id: D.nextReasonId++, name: name, fine: Math.max(0, Math.round(Number(getVal('nr-fine')) || 0)), tax: Number(getVal('nr-tax')) || 0 });
+      FX.closeModal('m-reason');
+      renderReasons();
+      toast('Причина добавлена', 'ok');
+    });
+    FX.on(q('[data-reason-save]', screen), 'click', function () { toast('Причины возврата сохранены', 'ok'); });
+    renderReasons();
+  }
+
+  /* ================================================================
+     7. ТИПЫ ОПТА
+     ================================================================ */
+  function wsField(i, key, label, value) {
+    return '<div class="field"><label>' + esc(label) + '</label>' +
+      '<input class="input" data-ws-field="' + key + '" data-ws="' + i + '" value="' + esc(value == null ? '' : value) + '"></div>';
+  }
+  function renderWholesale() {
+    var host = q('#wholesale-grid');
+    if (!host) return;
+    host.innerHTML = D.wholesale.map(function (w, i) {
+      return '<div class="panel">' +
+        '<div class="panel-head">' +
+          '<div class="row" style="gap:10px">' +
+            '<span class="cat-card-icon sm">' + esc(w.icon) + '</span>' +
+            '<div><h3>' + esc(w.nameAdmin || w.nameEn || 'Тип опта') + '</h3><div class="muted small">ID ' + w.id + '</div></div>' +
+          '</div>' +
+          '<button class="btn btn-sm btn-default" data-ws-upload>Upload</button>' +
+        '</div>' +
+        '<div class="panel-body">' +
+          '<div class="cat-icons-row">' +
+            '<div class="cat-icon-box">' +
+              '<div class="cat-card-icon">' + esc(w.icon) + '</div>' +
+              '<button class="btn btn-sm btn-ghost" data-ws-upload>Upload</button>' +
+              '<div class="hint">Иконка (светлый фон)</div>' +
+            '</div>' +
+            '<div class="cat-icon-box">' +
+              '<div class="cat-card-icon dark">' + esc(w.icon) + '</div>' +
+              '<button class="btn btn-sm btn-ghost" data-ws-upload>Upload</button>' +
+              '<div class="hint">Иконка (тёмный фон)</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="form-grid">' +
+            wsField(i, 'nameEn', 'Название En', w.nameEn) +
+            wsField(i, 'nameRu', 'Название Ru', w.nameRu) +
+            wsField(i, 'nameAdmin', 'Название в админке', w.nameAdmin) +
+            wsField(i, 'appEn', 'Название в приложении En', w.appEn) +
+            wsField(i, 'appRu', 'Название в приложении Ru', w.appRu) +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+  function initWholesale() {
+    var screen = q('.screen[data-screen="wholesale-types"]');
+    FX.on(q('#wholesale-grid'), 'input', function (e) {
+      var inp = e.target.closest('[data-ws-field]');
+      if (!inp) return;
+      var i = Number(inp.getAttribute('data-ws'));
+      if (D.wholesale[i]) D.wholesale[i][inp.getAttribute('data-ws-field')] = inp.value;
+    });
+    FX.on(q('#wholesale-grid'), 'click', function (e) {
+      var up = e.target.closest('[data-ws-upload]');
+      if (up) toast('Загрузка иконки — заглушка в прототипе', '');
+    });
+    FX.on(q('[data-ws-add]', screen), 'click', function () {
+      D.wholesale.push({ id: D.nextWholesaleId++, icon: '🛒', nameEn: '', nameRu: '', nameAdmin: 'Новый тип', appEn: '', appRu: '' });
+      renderWholesale();
+      var inputs = qa('#wholesale-grid [data-ws-field="nameEn"]');
+      var last = inputs[inputs.length - 1];
+      if (last) { last.focus(); }
+      toast('Добавлен тип опта', 'ok');
+    });
+    FX.on(q('[data-ws-save]', screen), 'click', function () { toast('Типы опта сохранены', 'ok'); });
+    renderWholesale();
+  }
+
+  /* ================================================================
+     8. СТАТУСЫ ДОСТАВКИ
+     ================================================================ */
+  function statusColorCell(s, kind) {
+    var c = kind === 'color' ? s.color : s.colorDark;
+    return '<label class="cat-color" title="' + esc(c) + '">' +
+      '<span class="color-swatch" style="background:' + esc(c) + '"></span>' +
+      '<input type="color" value="' + esc(c) + '" data-status-color="' + kind + '" data-id="' + s.id + '"></label>';
+  }
+  function renderStatuses() {
+    var tbody = q('#status-table tbody');
+    if (!tbody) return;
+    var rows = D.statuses.map(function (s, i) {
+      return '<tr class="ts-row" data-id="' + s.id + '">' +
+        '<td><div class="row" style="gap:5px"><span class="cat-drag" title="Перетащить">⋮⋮</span><span class="muted small">' + (i + 1) + '</span></div></td>' +
+        '<td><button class="cat-status-icon" data-status-edit="' + i + '" title="Изменить">' + esc(s.icon) + '</button></td>' +
+        '<td><input class="input" data-status-name="ru" data-id="' + s.id + '" value="' + esc(s.ru) + '"></td>' +
+        '<td><input class="input" data-status-name="en" data-id="' + s.id + '" value="' + esc(s.en) + '"></td>' +
+        '<td>' + statusColorCell(s, 'color') + '</td>' +
+        '<td>' + statusColorCell(s, 'dark') + '</td>' +
+        '<td><label class="checkbox"><input type="checkbox" data-status-issue data-id="' + s.id + '"' + (s.issue ? ' checked' : '') + '></label></td>' +
+        '<td><div class="actions">' +
+          '<button class="btn-icon" data-status-edit="' + i + '" title="Редактировать">✎</button>' +
+          '<button class="btn-icon" data-status-rm="' + i + '" title="Удалить">🗑</button>' +
+        '</div></td></tr>';
+    }).join('');
+    if (!D.statuses.length) {
+      tbody.innerHTML = tableEmpty(8, '🚚', 'No Data', 'Добавьте первый статус доставки.');
+    } else {
+      tbody.innerHTML = rows;
+    }
+    q('#status-count').textContent = D.statuses.length + ' статусов';
+  }
+  function openStatusModal(index) {
+    var s = index == null ? null : D.statuses[index];
+    D.editStatus = index == null ? null : index;
+    q('#ns-title').textContent = s ? 'Редактировать статус' : 'Add status';
+    setVal('ns-ru', s ? s.ru : '');
+    setVal('ns-en', s ? s.en : '');
+    setVal('ns-icon', s ? s.icon : '🚚');
+    setVal('ns-color', s ? s.color : '#37A0FA');
+    setVal('ns-color-hex', s ? s.color : '#37A0FA');
+    setVal('ns-color-dark', s ? s.colorDark : '#1F6FB5');
+    setVal('ns-color-dark-hex', s ? s.colorDark : '#1F6FB5');
+    setCheck('ns-issue', s ? s.issue : false);
+    FX.modal('m-status');
+    setTimeout(function () { var el = q('#ns-ru'); if (el) el.focus(); }, 60);
+  }
+  function initStatuses() {
+    var screen = q('.screen[data-screen="delivery-statuses"]');
+    var table = q('#status-table');
+    var tbody = q('#status-table tbody');
+    FX.on(table, 'click', function (e) {
+      var edit = e.target.closest('[data-status-edit]');
+      if (edit) { openStatusModal(Number(edit.getAttribute('data-status-edit'))); return; }
+      var rm = e.target.closest('[data-status-rm]');
+      if (rm) {
+        var i = Number(rm.getAttribute('data-status-rm'));
+        var name = D.statuses[i] ? D.statuses[i].ru : '';
+        D.statuses.splice(i, 1);
+        renderStatuses();
+        toast('Статус «' + name + '» удалён', '');
+      }
+    });
+    FX.on(table, 'input', function (e) {
+      var nm = e.target.closest('[data-status-name]');
+      if (nm) {
+        var id = Number(nm.getAttribute('data-id'));
+        var s = D.statuses.filter(function (x) { return x.id === id; })[0];
+        if (s) s[nm.getAttribute('data-status-name')] = nm.value;
+      }
+    });
+    FX.on(table, 'change', function (e) {
+      var col = e.target.closest('[data-status-color]');
+      if (col) {
+        var id = Number(col.getAttribute('data-id'));
+        var st = D.statuses.filter(function (x) { return x.id === id; })[0];
+        if (st) {
+          var val = col.value;
+          if (col.getAttribute('data-status-color') === 'color') st.color = val;
+          else st.colorDark = val;
+          var sw = col.parentNode.querySelector('.color-swatch');
+          if (sw) sw.style.background = val;
+          col.parentNode.title = val;
+        }
+      }
+      var issue = e.target.closest('[data-status-issue]');
+      if (issue) {
+        var sid = Number(issue.getAttribute('data-id'));
+        var st2 = D.statuses.filter(function (x) { return x.id === sid; })[0];
+        if (st2) st2.issue = issue.checked;
+      }
+    });
+    FX.on(q('[data-status-add]', screen), 'click', function () { openStatusModal(null); });
+    FX.on(q('#ns-color'), 'input', function () { setVal('ns-color-hex', this.value.toUpperCase()); });
+    FX.on(q('#ns-color-dark'), 'input', function () { setVal('ns-color-dark-hex', this.value.toUpperCase()); });
+    FX.on(q('#ns-color-hex'), 'change', function () {
+      var v = this.value.trim();
+      if (/^#[0-9a-f]{6}$/i.test(v)) { setVal('ns-color', v); this.value = v.toUpperCase(); }
+      else this.value = getVal('ns-color').toUpperCase();
+    });
+    FX.on(q('#ns-color-dark-hex'), 'change', function () {
+      var v = this.value.trim();
+      if (/^#[0-9a-f]{6}$/i.test(v)) { setVal('ns-color-dark', v); this.value = v.toUpperCase(); }
+      else this.value = getVal('ns-color-dark').toUpperCase();
+    });
+    FX.on(q('#ns-save'), 'click', function () {
+      var ru = getVal('ns-ru').trim();
+      if (!ru) { toast('Укажите название на русском', 'error'); return; }
+      var data = {
+        id: D.editStatus == null ? D.nextStatusId++ : D.statuses[D.editStatus].id,
+        ru: ru, en: getVal('ns-en').trim(),
+        icon: getVal('ns-icon').trim() || '🚚',
+        color: getVal('ns-color'), colorDark: getVal('ns-color-dark'),
+        issue: getCheck('ns-issue')
+      };
+      if (D.editStatus == null) D.statuses.push(data);
+      else D.statuses[D.editStatus] = data;
+      FX.closeModal('m-status');
+      renderStatuses();
+      toast(D.editStatus == null ? 'Статус добавлен' : 'Статус сохранён', 'ok');
+      D.editStatus = null;
+    });
+    FX.on(q('[data-status-save]', screen), 'click', function () { toast('Статусы доставки сохранены', 'ok'); });
+    /* drag & drop reorder */
+    var dragRow = null, dropped = false;
+    FX.on(tbody, 'mousedown', function (e) {
+      var handle = e.target.closest('.cat-drag');
+      qa('tr', tbody).forEach(function (tr) { tr.draggable = false; });
+      if (handle) handle.closest('tr').draggable = true;
+    });
+    FX.on(tbody, 'dragstart', function (e) {
+      var tr = e.target.closest('tr');
+      if (!tr || !tr.draggable) return;
+      dragRow = tr;
+      tr.classList.add('dragging');
+      try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', ''); } catch (err) { /* noop */ }
+    });
+    FX.on(tbody, 'dragover', function (e) {
+      if (!dragRow) return;
+      e.preventDefault();
+      var tr = e.target.closest('tr');
+      if (!tr || tr === dragRow) return;
+      var r = tr.getBoundingClientRect();
+      var before = (e.clientY - r.top) < r.height / 2;
+      tbody.insertBefore(dragRow, before ? tr : tr.nextSibling);
+    });
+    function finishDrag() {
+      if (!dragRow) return;
+      qa('tr', tbody).forEach(function (tr) { tr.classList.remove('dragging'); tr.draggable = false; });
+      dragRow = null;
+      var order = qa('tr', tbody).map(function (tr) { return Number(tr.getAttribute('data-id')); });
+      D.statuses.sort(function (a, b) { return order.indexOf(a.id) - order.indexOf(b.id); });
+      renderStatuses();
+      toast('Порядок статусов обновлён', 'ok', 1500);
+    }
+    FX.on(tbody, 'drop', function (e) { e.preventDefault(); dropped = true; finishDrag(); });
+    FX.on(tbody, 'dragend', function () { if (!dropped) finishDrag(); dropped = false; });
+    renderStatuses();
+  }
+
+  /* ================================================================
+     9. КОНСТАНТЫ ПРИЛОЖЕНИЯ
+     ================================================================ */
+  function constGroups() { return uniq(D.constants.map(function (c) { return c.group; })); }
+  function constKeys() { return D.constants.map(function (c) { return c.key; }); }
+  function fillConstFilters() {
+    var g = q('#const-group'), k = q('#const-key');
+    if (!g || !k) return;
+    var gv = g.value, kv = k.value;
+    g.innerHTML = '<option value="">Все группы</option>' + constGroups().map(function (x) {
+      return '<option value="' + esc(x) + '">' + esc(x) + '</option>';
+    }).join('');
+    k.innerHTML = '<option value="">Все ключи</option>' + constKeys().map(function (x) {
+      return '<option value="' + esc(x) + '">' + esc(x) + '</option>';
+    }).join('');
+    g.value = gv; k.value = kv;
+  }
+  function renderConstants() {
+    var tbody = q('#const-table tbody');
+    if (!tbody) return;
+    var term = q('#const-search').value.toLowerCase().trim();
+    var group = q('#const-group').value;
+    var key = q('#const-key').value;
+    var where = q('#const-where').value;
+    var rows = D.constants.filter(function (c) {
+      if (group && c.group !== group) return false;
+      if (key && c.key !== key) return false;
+      if (where && c.where !== where) return false;
+      if (!term) return true;
+      return (c.key + ' ' + c.ru + ' ' + c.en + ' ' + c.group + ' ' + c.screen).toLowerCase().indexOf(term) !== -1;
+    });
+    if (!D.constants.length) {
+      tbody.innerHTML = tableEmpty(5, '🧩', 'Переопределений пока нет', 'Добавьте первое переопределение — оно появится здесь.');
+    } else if (!rows.length) {
+      tbody.innerHTML = tableEmpty(5, '🔍', 'Ничего не найдено', 'Измените поисковый запрос или фильтры.');
+    } else {
+      tbody.innerHTML = rows.map(function (c) {
+        return '<tr>' +
+          '<td><span class="badge badge-gray">' + esc(c.group) + '</span></td>' +
+          '<td><span class="mono cat-key" data-copy-key="' + esc(c.key) + '" title="Нажмите, чтобы скопировать">' + esc(c.key) + '</span></td>' +
+          '<td class="cat-const-ru">' + esc(c.ru) + '</td>' +
+          '<td class="cat-const-en">' + esc(c.en) + '</td>' +
+          '<td class="muted small">' + (c.screen ? esc(c.screen) : '—') + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+    q('#const-count').textContent = rows.length + ' из ' + D.constants.length;
+  }
+  function initConstants() {
+    var screen = q('.screen[data-screen="constants"]');
+    fillConstFilters();
+    FX.on(q('#const-search'), 'input', renderConstants);
+    FX.on(q('#const-group'), 'change', renderConstants);
+    FX.on(q('#const-key'), 'change', renderConstants);
+    FX.on(q('#const-where'), 'change', renderConstants);
+    FX.on(q('#const-reset'), 'click', function () {
+      setVal('const-search', '');
+      setVal('const-group', '');
+      setVal('const-key', '');
+      setVal('const-where', '');
+      renderConstants();
+      toast('Фильтры сброшены', '');
+    });
+    FX.on(q('#const-table'), 'click', function (e) {
+      var key = e.target.closest('[data-copy-key]');
+      if (key) copyText(key.getAttribute('data-copy-key'));
+    });
+    FX.on(q('[data-const-add]', screen), 'click', function () {
+      var groupSel = q('#ncm-group');
+      groupSel.innerHTML = constGroups().map(function (g) { return '<option>' + esc(g) + '</option>'; }).join('') +
+        '<option value="__new__">＋ Создать группу</option>';
+      setVal('ncm-group-new', '');
+      q('#ncm-new-group-wrap').hidden = true;
+      setVal('ncm-where', 'Оба приложения');
+      setVal('ncm-key', '');
+      setVal('ncm-screen', '');
+      setVal('ncm-ru', '');
+      setVal('ncm-en', '');
+      FX.modal('m-const');
+      setTimeout(function () { var el = q('#ncm-key'); if (el) el.focus(); }, 60);
+    });
+    FX.on(q('#ncm-group'), 'change', function () {
+      q('#ncm-new-group-wrap').hidden = this.value !== '__new__';
+    });
+    FX.on(q('#ncm-save'), 'click', function () {
+      var key = getVal('ncm-key').trim();
+      var ru = getVal('ncm-ru').trim();
+      var group = getVal('ncm-group');
+      if (group === '__new__') group = getVal('ncm-group-new').trim();
+      if (!group) { toast('Укажите группу', 'error'); return; }
+      if (!key) { toast('Укажите ключ', 'error'); return; }
+      if (!ru) { toast('Заполните текст RU', 'error'); return; }
+      var where = getVal('ncm-where');
+      if (!/^(fi_|ma_)/.test(key)) key = (where === 'Админка' ? 'ma_' : 'fi_') + key;
+      D.constants.unshift({
+        id: D.nextConstId++, group: group, key: key, ru: ru,
+        en: getVal('ncm-en').trim(), screen: getVal('ncm-screen').trim(), where: where
+      });
+      FX.closeModal('m-const');
+      fillConstFilters();
+      renderConstants();
+      toast('Переопределение добавлено', 'ok');
+    });
+    renderConstants();
+  }
+
+  /* ================================================================
+     10. КОМАНДА
+     ================================================================ */
+  function renderTeamKpis() {
+    var host = q('#team-kpis');
+    if (!host) return;
+    var active = D.team.filter(function (t) { return t.status === 'active'; }).length;
+    var invited = D.team.filter(function (t) { return t.status !== 'active'; }).length;
+    var roles = uniq(D.team.map(function (t) { return t.role; })).length;
+    var kpis = [
+      { label: 'Участников', value: D.team.length, hint: 'в команде' },
+      { label: 'Активны', value: active, hint: 'есть доступ' },
+      { label: 'Приглашены', value: invited, hint: 'ожидают входа' },
+      { label: 'Ролей', value: roles, hint: 'используется' }
+    ];
+    host.innerHTML = kpis.map(function (k) {
+      return '<div class="kpi"><div class="label">' + k.label + '</div><div class="value">' + k.value + '</div><div class="hint">' + k.hint + '</div></div>';
+    }).join('');
+  }
+  function renderRoleChips() {
+    var host = q('#role-chips');
+    if (!host) return;
+    var counts = {};
+    D.team.forEach(function (t) { counts[t.role] = (counts[t.role] || 0) + 1; });
+    var html = '<span class="chip' + (D.roleFilter === 'all' ? ' active' : '') + '" data-role-filter="all">Все <b style="font-weight:600">' + D.team.length + '</b></span>';
+    D.roles.forEach(function (r) {
+      html += '<span class="chip' + (D.roleFilter === r ? ' active' : '') + '" data-role-filter="' + esc(r) + '">' + esc(r) + ' <b style="font-weight:600">' + (counts[r] || 0) + '</b></span>';
+    });
+    host.innerHTML = html;
+  }
+  function renderTeam() {
+    var tbody = q('#team-table tbody');
+    if (!tbody) return;
+    var rows = D.team.filter(function (t) { return D.roleFilter === 'all' || t.role === D.roleFilter; });
+    if (!rows.length) {
+      tbody.innerHTML = tableEmpty(5, '👥', 'No users', 'В этой роли пока нет участников.');
+    } else {
+      tbody.innerHTML = rows.map(function (t) {
+        var idx = D.team.indexOf(t);
+        var statusBadge = t.status === 'active' ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Invited</span>';
+        return '<tr>' +
+          '<td><div class="row" style="gap:9px"><span class="avatar sm">' + FX.initials(t.name) + '</span><span class="strong">' + esc(t.name) + '</span></div></td>' +
+          '<td class="mono small">' + esc(t.email) + '</td>' +
+          '<td><span class="badge badge-blue cat-role-badge">' + esc(t.role) + '</span></td>' +
+          '<td>' + statusBadge + '</td>' +
+          '<td><div class="cat-team-actions">' +
+            '<button class="btn-icon" data-autologin="' + idx + '" title="Автовход">🔑</button>' +
+            '<button class="btn-icon" data-team-rm="' + idx + '" title="Удалить">🗑</button>' +
+          '</div></td></tr>';
+      }).join('');
+    }
+    var visible = rows.length;
+    q('#team-count').textContent = visible + ' из ' + D.team.length;
+    renderTeamKpis();
+    renderRoleChips();
+  }
+  function renderTmPrivs() {
+    var host = q('#tm-privs');
+    if (!host) return;
+    host.innerHTML = D.privs.map(function (p) {
+      return '<span class="chip' + (D.tmPrivs.indexOf(p) !== -1 ? ' active' : '') + '" data-priv="' + esc(p) + '">' + esc(p) + '</span>';
+    }).join('');
+  }
+  function initUsers() {
+    var screen = q('.screen[data-screen="users"]');
+    FX.on(q('#role-chips'), 'click', function (e) {
+      var chip = e.target.closest('[data-role-filter]');
+      if (!chip) return;
+      D.roleFilter = chip.getAttribute('data-role-filter');
+      renderTeam();
+    });
+    FX.on(q('#team-table'), 'click', function (e) {
+      var login = e.target.closest('[data-autologin]');
+      if (login) {
+        var t = D.team[Number(login.getAttribute('data-autologin'))];
+        if (t) toast('Вход выполнен как ' + t.name + ' (демо)', 'ok');
+        return;
+      }
+      var rm = e.target.closest('[data-team-rm]');
+      if (rm) {
+        D.pendingUser = Number(rm.getAttribute('data-team-rm'));
+        q('#ud-name').textContent = D.team[D.pendingUser] ? D.team[D.pendingUser].name : '';
+        FX.modal('m-user-delete');
+      }
+    });
+    FX.on(q('#ud-confirm'), 'click', function () {
+      if (D.pendingUser < 0) return;
+      D.team.splice(D.pendingUser, 1);
+      D.pendingUser = -1;
+      FX.closeModal('m-user-delete');
+      renderTeam();
+      toast('Участник удалён', '');
+    });
+    FX.on(q('[data-team-add]', screen), 'click', function () {
+      setVal('tm-name', ''); setVal('tm-email', ''); setVal('tm-pass', ''); setVal('tm-pass2', '');
+      fillSelect(q('#tm-role'), D.roles, 'sales');
+      D.tmRole = 'sales';
+      D.tmPrivs = (D.privDefaults.sales || []).slice();
+      renderTmPrivs();
+      FX.modal('m-member');
+      setTimeout(function () { var el = q('#tm-name'); if (el) el.focus(); }, 60);
+    });
+    FX.on(q('#tm-role'), 'change', function () {
+      D.tmRole = this.value;
+      D.tmPrivs = (D.privDefaults[D.tmRole] || []).slice();
+      renderTmPrivs();
+    });
+    FX.on(q('#tm-privs'), 'click', function (e) {
+      var chip = e.target.closest('[data-priv]');
+      if (!chip) return;
+      var p = chip.getAttribute('data-priv');
+      var pos = D.tmPrivs.indexOf(p);
+      if (pos === -1) D.tmPrivs.push(p);
+      else D.tmPrivs.splice(pos, 1);
+      renderTmPrivs();
+    });
+    FX.on(q('#tm-save'), 'click', function () {
+      var name = getVal('tm-name').trim();
+      var email = getVal('tm-email').trim();
+      var pass = getVal('tm-pass');
+      var pass2 = getVal('tm-pass2');
+      if (!name) { toast('Укажите имя', 'error'); return; }
+      if (!email || email.indexOf('@') === -1) { toast('Укажите корректный e-mail', 'error'); return; }
+      if (pass !== pass2) { toast('Пароли не совпадают', 'error'); return; }
+      if (D.team.some(function (t) { return t.email.toLowerCase() === email.toLowerCase(); })) {
+        toast('Участник с таким e-mail уже есть', 'error');
+        return;
+      }
+      D.team.push({
+        id: D.nextTeamId++, name: name, email: email, role: getVal('tm-role'),
+        status: pass ? 'active' : 'invited', last: '—', privs: D.tmPrivs.slice()
+      });
+      FX.closeModal('m-member');
+      renderTeam();
+      toast('Участник добавлен', 'ok');
+    });
+    renderTeam();
+  }
+
+  /* ================================================================
+     WIRING
+     ================================================================ */
+  var initFns = {
+    'chars-settings': initChars,
+    nomenclature: initNom,
+    cargo: initCargo,
+    percents: initPercents,
+    penalty: initPenalty,
+    'reason-settings': initReasons,
+    'wholesale-types': initWholesale,
+    'delivery-statuses': initStatuses,
+    constants: initConstants,
+    users: initUsers
+  };
+  var inited = {};
+
+  FimexAdmin.onScreen = function (screen) {
+    var fn = initFns[screen];
+    if (!fn || inited[screen]) return;
+    inited[screen] = true;
+    fn();
+    FX.tabs(document);
+  };
+
+  FimexAdmin.mount({ page: 'catalog', screen: 'chars-settings' });
+  FX.tabs(document);
+
+  /* «Команда» в общем сайдбаре ведёт на admin-company.html#users, а экран
+     users в этом прототипе живёт на этой странице — направляем ссылку сюда. */
+  var usersLink = q('.side-item[data-screen="users"]');
+  if (usersLink) {
+    usersLink.setAttribute('data-page', 'catalog');
+    usersLink.setAttribute('href', 'admin-catalog.html#users');
+  }
+})();
+
+</script>
+</body>
+</html>
