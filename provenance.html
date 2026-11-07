@@ -136,8 +136,8 @@
               <td>Нет: контент за авторизацией, HTML пустой.</td>
               <td>32 чанка Next.js: точные UI-строки, меню, подписи колонок; ~36 имён роутов из RTK Query; страницы <code>/dashboard/supplier/{stock,p2p,service,statistic}</code>.</td></tr>
             <tr><td><b>iOS-приложение</b></td>
-              <td><b>Да</b>: 74 запроса к <code>/app-api/v1</code> (26 уникальных URL), полные JSON-ответы.</td>
-              <td>Реальные форматы: прайс-лист, профиль, статусы заказов, бренды, категории, корзина, опт, наценки, qty-фильтры, периоды. Плюс App Store (подписки, 4.7.0) и константы приложения.</td></tr>
+              <td><b>Частично</b>: 74 запроса к <code>/app-api/v1</code> (26 уникальных URL), из них 64 × HTTP 200 и 10 × 401. 18 эндпоинтов с непустыми JSON, 4 — пустые состояния (корзина/заказы/ставки), 2 — только 401 (логистика, телеметрия).</td>
+              <td>Реальные форматы: прайс-лист (42 позиции), профиль, статусы заказов, бренды, категории, опт, наценки, qty-фильтры, периоды, статистика. Пустые списки заказов/ставок и 401 на логистике учтены ниже. Плюс App Store (подписки, 4.7.0) и константы приложения.</td></tr>
             <tr><td><b>Публичный сайт</b></td>
               <td>—</td>
               <td>Чанк лендинга: точные тексты hero, «Key Advantages», футер, cookie-баннер.</td></tr>
@@ -202,7 +202,9 @@
     <section id="ios">
       <h2><span class="num">3.</span>iOS-приложение: экран → endpoint</h2>
       <p>Здесь у нас были реальные JSON-ответы, поэтому поля совпадают с форматами API, а не
-        пересказаны по строкам.</p>
+        пересказаны по строкам. Дамп снят <b>11.10.2026</b> на <b>FimexProd 4.5.0 (build 38), iOS 27.0.1</b>:
+        74 запроса к API, 64 успешных, 10 × 401. У аккаунта на момент съёмки не было заказов и ставок,
+        поэтому часть экранов подтверждена формой пустого ответа, а не реальными строками.</p>
       <div class="table-wrap">
         <table class="table">
           <thead><tr><th>Экран</th><th>Endpoint / доказательство</th><th>Статус</th></tr></thead>
@@ -212,12 +214,12 @@
             <tr><td>Каталог</td><td><code>catalog/fetch-brands</code>, <code>fetch-categories</code>, <code>fetch-subcategories</code>, <code>fetch-popular-subcategories</code> — реальные ответы (Apple, Samsung, iPhone 18 Pro…)</td><td><span class="tag conf">подтверждено</span></td></tr>
             <tr><td>Прайс-лист</td><td><code>catalog/fetch-pricelist</code> (42 позиции: <code>price</code>, <code>stock_qty</code>, <code>country_abbr</code>, <code>from</code>, <code>available_at</code>…), <code>fetch-pricelist-percents</code>, <code>profile/fetch-qty-filter</code></td><td><span class="tag conf">подтверждено</span></td></tr>
             <tr><td>Корзина</td><td><code>profile/my-orders/cart</code> → <code>{total_qty, discounted, preorders}</code></td><td><span class="tag conf">подтверждено</span></td></tr>
-            <tr><td>Заказы / выданные</td><td><code>profile/my-orders/</code>, <code>issued-orders</code>, <code>statuses</code> (реальные статусы с RU/EN названиями и цветами)</td><td><span class="tag conf">подтверждено</span></td></tr>
+            <tr><td>Заказы / выданные</td><td><code>profile/my-orders/statuses</code> — 18 реальных статусов с RU/EN названиями и цветами; <code>my-orders/</code> — пустой список; <code>issued-orders</code> — 1 реальная preorder-запись</td><td><span class="tag conf">подтверждено</span> <span class="tag inf">строки заказов — выведены</span></td></tr>
             <tr><td>Деталь заказа</td><td>константа <code>OrderDetailViewController</code> + состав заказа из my-orders</td><td><span class="tag conf">подтверждено</span> <span class="tag add">таймлайн авторский</span></td></tr>
-            <tr><td>P2P-ставки</td><td><code>profile/p2p-bids/</code>, <code>approved-bids?period=…</code></td><td><span class="tag conf">подтверждено</span></td></tr>
+            <tr><td>P2P-ставки</td><td><code>profile/p2p-bids/</code> → <code>[]</code>, <code>approved-bids</code> → пустой список; экран и периоды существуют, но реальных ставок в дампе нет</td><td><span class="tag conf">подтверждено</span> <span class="tag inf">строки/статусы — выведены</span></td></tr>
             <tr><td>Статистика</td><td><code>profile/statistics/brands?period=…</code>; периоды из <code>meta/fetch-time-ranges</code></td><td><span class="tag conf">подтверждено</span> <span class="tag add">KPI/график авторские</span></td></tr>
-            <tr><td>Профиль</td><td><code>profile/user</code> (реальные поля <code>limit</code>, <code>ballance</code>, <code>penalty_ballance</code>, <code>deposit</code>, <code>default_markup</code>, <code>subscription_status</code>, <code>number</code>), <code>logistics/fetch-logistics</code>, <code>wholesales</code>, percents</td><td><span class="tag conf">подтверждено</span></td></tr>
-            <tr><td>Уведомления</td><td><code>profile/notifications/count-unread</code> (+ список из того же раздела API)</td><td><span class="tag conf">подтверждено</span> <span class="tag fake">тексты вымышлены</span></td></tr>
+            <tr><td>Профиль</td><td><code>profile/user</code> — реальные поля <code>limit</code>, <code>ballance</code>, <code>penalty_ballance</code>, <code>deposit</code>, <code>default_markup</code>, <code>subscription_status</code>, <code>number</code>, <code>companies</code>; <code>wholesales</code> — реальный Cash/Online. <code>logistics/fetch-logistics</code> — 401, список перевозчиков не пойман</td><td><span class="tag conf">подтверждено</span> <span class="tag inf">логистика — выведена</span></td></tr>
+            <tr><td>Уведомления</td><td>только <code>profile/notifications/count-unread</code> (счётчик); списка уведомлений в дампе нет</td><td><span class="tag conf">счётчик подтверждён</span> <span class="tag fake">список и тексты вымышлены</span></td></tr>
             <tr><td>Чат поддержки</td><td>App Store: «обмен сообщениями и чат»; отдельного мобильного endpoint в дампе нет</td><td><span class="tag inf">выведено</span></td></tr>
             <tr><td>Наценка</td><td><code>fetch-pricelist-percents</code>, <code>default_markup</code></td><td><span class="tag conf">подтверждено</span></td></tr>
           </tbody>
@@ -275,7 +277,7 @@
         <div class="cell"><div class="n">280</div><div class="t">роутов админки</div><div class="s">подтверждено: <code>spa-api-inventory.json</code></div></div>
         <div class="cell"><div class="n">29</div><div class="t">route-компонентов</div><div class="s">подтверждено: <code>admin-routes.json</code>, 25 собрано</div></div>
         <div class="cell"><div class="n">32</div><div class="t">чанка Next.js</div><div class="s">файлов в <code>next-chunks/</code>; в отчёте было 34 — в наличии 32</div></div>
-        <div class="cell"><div class="n">74</div><div class="t">запроса iOS к API</div><div class="s">26 уникальных URL в mitm-дампе; в отчёте было 57</div></div>
+        <div class="cell"><div class="n">74</div><div class="t">запроса iOS к API</div><div class="s">64×200, 10×401, 26 уникальных URL; дамп 11.10.2026, app 4.5.0 (38)</div></div>
         <div class="cell"><div class="n">75</div><div class="t">событий с публичных каналов</div><div class="s">подтверждено: <code>f1-captured-events.json</code>, окно 218 сек</div></div>
         <div class="cell"><div class="n">16</div><div class="t">неразрешённых вызовов</div><div class="s">пути в переменных; 280 — нижняя граница</div></div>
       </div>
@@ -297,6 +299,9 @@
         <li><b>Пиксель-перфект не гарантирован</b>: цвета и шрифты приближены (DIN Next W1G / Inter / Bebas Neue,
           палитра MUI), но не сверены с живым продуктом.</li>
         <li><b>Android-версия</b> приложения вероятна, но не подтверждена; в прототипе только iOS.</li>
+        <li><b>Мобильный дамп неполный.</b> Снят 11.10.2026 на app 4.5.0 (сейчас 4.7.0); в нём нет списка
+          уведомлений, чата, деталей/создания заказа, реальных P2P-ставок и ответа логистики (401).
+          Полный инвентарь покрытия — в <code>.dev/fimex/mobile-traffic/README.md</code>.</li>
         <li><b>Данные вымышлены</b> полностью; в артефакте нет реальных e-mail, лицензий, цен или имён
           поставщиков из перехвата.</li>
       </ul>
